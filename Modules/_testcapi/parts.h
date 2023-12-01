@@ -63,5 +63,6 @@ int _PyTestCapi_Init_Time(PyObject *module);
 
 int _PyTestCapi_Init_VectorcallLimited(PyObject *module);
 int _PyTestCapi_Init_HeaptypeRelative(PyObject *module);
+int _PyTestCapi_Init_Config(PyObject *mod);
 
 #endif // Py_TESTCAPI_PARTS_H
