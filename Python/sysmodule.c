@@ -2471,6 +2471,22 @@ close_and_release:
 #endif
 
 
+/*[clinic input]
+sys.get_config
+
+    name: str
+
+Get a configuration option.
+[clinic start generated code]*/
+
+static PyObject *
+sys_get_config_impl(PyObject *module, const char *name)
+/*[clinic end generated code: output=dd864a2f9e4a1337 input=ed69c0839f857b23]*/
+{
+    return PyConfig_Get(name);
+}
+
+
 static PyMethodDef sys_methods[] = {
     /* Might as well keep this in alphabetic order */
     SYS_ADDAUDITHOOK_METHODDEF
@@ -2539,6 +2555,7 @@ static PyMethodDef sys_methods[] = {
     SYS__STATS_DUMP_METHODDEF
 #endif
     SYS__GET_CPU_COUNT_CONFIG_METHODDEF
+    SYS_GET_CONFIG_METHODDEF
     {NULL, NULL}  // sentinel
 };
 
