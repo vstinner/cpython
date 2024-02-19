@@ -3393,13 +3393,6 @@ config_get_sys(const char *name)
 
 
 static int
-config_can_use_sys(void)
-{
-    return _PyRuntime.initialized;
-}
-
-
-static int
 config_get_sys_write_bytecode(const PyConfig *config, int *value)
 {
     PyObject *attr = config_get_sys("dont_write_bytecode");
@@ -3421,7 +3414,7 @@ static PyObject*
 config_get(const PyConfig *config, const PyConfigSpec *spec,
            int use_sys)
 {
-    if (use_sys && config_can_use_sys()) {
+    if (use_sys) {
         if (spec->sys_attr != NULL) {
             return config_get_sys(spec->sys_attr);
         }
@@ -3521,7 +3514,7 @@ PyConfig_GetInt(const char *name, int *value)
     }
     const PyConfig *config = _Py_GetConfig();
 
-    if (config_can_use_sys() && strcmp(spec->name, "write_bytecode") == 0) {
+    if (strcmp(spec->name, "write_bytecode") == 0) {
         if (config_get_sys_write_bytecode(config, value) < 0) {
             return -1;
         }

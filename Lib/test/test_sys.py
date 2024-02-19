@@ -1234,84 +1234,89 @@ class SysModuleTest(unittest.TestCase):
     def test_get_config(self):
         # test sys.get_config()
 
-        # test config options type, check that all options can be read
-        options = [
-            # PyConfig members (excluding duplicates)
-            ("_config_init", int, None),
-            ("isolated", int, None),
-            ("use_environment", int, None),
-            ("dev_mode", int, None),
-            ("install_signal_handlers", int, None),
-            ("use_hash_seed", int, None),
-            ("hash_seed", int, None),
-            ("faulthandler", int, None),
-            ("tracemalloc", int, None),
-            ("perf_profiling", int, None),
-            ("import_time", int, None),
-            ("code_debug_ranges", int, None),
-            ("show_ref_count", int, None),
-            ("dump_refs", int, None),
-            ("dump_refs_file", str | None, None),
-            ("malloc_stats", int, None),
-            ("filesystem_encoding", str, None),
-            ("filesystem_errors", str, None),
-            ("pycache_prefix", str | None, "pycache_prefix"),
-            ("parse_argv", int, None),
-            ("orig_argv", list[str], "orig_argv"),
-            ("argv", list[str], "argv"),
-            ("xoptions", dict[str, str], "_xoptions"),
-            ("warnoptions", list[str], "warnoptions"),
-            ("site_import", int, None),
-            ("bytes_warning", int, None),
-            ("warn_default_encoding", int, None),
-            ("inspect", int, None),
-            ("interactive", int, None),
-            ("optimization_level", int, None),
-            ("parser_debug", int, None),
-            ("write_bytecode", int, None),
-            ("verbose", int, None),
-            ("quiet", int, None),
-            ("user_site_directory", int, None),
-            ("configure_c_stdio", int, None),
-            ("buffered_stdio", int, None),
-            ("stdio_encoding", str, None),
-            ("stdio_errors", str, None),
-            ("check_hash_pycs_mode", str, None),
-            ("use_frozen_modules", int, None),
-            ("safe_path", int, None),
-            ("int_max_str_digits", int, None),
-            ("cpu_count", int, None),
-            ("pathconfig_warnings", int, None),
-            ("program_name", str, None),
-            ("pythonpath_env", str | None, None),
-            ("home", str | None, None),
-            ("platlibdir", str, "platlibdir"),
-            ("sys_path_0", str | None, None),
-            ("module_search_paths_set", int, None),
-            ("module_search_paths", list[str], "path"),
-            ("stdlib_dir", str | None, "_stdlib_dir"),
-            ("executable", str | None, "executable"),
-            ("base_executable", str | None, "_base_executable"),
-            ("prefix", str | None, "prefix"),
-            ("base_prefix", str | None, "base_prefix"),
-            ("exec_prefix", str | None, "exec_prefix"),
-            ("base_exec_prefix", str | None, "base_exec_prefix"),
-            ("skip_source_first_line", int, None),
-            ("run_command", str | None, None),
-            ("run_module", str | None, None),
-            ("run_filename", str | None, None),
-            ("_install_importlib", int, None),
-            ("_init_main", int, None),
-            ("_is_python_build", int, None),
+        markers = {
+            str: "TEST_MARKER_STR",
+            str | None: "TEST_MARKER_OPT_STR",
+            list[str]: ["TEST_MARKER_STRLIST"],
+            dict[str, str]: {"x": "value", "y": True},
+        }
 
-            # PyPreConfig members (excluding duplicates)
-            ("configure_locale", int, None),
+        # read config options and check their type
+        options = [
+            ("allocator", int, None),
+            ("argv", list[str], "argv"),
+            ("base_exec_prefix", str | None, "base_exec_prefix"),
+            ("base_executable", str | None, "_base_executable"),
+            ("base_prefix", str | None, "base_prefix"),
+            ("buffered_stdio", int, None),
+            ("bytes_warning", int, None),
+            ("check_hash_pycs_mode", str, None),
+            ("code_debug_ranges", int, None),
             ("coerce_c_locale", int, None),
             ("coerce_c_locale_warn", int, None),
+            ("configure_c_stdio", int, None),
+            ("configure_locale", int, None),
+            ("cpu_count", int, None),
+            ("dev_mode", int, None),
+            ("dump_refs", int, None),
+            ("dump_refs_file", str | None, None),
+            ("exec_prefix", str | None, "exec_prefix"),
+            ("executable", str | None, "executable"),
+            ("faulthandler", int, None),
+            ("filesystem_encoding", str, None),
+            ("filesystem_errors", str, None),
+            ("hash_seed", int, None),
+            ("home", str | None, None),
+            ("import_time", int, None),
+            ("inspect", int, None),
+            ("install_signal_handlers", int, None),
+            ("int_max_str_digits", int, None),
+            ("interactive", int, None),
+            ("isolated", int, None),
+            ("malloc_stats", int, None),
+            ("module_search_paths", list[str], "path"),
+            ("module_search_paths_set", int, None),
+            ("optimization_level", int, None),
+            ("orig_argv", list[str], "orig_argv"),
+            ("parse_argv", int, None),
+            ("parser_debug", int, None),
+            ("pathconfig_warnings", int, None),
+            ("perf_profiling", int, None),
+            ("platlibdir", str, "platlibdir"),
+            ("prefix", str | None, "prefix"),
+            ("program_name", str, None),
+            ("pycache_prefix", str | None, "pycache_prefix"),
+            ("pythonpath_env", str | None, None),
+            ("quiet", int, None),
+            ("run_command", str | None, None),
+            ("run_filename", str | None, None),
+            ("run_module", str | None, None),
+            ("safe_path", int, None),
+            ("show_ref_count", int, None),
+            ("site_import", int, None),
+            ("skip_source_first_line", int, None),
+            ("stdio_encoding", str, None),
+            ("stdio_errors", str, None),
+            ("stdlib_dir", str | None, "_stdlib_dir"),
+            ("sys_path_0", str | None, None),
+            ("tracemalloc", int, None),
+            ("use_environment", int, None),
+            ("use_frozen_modules", int, None),
+            ("use_hash_seed", int, None),
+            ("user_site_directory", int, None),
             ("utf8_mode", int, None),
-            ("allocator", int, None),
-        ]
+            ("verbose", int, None),
+            ("warn_default_encoding", int, None),
+            ("warnoptions", list[str], "warnoptions"),
+            ("write_bytecode", int, None),
+            ("xoptions", dict[str, str], "_xoptions"),
 
+            # private members
+            ("_config_init", int, None),
+            ("_init_main", int, None),
+            ("_install_importlib", int, None),
+            ("_is_python_build", int, None),
+        ]
         if support.MS_WINDOWS:
             options.extend((
                 ("legacy_windows_stdio", int, None),
@@ -1343,21 +1348,11 @@ class SysModuleTest(unittest.TestCase):
 
                 if sys_attr is not None:
                     self.assertEqual(getattr(sys, sys_attr), value)
+                    expected = markers[option_type]
+                    with support.swap_attr(sys, sys_attr, expected):
+                        self.assertEqual(sys.get_config(name), expected)
 
-        # test config option types
-        for name, config_type, expected in (
-            ('verbose', int, sys.flags.verbose),   # integer
-            ('isolated', int, sys.flags.isolated), # unsigned integer
-            ('platlibdir', str, sys.platlibdir),   # string
-            ('argv', list, sys.argv),              # string list
-            ('xoptions', dict, sys._xoptions),     # string dictionary
-        ):
-            with self.subTest(name=name):
-                value = sys.get_config(name)
-                self.assertEqual(type(value), config_type)
-                self.assertEqual(value, expected)
-
-        # compare config options and sys.flags
+        # compare config options with sys.flags
         for flag, name, negate in (
             ("debug", "parser_debug", False),
             ("inspect", "inspect", False),
@@ -1387,32 +1382,6 @@ class SysModuleTest(unittest.TestCase):
         self.assertEqual(sys.flags.hash_randomization,
                          sys.get_config('use_hash_seed') == 0
                          or sys.get_config('hash_seed') == 0)
-
-        # test config options read from sys attributes
-        value_str = "TEST_MARKER_STR"
-        value_list = ["TEST_MARKER_STRLIST"]
-        value_dict = {"x": "value", "y": True}
-        for name, sys_name, value in (
-            ("base_exec_prefix", None, value_str),
-            ("base_prefix", None, value_str),
-            ("exec_prefix", None, value_str),
-            ("executable", None, value_str),
-            ("platlibdir", None, value_str),
-            ("prefix", None, value_str),
-            ("pycache_prefix", None, value_str),
-            ("base_executable", "_base_executable", value_str),
-            ("stdlib_dir", "_stdlib_dir", value_str),
-            ("argv", None, value_list),
-            ("orig_argv", None, value_list),
-            ("warnoptions", None, value_list),
-            ("module_search_paths", "path", value_list),
-            ("xoptions", "_xoptions", value_dict),
-        ):
-            with self.subTest(name=name):
-                if sys_name is None:
-                    sys_name = name
-                with support.swap_attr(sys, sys_name, value):
-                    self.assertEqual(sys.get_config(name), value)
 
 
 @test.support.cpython_only
