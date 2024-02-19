@@ -11,6 +11,7 @@ import subprocess
 import sys
 import sysconfig
 import test.support
+import types
 from test import support
 from test.support import os_helper
 from test.support.script_helper import assert_python_ok, assert_python_failure
@@ -23,6 +24,10 @@ except ImportError:
 import textwrap
 import unittest
 import warnings
+
+
+# Is the Py_STATS macro defined?
+Py_STATS = hasattr(sys, '_stats_on')
 
 
 def requires_subinterpreters(meth):
@@ -1212,7 +1217,7 @@ class SysModuleTest(unittest.TestCase):
         get_objects = sys.getobjects(3, MyType)
         self.assertEqual(len(get_objects), 3)
 
-    @unittest.skipUnless(hasattr(sys, '_stats_on'), 'need Py_STATS build')
+    @unittest.skipUnless(Py_STATS, 'need Py_STATS build')
     def test_pystats(self):
         # Call the functions, just check that they don't crash
         # Cannot save/restore state.
@@ -1229,6 +1234,116 @@ class SysModuleTest(unittest.TestCase):
     def test_get_config(self):
         # test sys.get_config()
 
+        # test config options type, check that all options can be read
+        options = [
+            # PyConfig members (excluding duplicates)
+            ("_config_init", int, None),
+            ("isolated", int, None),
+            ("use_environment", int, None),
+            ("dev_mode", int, None),
+            ("install_signal_handlers", int, None),
+            ("use_hash_seed", int, None),
+            ("hash_seed", int, None),
+            ("faulthandler", int, None),
+            ("tracemalloc", int, None),
+            ("perf_profiling", int, None),
+            ("import_time", int, None),
+            ("code_debug_ranges", int, None),
+            ("show_ref_count", int, None),
+            ("dump_refs", int, None),
+            ("dump_refs_file", str | None, None),
+            ("malloc_stats", int, None),
+            ("filesystem_encoding", str, None),
+            ("filesystem_errors", str, None),
+            ("pycache_prefix", str | None, "pycache_prefix"),
+            ("parse_argv", int, None),
+            ("orig_argv", list[str], "orig_argv"),
+            ("argv", list[str], "argv"),
+            ("xoptions", dict[str, str], "_xoptions"),
+            ("warnoptions", list[str], "warnoptions"),
+            ("site_import", int, None),
+            ("bytes_warning", int, None),
+            ("warn_default_encoding", int, None),
+            ("inspect", int, None),
+            ("interactive", int, None),
+            ("optimization_level", int, None),
+            ("parser_debug", int, None),
+            ("write_bytecode", int, None),
+            ("verbose", int, None),
+            ("quiet", int, None),
+            ("user_site_directory", int, None),
+            ("configure_c_stdio", int, None),
+            ("buffered_stdio", int, None),
+            ("stdio_encoding", str, None),
+            ("stdio_errors", str, None),
+            ("check_hash_pycs_mode", str, None),
+            ("use_frozen_modules", int, None),
+            ("safe_path", int, None),
+            ("int_max_str_digits", int, None),
+            ("cpu_count", int, None),
+            ("pathconfig_warnings", int, None),
+            ("program_name", str, None),
+            ("pythonpath_env", str | None, None),
+            ("home", str | None, None),
+            ("platlibdir", str, "platlibdir"),
+            ("sys_path_0", str | None, None),
+            ("module_search_paths_set", int, None),
+            ("module_search_paths", list[str], "path"),
+            ("stdlib_dir", str | None, "_stdlib_dir"),
+            ("executable", str | None, "executable"),
+            ("base_executable", str | None, "_base_executable"),
+            ("prefix", str | None, "prefix"),
+            ("base_prefix", str | None, "base_prefix"),
+            ("exec_prefix", str | None, "exec_prefix"),
+            ("base_exec_prefix", str | None, "base_exec_prefix"),
+            ("skip_source_first_line", int, None),
+            ("run_command", str | None, None),
+            ("run_module", str | None, None),
+            ("run_filename", str | None, None),
+            ("_install_importlib", int, None),
+            ("_init_main", int, None),
+            ("_is_python_build", int, None),
+
+            # PyPreConfig members (excluding duplicates)
+            ("configure_locale", int, None),
+            ("coerce_c_locale", int, None),
+            ("coerce_c_locale_warn", int, None),
+            ("utf8_mode", int, None),
+            ("allocator", int, None),
+        ]
+
+        if support.MS_WINDOWS:
+            options.extend((
+                ("legacy_windows_stdio", int, None),
+                ("legacy_windows_fs_encoding", int, None),
+            ))
+        if support.Py_DEBUG:
+            options.extend((
+                ("run_presite", str | None, None),
+            ))
+        if Py_STATS:
+            options.extend((
+                ("_pystats", int, None),
+            ))
+
+        for name, option_type, sys_attr in options:
+            with self.subTest(name=name, option_type=option_type,
+                              sys_attr=sys_attr):
+                value = sys.get_config(name)
+                if isinstance(option_type, types.GenericAlias):
+                    self.assertIsInstance(value, option_type.__origin__)
+                    if option_type.__origin__ == dict:
+                        for item in value.items():
+                            self.assertIsInstance(item, option_type.__args__)
+                    else:
+                        for item in value:
+                            self.assertIsInstance(item, option_type.__args__)
+                else:
+                    self.assertIsInstance(value, option_type)
+
+                if sys_attr is not None:
+                    self.assertEqual(getattr(sys, sys_attr), value)
+
         # test config option types
         for name, config_type, expected in (
             ('verbose', int, sys.flags.verbose),   # integer
@@ -1242,7 +1357,7 @@ class SysModuleTest(unittest.TestCase):
                 self.assertEqual(type(value), config_type)
                 self.assertEqual(value, expected)
 
-        # comapre config options and sys.flags
+        # compare config options and sys.flags
         for flag, name, negate in (
             ("debug", "parser_debug", False),
             ("inspect", "inspect", False),
