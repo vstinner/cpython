@@ -128,6 +128,28 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
 
 #undef SPEC
 
+#define SPEC(MEMBER, TYPE) \
+    {#MEMBER, offsetof(PyPreConfig, MEMBER), PyConfig_MEMBER_##TYPE, NULL}
+
+static const PyConfigSpec PYPRECONFIG_SPEC[] = {
+    SPEC(_config_init, INT),
+    SPEC(parse_argv, INT),
+    SPEC(isolated, INT),
+    SPEC(use_environment, INT),
+    SPEC(configure_locale, INT),
+    SPEC(coerce_c_locale, INT),
+    SPEC(coerce_c_locale_warn, INT),
+#ifdef MS_WINDOWS
+    SPEC(legacy_windows_fs_encoding, INT),
+#endif
+    SPEC(utf8_mode, INT),
+    SPEC(dev_mode, INT),
+    SPEC(allocator, INT),
+    {NULL, 0, 0, NULL},
+};
+
+#undef SPEC
+
 
 // Forward declarations
 static PyObject*
@@ -3273,10 +3295,9 @@ config_spec_get_member(const PyConfigSpec *spec, const PyConfig *config)
 
 
 static const PyConfigSpec*
-config_find_spec(const char *name)
+config_generic_find_spec(const PyConfigSpec *spec, const char *name)
 {
-    const PyConfigSpec *spec;
-    for (spec = PYCONFIG_SPEC; spec->name != NULL; spec++) {
+    for (; spec->name != NULL; spec++) {
         if (strcmp(name, spec->name) == 0) {
             return spec;
         }
@@ -3284,6 +3305,20 @@ config_find_spec(const char *name)
     PyErr_Format(PyExc_ValueError,
                  "unknown config option name: %s", name);
     return NULL;
+}
+
+
+static const PyConfigSpec*
+config_find_spec(const char *name)
+{
+    return config_generic_find_spec(PYCONFIG_SPEC, name);
+}
+
+
+static const PyConfigSpec*
+preconfig_find_spec(const char *name)
+{
+    return config_generic_find_spec(PYPRECONFIG_SPEC, name);
 }
 
 
@@ -3445,15 +3480,35 @@ config_get(const PyConfig *config, const PyConfigSpec *spec,
 }
 
 
+static PyObject*
+preconfig_get(const PyPreConfig *preconfig, const PyConfigSpec *spec)
+{
+    // The type of all PYPRECONFIG_SPEC members is INT
+    assert(spec->type == PyConfig_MEMBER_INT);
+
+    char *member = (char *)preconfig + spec->offset;
+    int value = *(int *)member;
+    return PyLong_FromLong(value);
+}
+
+
 PyObject*
 PyConfig_Get(const char *name)
 {
     const PyConfigSpec *spec = config_find_spec(name);
-    if (spec == NULL) {
-        return NULL;
+    if (spec != NULL) {
+        const PyConfig *config = _Py_GetConfig();
+        return config_get(config, spec, 1);
     }
-    const PyConfig *config = _Py_GetConfig();
-    return config_get(config, spec, 1);
+    PyErr_Clear();
+
+    spec = preconfig_find_spec(name);
+    if (spec != NULL) {
+        const PyPreConfig *preconfig = &_PyRuntime.preconfig;
+        return preconfig_get(preconfig, spec);
+    }
+
+    return NULL;
 }
 
 

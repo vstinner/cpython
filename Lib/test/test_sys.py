@@ -1226,6 +1226,79 @@ class SysModuleTest(unittest.TestCase):
     def test_disable_gil_abi(self):
         self.assertEqual('t' in sys.abiflags, support.Py_GIL_DISABLED)
 
+    def test_get_config(self):
+        # test sys.get_config()
+
+        # test config option types
+        for name, config_type, expected in (
+            ('verbose', int, sys.flags.verbose),   # integer
+            ('isolated', int, sys.flags.isolated), # unsigned integer
+            ('platlibdir', str, sys.platlibdir),   # string
+            ('argv', list, sys.argv),              # string list
+            ('xoptions', dict, sys._xoptions),     # string dictionary
+        ):
+            with self.subTest(name=name):
+                value = sys.get_config(name)
+                self.assertEqual(type(value), config_type)
+                self.assertEqual(value, expected)
+
+        # comapre config options and sys.flags
+        for flag, name, negate in (
+            ("debug", "parser_debug", False),
+            ("inspect", "inspect", False),
+            ("interactive", "interactive", False),
+            ("optimize", "optimization_level", False),
+            ("dont_write_bytecode", "write_bytecode", True),
+            ("no_user_site", "user_site_directory", True),
+            ("no_site", "site_import", True),
+            ("ignore_environment", "use_environment", True),
+            ("verbose", "verbose", False),
+            ("bytes_warning", "bytes_warning", False),
+            ("quiet", "quiet", False),
+            ("isolated", "isolated", False),
+            ("dev_mode", "dev_mode", False),
+            ("utf8_mode", "utf8_mode", False),
+            ("warn_default_encoding", "warn_default_encoding", False),
+            ("safe_path", "safe_path", False),
+            ("int_max_str_digits", "int_max_str_digits", False),
+        ):
+            with self.subTest(flag=flag, name=name, negate=negate):
+                value = sys.get_config(name)
+                if negate:
+                    value = not value
+                self.assertEqual(getattr(sys.flags, flag), value)
+
+        # hash randomization
+        self.assertEqual(sys.flags.hash_randomization,
+                         sys.get_config('use_hash_seed') == 0
+                         or sys.get_config('hash_seed') == 0)
+
+        # test config options read from sys attributes
+        value_str = "TEST_MARKER_STR"
+        value_list = ["TEST_MARKER_STRLIST"]
+        value_dict = {"x": "value", "y": True}
+        for name, sys_name, value in (
+            ("base_exec_prefix", None, value_str),
+            ("base_prefix", None, value_str),
+            ("exec_prefix", None, value_str),
+            ("executable", None, value_str),
+            ("platlibdir", None, value_str),
+            ("prefix", None, value_str),
+            ("pycache_prefix", None, value_str),
+            ("base_executable", "_base_executable", value_str),
+            ("stdlib_dir", "_stdlib_dir", value_str),
+            ("argv", None, value_list),
+            ("orig_argv", None, value_list),
+            ("warnoptions", None, value_list),
+            ("module_search_paths", "path", value_list),
+            ("xoptions", "_xoptions", value_dict),
+        ):
+            with self.subTest(name=name):
+                if sys_name is None:
+                    sys_name = name
+                with support.swap_attr(sys, sys_name, value):
+                    self.assertEqual(sys.get_config(name), value)
+
 
 @test.support.cpython_only
 class UnraisableHookTest(unittest.TestCase):
