@@ -3549,3 +3549,46 @@ PyConfig_GetInt(const char *name, int *value)
     }
     return 0;
 }
+
+
+static int
+config_names_add(PyObject *names, const PyConfigSpec *spec)
+{
+    for (; spec->name != NULL; spec++) {
+        PyObject *name = PyUnicode_FromString(spec->name);
+        if (name == NULL) {
+            return -1;
+        }
+        int res = PyList_Append(names, name);
+        Py_DECREF(name);
+        if (res < 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+
+PyObject*
+PyConfig_Names(void)
+{
+    PyObject *names = PyList_New(0);
+    if (names == NULL) {
+        goto error;
+    }
+
+    if (config_names_add(names, PYCONFIG_SPEC) < 0) {
+        goto error;
+    }
+    if (config_names_add(names, PYPRECONFIG_SPEC) < 0) {
+        goto error;
+    }
+
+    PyObject *frozen = PyFrozenSet_New(names);
+    Py_DECREF(names);
+    return frozen;
+
+error:
+    Py_XDECREF(names);
+    return NULL;
+}

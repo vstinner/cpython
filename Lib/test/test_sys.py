@@ -1352,6 +1352,10 @@ class SysModuleTest(unittest.TestCase):
                     with support.swap_attr(sys, sys_attr, expected):
                         self.assertEqual(sys.get_config(name), expected)
 
+        # check that the test checks all options
+        self.assertEqual(sorted(name for name, option_type, sys_attr in options),
+                         sorted(sys.get_config_names()))
+
         # compare config options with sys.flags
         for flag, name, negate in (
             ("debug", "parser_debug", False),
@@ -1382,6 +1386,12 @@ class SysModuleTest(unittest.TestCase):
         self.assertEqual(sys.flags.hash_randomization,
                          sys.get_config('use_hash_seed') == 0
                          or sys.get_config('hash_seed') == 0)
+
+    def test_get_config_names(self):
+        names = sys.get_config_names()
+        self.assertIsInstance(names, frozenset)
+        for name in names:
+            self.assertIsInstance(name, str)
 
 
 @test.support.cpython_only

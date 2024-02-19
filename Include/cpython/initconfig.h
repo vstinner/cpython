@@ -263,9 +263,18 @@ PyAPI_FUNC(PyStatus) PyConfig_SetWideStringList(PyConfig *config,
 // Return a new reference on success.
 // Set an exception and return NULL on error.
 //
+// The caller must hold the GIL.
+//
 // The object type depends on the configuration option. It can be:
-// int, str, list[str] and dict[str, str].
+// int, str, str | None, list[str] and dict[str, str].
 PyAPI_FUNC(PyObject*) PyConfig_Get(const char *name);
+
+// Get names of all configuration options as a frozenset.
+// Return a new reference on success.
+// Set an exception and return NULL on error.
+//
+// The caller must hold the GIL.
+PyAPI_FUNC(PyObject*) PyConfig_Names(void);
 
 // Get an configuration option as an integer.
 // Return 0 and set '*value' on success.

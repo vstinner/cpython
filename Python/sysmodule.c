@@ -2487,6 +2487,20 @@ sys_get_config_impl(PyObject *module, const char *name)
 }
 
 
+/*[clinic input]
+sys.get_config_names
+
+Get a configuration option names.
+[clinic start generated code]*/
+
+static PyObject *
+sys_get_config_names_impl(PyObject *module)
+/*[clinic end generated code: output=059eef4a53923235 input=c436001bb0b711ce]*/
+{
+    return PyConfig_Names();
+}
+
+
 static PyMethodDef sys_methods[] = {
     /* Might as well keep this in alphabetic order */
     SYS_ADDAUDITHOOK_METHODDEF
@@ -2556,6 +2570,7 @@ static PyMethodDef sys_methods[] = {
 #endif
     SYS__GET_CPU_COUNT_CONFIG_METHODDEF
     SYS_GET_CONFIG_METHODDEF
+    SYS_GET_CONFIG_NAMES_METHODDEF
     {NULL, NULL}  // sentinel
 };
 

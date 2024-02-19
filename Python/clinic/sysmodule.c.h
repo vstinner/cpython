@@ -1528,6 +1528,24 @@ exit:
     return return_value;
 }
 
+PyDoc_STRVAR(sys_get_config_names__doc__,
+"get_config_names($module, /)\n"
+"--\n"
+"\n"
+"Get a configuration option names.");
+
+#define SYS_GET_CONFIG_NAMES_METHODDEF    \
+    {"get_config_names", (PyCFunction)sys_get_config_names, METH_NOARGS, sys_get_config_names__doc__},
+
+static PyObject *
+sys_get_config_names_impl(PyObject *module);
+
+static PyObject *
+sys_get_config_names(PyObject *module, PyObject *Py_UNUSED(ignored))
+{
+    return sys_get_config_names_impl(module);
+}
+
 #ifndef SYS_GETWINDOWSVERSION_METHODDEF
     #define SYS_GETWINDOWSVERSION_METHODDEF
 #endif /* !defined(SYS_GETWINDOWSVERSION_METHODDEF) */
@@ -1571,4 +1589,4 @@ exit:
 #ifndef SYS_GETANDROIDAPILEVEL_METHODDEF
     #define SYS_GETANDROIDAPILEVEL_METHODDEF
 #endif /* !defined(SYS_GETANDROIDAPILEVEL_METHODDEF) */
-/*[clinic end generated code: output=0ad0ff7adef1a35f input=a9049054013a1b77]*/
+/*[clinic end generated code: output=18cff38dfdfd9ba6 input=a9049054013a1b77]*/
