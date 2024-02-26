@@ -1237,90 +1237,90 @@ class SysModuleTest(unittest.TestCase):
         markers = {
             str: "TEST_MARKER_STR",
             str | None: "TEST_MARKER_OPT_STR",
-            list[str]: ["TEST_MARKER_STRLIST"],
+            tuple[str, ...]: ("TEST_MARKER_STR_TUPLE",),
             dict[str, str]: {"x": "value", "y": True},
         }
 
         # read config options and check their type
         options = [
             ("allocator", int, None),
-            ("argv", list[str], "argv"),
+            ("argv", tuple[str, ...], "argv"),
             ("base_exec_prefix", str | None, "base_exec_prefix"),
             ("base_executable", str | None, "_base_executable"),
             ("base_prefix", str | None, "base_prefix"),
-            ("buffered_stdio", int, None),
+            ("buffered_stdio", bool, None),
             ("bytes_warning", int, None),
             ("check_hash_pycs_mode", str, None),
-            ("code_debug_ranges", int, None),
-            ("coerce_c_locale", int, None),
-            ("coerce_c_locale_warn", int, None),
-            ("configure_c_stdio", int, None),
-            ("configure_locale", int, None),
+            ("code_debug_ranges", bool, None),
+            ("coerce_c_locale", bool, None),
+            ("coerce_c_locale_warn", bool, None),
+            ("configure_c_stdio", bool, None),
+            ("configure_locale", bool, None),
             ("cpu_count", int, None),
-            ("dev_mode", int, None),
-            ("dump_refs", int, None),
+            ("dev_mode", bool, None),
+            ("dump_refs", bool, None),
             ("dump_refs_file", str | None, None),
             ("exec_prefix", str | None, "exec_prefix"),
             ("executable", str | None, "executable"),
-            ("faulthandler", int, None),
+            ("faulthandler", bool, None),
             ("filesystem_encoding", str, None),
             ("filesystem_errors", str, None),
             ("hash_seed", int, None),
             ("home", str | None, None),
-            ("import_time", int, None),
-            ("inspect", int, None),
-            ("install_signal_handlers", int, None),
+            ("import_time", bool, None),
+            ("inspect", bool, None),
+            ("install_signal_handlers", bool, None),
             ("int_max_str_digits", int, None),
-            ("interactive", int, None),
-            ("isolated", int, None),
-            ("malloc_stats", int, None),
-            ("module_search_paths", list[str], "path"),
-            ("module_search_paths_set", int, None),
+            ("interactive", bool, None),
+            ("isolated", bool, None),
+            ("malloc_stats", bool, None),
+            ("module_search_paths", tuple[str, ...], "path"),
+            ("module_search_paths_set", bool, None),
             ("optimization_level", int, None),
-            ("orig_argv", list[str], "orig_argv"),
-            ("parse_argv", int, None),
-            ("parser_debug", int, None),
-            ("pathconfig_warnings", int, None),
-            ("perf_profiling", int, None),
+            ("orig_argv", tuple[str, ...], "orig_argv"),
+            ("parse_argv", bool, None),
+            ("parser_debug", bool, None),
+            ("pathconfig_warnings", bool, None),
+            ("perf_profiling", bool, None),
             ("platlibdir", str, "platlibdir"),
             ("prefix", str | None, "prefix"),
             ("program_name", str, None),
             ("pycache_prefix", str | None, "pycache_prefix"),
             ("pythonpath_env", str | None, None),
-            ("quiet", int, None),
+            ("quiet", bool, None),
             ("run_command", str | None, None),
             ("run_filename", str | None, None),
             ("run_module", str | None, None),
-            ("safe_path", int, None),
-            ("show_ref_count", int, None),
-            ("site_import", int, None),
-            ("skip_source_first_line", int, None),
+            ("safe_path", bool, None),
+            ("show_ref_count", bool, None),
+            ("site_import", bool, None),
+            ("skip_source_first_line", bool, None),
             ("stdio_encoding", str, None),
             ("stdio_errors", str, None),
             ("stdlib_dir", str | None, "_stdlib_dir"),
             ("sys_path_0", str | None, None),
-            ("tracemalloc", int, None),
-            ("use_environment", int, None),
-            ("use_frozen_modules", int, None),
-            ("use_hash_seed", int, None),
-            ("user_site_directory", int, None),
-            ("utf8_mode", int, None),
+            ("tracemalloc", bool, None),
+            ("use_environment", bool, None),
+            ("use_frozen_modules", bool, None),
+            ("use_hash_seed", bool, None),
+            ("user_site_directory", bool, None),
+            ("utf8_mode", bool, None),
             ("verbose", int, None),
-            ("warn_default_encoding", int, None),
-            ("warnoptions", list[str], "warnoptions"),
-            ("write_bytecode", int, None),
+            ("warn_default_encoding", bool, None),
+            ("warnoptions", tuple[str, ...], "warnoptions"),
+            ("write_bytecode", bool, None),
             ("xoptions", dict[str, str], "_xoptions"),
 
             # private members
             ("_config_init", int, None),
-            ("_init_main", int, None),
-            ("_install_importlib", int, None),
-            ("_is_python_build", int, None),
+            ("_init_main", bool, None),
+            ("_install_importlib", bool, None),
+            ("_is_python_build", bool, None),
         ]
         if support.MS_WINDOWS:
             options.extend((
-                ("legacy_windows_stdio", int, None),
-                ("legacy_windows_fs_encoding", int, None),
+                ("legacy_windows_stdio", bool, None),
+                ("legacy_windows_fs_encoding", bool, None),
             ))
         if support.Py_DEBUG:
             options.extend((
@@ -1328,7 +1328,7 @@ class SysModuleTest(unittest.TestCase):
             ))
         if Py_STATS:
             options.extend((
-                ("_pystats", int, None),
+                ("_pystats", bool, None),
             ))
 
         for name, option_type, sys_attr in options:
@@ -1338,19 +1338,27 @@ class SysModuleTest(unittest.TestCase):
                 if isinstance(option_type, types.GenericAlias):
                     self.assertIsInstance(value, option_type.__origin__)
                     if option_type.__origin__ == dict:
+                        key_type = option_type.__args__[0]
+                        value_type = option_type.__args__[1]
                         for item in value.items():
-                            self.assertIsInstance(item, option_type.__args__)
+                            self.assertIsInstance(item[0], key_type)
+                            self.assertIsInstance(item[1], value_type)
                     else:
+                        item_type = option_type.__args__[0]
                         for item in value:
-                            self.assertIsInstance(item, option_type.__args__)
+                            self.assertIsInstance(item, item_type)
                 else:
                     self.assertIsInstance(value, option_type)
 
                 if sys_attr is not None:
-                    self.assertEqual(getattr(sys, sys_attr), value)
-                    expected = markers[option_type]
-                    with support.swap_attr(sys, sys_attr, expected):
-                        self.assertEqual(sys.get_config(name), expected)
+                    expected = getattr(sys, sys_attr)
+                    if isinstance(expected, list):
+                        expected = tuple(expected)
+                    self.assertEqual(expected, value)
+
+                    override = markers[option_type]
+                    with support.swap_attr(sys, sys_attr, override):
+                        self.assertEqual(sys.get_config(name), override)
 
         # check that the test checks all options
         self.assertEqual(sorted(name for name, option_type, sys_attr in options),
