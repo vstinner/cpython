@@ -1401,6 +1401,110 @@ class SysModuleTest(unittest.TestCase):
         for name in names:
             self.assertIsInstance(name, str)
 
+    def test_set_config_sys_attr(self):
+        # mutable configuration option mapped to sys attributes
+        for name, sys_attr, option_type in (
+            ('platlibdir', 'platlibdir', str),
+            ('pycache_prefix', 'pycache_prefix', str | None),
+            ('stdlib_dir', '_stdlib_dir', str | None),
+            ('executable', 'executable', str | None),
+            ('base_executable', '_base_executable', str | None),
+            ('prefix', 'prefix', str | None),
+            ('base_prefix', 'base_prefix', str | None),
+            ('exec_prefix', 'exec_prefix', str | None),
+            ('base_exec_prefix', 'base_exec_prefix', str | None),
+        ):
+            with self.subTest(name=name):
+                if option_type == str | None:
+                    values = ('TEST_REPLACE', None)
+                    invalid_types = (1,)
+                else:
+                    # str
+                    values = ('TEST_REPLACE',)
+                    invalid_types = (1, None)
+
+                old_opt_value = sys.get_config(name)
+                old_sys_value = getattr(sys, sys_attr)
+                try:
+                    for value in values:
+                        sys.set_config(name, value)
+                        self.assertEqual(sys.get_config(name), value)
+                        self.assertEqual(getattr(sys, sys_attr), value)
+
+                    for value in invalid_types:
+                        with self.assertRaises(TypeError):
+                            sys.set_config(name, value)
+                finally:
+                    setattr(sys, sys_attr, old_sys_value)
+                    sys.set_config(name, old_opt_value)
+
+    def test_set_config_sys_flag(self):
+        # mutable configuration option mapped to sys.flags
+        class unsigned_int(int):
+            pass
+
+        for name, sys_flag, option_type in (
+            ('parser_debug', 'debug', bool),
+            ('inspect', 'inspect', bool),
+            ('interactive', 'interactive', bool),
+            ('optimization_level', 'optimize', unsigned_int),
+            # dont_write_bytecode
+            # no_user_site
+            # no_site
+            # ignore_environment
+            ('verbose', 'verbose', unsigned_int),
+            ('bytes_warning', 'bytes_warning', unsigned_int),
+            ('quiet', 'quiet', bool),
+            # isolated
+            # dev_mode
+            # utf8_mode
+            # warn_default_encoding
+            # safe_path
+            # int_max_str_digits
+        ):
+            if option_type == int:
+                new_values = (False, True, 0, 1, 5, -5)
+                invalid_values = ()
+                invalid_types = (1.0, "abc")
+            else:
+                new_values = (False, True, 0, 1, 5)
+                invalid_values = (-5,)
+                invalid_types = (1.0, "abc")
+
+            with self.subTest(name=name):
+                old_value = sys.get_config(name)
+                try:
+                    for value in new_values:
+                        sys.set_config(name, value)
+
+                        expected = value
+                        if option_type == bool:
+                            expected = int(bool(expected))
+                        self.assertEqual(sys.get_config(name), expected)
+
+                        if option_type == bool:
+                            expected = int(expected)
+                        self.assertEqual(getattr(sys.flags, sys_flag), expected)
+
+                    for value in invalid_values:
+                        with self.assertRaises(ValueError):
+                            sys.set_config(name, value)
+
+                    for value in invalid_types:
+                        with self.assertRaises(TypeError):
+                            sys.set_config(name, value)
+                finally:
+                    sys.set_config(name, old_value)
+
+    def test_set_config_read_only(self):
+        # test some options which cannot be set
+        for name, value in (
+            ("utf8", True),
+        ):
+            with self.subTest(name=name, value=value):
+                with self.assertRaises(ValueError):
+                    sys.set_config(name, value)
+
 
 @test.support.cpython_only
 class UnraisableHookTest(unittest.TestCase):

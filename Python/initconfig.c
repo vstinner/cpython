@@ -42,95 +42,101 @@ typedef struct {
     size_t offset;
     PyConfigMemberType type;
     const char *sys_attr;
+    int sys_flag;
+    int read_only;
 } PyConfigSpec;
 
-#define SPEC(MEMBER, TYPE, SYS_ATTR) \
-    {#MEMBER, offsetof(PyConfig, MEMBER), PyConfig_MEMBER_##TYPE, SYS_ATTR}
+#define SPEC(MEMBER, TYPE, SYS_ATTR, SYS_FLAG, read_only) \
+    {#MEMBER, offsetof(PyConfig, MEMBER), PyConfig_MEMBER_##TYPE, SYS_ATTR, SYS_FLAG, read_only}
+#define WRITE 0
+#define READ_ONLY 1
 
 static const PyConfigSpec PYCONFIG_SPEC[] = {
-    SPEC(_config_init, UINT, NULL),
-    SPEC(isolated, BOOL, NULL),
-    SPEC(use_environment, BOOL, NULL),
-    SPEC(dev_mode, BOOL, NULL),
-    SPEC(install_signal_handlers, BOOL, NULL),
-    SPEC(use_hash_seed, BOOL, NULL),
-    SPEC(hash_seed, ULONG, NULL),
-    SPEC(faulthandler, BOOL, NULL),
-    SPEC(tracemalloc, BOOL, NULL),
-    SPEC(perf_profiling, BOOL, NULL),
-    SPEC(import_time, BOOL, NULL),
-    SPEC(code_debug_ranges, BOOL, NULL),
-    SPEC(show_ref_count, BOOL, NULL),
-    SPEC(dump_refs, BOOL, NULL),
-    SPEC(dump_refs_file, WSTR_OPT, NULL),
-    SPEC(malloc_stats, BOOL, NULL),
-    SPEC(filesystem_encoding, WSTR, NULL),
-    SPEC(filesystem_errors, WSTR, NULL),
-    SPEC(pycache_prefix, WSTR_OPT, "pycache_prefix"),
-    SPEC(parse_argv, BOOL, NULL),
-    SPEC(orig_argv, WSTR_LIST, "orig_argv"),
-    SPEC(argv, WSTR_LIST, "argv"),
-    SPEC(xoptions, WSTR_LIST, "_xoptions"),
-    SPEC(warnoptions, WSTR_LIST, "warnoptions"),
-    SPEC(site_import, BOOL, NULL),
-    SPEC(bytes_warning, UINT, NULL),
-    SPEC(warn_default_encoding, BOOL, NULL),
-    SPEC(inspect, BOOL, NULL),
-    SPEC(interactive, BOOL, NULL),
-    SPEC(optimization_level, UINT, NULL),
-    SPEC(parser_debug, BOOL, NULL),
+    SPEC(_config_init, UINT, NULL, -1, READ_ONLY),
+    SPEC(isolated, BOOL, NULL, -1, READ_ONLY),
+    SPEC(use_environment, BOOL, NULL, -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(dev_mode, BOOL, NULL, -1, READ_ONLY),
+    SPEC(install_signal_handlers, BOOL, NULL, -1, READ_ONLY),
+    SPEC(use_hash_seed, BOOL, NULL, -1, READ_ONLY),
+    SPEC(hash_seed, ULONG, NULL, -1, READ_ONLY),
+    SPEC(faulthandler, BOOL, NULL, -1, READ_ONLY),
+    SPEC(tracemalloc, BOOL, NULL, -1, READ_ONLY),
+    SPEC(perf_profiling, BOOL, NULL, -1, READ_ONLY),
+    SPEC(import_time, BOOL, NULL, -1, READ_ONLY),
+    SPEC(code_debug_ranges, BOOL, NULL, -1, READ_ONLY),
+    SPEC(show_ref_count, BOOL, NULL, -1, READ_ONLY),
+    SPEC(dump_refs, BOOL, NULL, -1, READ_ONLY),
+    SPEC(dump_refs_file, WSTR_OPT, NULL, -1, READ_ONLY),
+    SPEC(malloc_stats, BOOL, NULL, -1, READ_ONLY),
+    SPEC(filesystem_encoding, WSTR, NULL, -1, READ_ONLY),
+    SPEC(filesystem_errors, WSTR, NULL, -1, READ_ONLY),
+    SPEC(pycache_prefix, WSTR_OPT, "pycache_prefix", -1, WRITE),
+    SPEC(parse_argv, BOOL, NULL, -1, READ_ONLY),
+    SPEC(orig_argv, WSTR_LIST, "orig_argv", -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(argv, WSTR_LIST, "argv", -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(xoptions, WSTR_LIST, "_xoptions", -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(warnoptions, WSTR_LIST, "warnoptions", -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(site_import, BOOL, NULL, -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(bytes_warning, UINT, NULL, 9, WRITE),
+    SPEC(warn_default_encoding, BOOL, NULL, -1, READ_ONLY),
+    SPEC(inspect, BOOL, NULL, 1, WRITE),
+    SPEC(interactive, BOOL, NULL, 2, WRITE),
+    SPEC(optimization_level, UINT, NULL, 3, WRITE),
+    SPEC(parser_debug, BOOL, NULL, 0, WRITE),
     // config_get_sys_write_bytecode() gets sys.dont_write_bytecode
-    SPEC(write_bytecode, BOOL, NULL),
-    SPEC(verbose, UINT, NULL),
-    SPEC(quiet, BOOL, NULL),
-    SPEC(user_site_directory, BOOL, NULL),
-    SPEC(configure_c_stdio, BOOL, NULL),
-    SPEC(buffered_stdio, BOOL, NULL),
-    SPEC(stdio_encoding, WSTR, NULL),
-    SPEC(stdio_errors, WSTR, NULL),
+    SPEC(write_bytecode, BOOL, NULL, -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(verbose, UINT, NULL, 8, WRITE),
+    SPEC(quiet, BOOL, NULL, 10, WRITE),
+    SPEC(user_site_directory, BOOL, NULL, 3, WRITE),  // FIXME: MAKE WRITE
+    SPEC(configure_c_stdio, BOOL, NULL, -1, READ_ONLY),
+    SPEC(buffered_stdio, BOOL, NULL, -1, READ_ONLY),
+    SPEC(stdio_encoding, WSTR, NULL, -1, READ_ONLY),
+    SPEC(stdio_errors, WSTR, NULL, -1, READ_ONLY),
 #ifdef MS_WINDOWS
-    SPEC(legacy_windows_stdio, BOOL, NULL),
+    SPEC(legacy_windows_stdio, BOOL, NULL, -1, READ_ONLY),
 #endif
-    SPEC(check_hash_pycs_mode, WSTR, NULL),
-    SPEC(use_frozen_modules, BOOL, NULL),
-    SPEC(safe_path, BOOL, NULL),
-    SPEC(int_max_str_digits, INT, NULL),
-    SPEC(cpu_count, INT, NULL),
-    SPEC(pathconfig_warnings, BOOL, NULL),
-    SPEC(program_name, WSTR, NULL),
-    SPEC(pythonpath_env, WSTR_OPT, NULL),
-    SPEC(home, WSTR_OPT, NULL),
-    SPEC(platlibdir, WSTR, "platlibdir"),
-    SPEC(sys_path_0, WSTR_OPT, NULL),
-    SPEC(module_search_paths_set, BOOL, NULL),
-    SPEC(module_search_paths, WSTR_LIST, "path"),
-    SPEC(stdlib_dir, WSTR_OPT, "_stdlib_dir"),
-    SPEC(executable, WSTR_OPT, "executable"),
-    SPEC(base_executable, WSTR_OPT, "_base_executable"),
-    SPEC(prefix, WSTR_OPT, "prefix"),
-    SPEC(base_prefix, WSTR_OPT, "base_prefix"),
-    SPEC(exec_prefix, WSTR_OPT, "exec_prefix"),
-    SPEC(base_exec_prefix, WSTR_OPT, "base_exec_prefix"),
-    SPEC(skip_source_first_line, BOOL, NULL),
-    SPEC(run_command, WSTR_OPT, NULL),
-    SPEC(run_module, WSTR_OPT, NULL),
-    SPEC(run_filename, WSTR_OPT, NULL),
-    SPEC(_install_importlib, BOOL, NULL),
-    SPEC(_init_main, BOOL, NULL),
-    SPEC(_is_python_build, BOOL, NULL),
+    SPEC(check_hash_pycs_mode, WSTR, NULL, -1, READ_ONLY),
+    SPEC(use_frozen_modules, BOOL, NULL, -1, READ_ONLY),
+    SPEC(safe_path, BOOL, NULL, -1, READ_ONLY),
+    SPEC(int_max_str_digits, INT, NULL, -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(cpu_count, INT, NULL, -1, READ_ONLY),
+    SPEC(pathconfig_warnings, BOOL, NULL, -1, READ_ONLY),
+    SPEC(program_name, WSTR, NULL, -1, READ_ONLY),
+    SPEC(pythonpath_env, WSTR_OPT, NULL, -1, READ_ONLY),
+    SPEC(home, WSTR_OPT, NULL, -1, READ_ONLY),
+    SPEC(platlibdir, WSTR, "platlibdir", -1, WRITE),
+    SPEC(sys_path_0, WSTR_OPT, NULL, -1, READ_ONLY),
+    SPEC(module_search_paths_set, BOOL, NULL, -1, READ_ONLY),
+    SPEC(module_search_paths, WSTR_LIST, "path", -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(stdlib_dir, WSTR_OPT, "_stdlib_dir", -1, WRITE),
+    SPEC(executable, WSTR_OPT, "executable", -1, WRITE),
+    SPEC(base_executable, WSTR_OPT, "_base_executable", -1, WRITE),
+    SPEC(prefix, WSTR_OPT, "prefix", -1, WRITE),
+    SPEC(base_prefix, WSTR_OPT, "base_prefix", -1, WRITE),
+    SPEC(exec_prefix, WSTR_OPT, "exec_prefix", -1, WRITE),
+    SPEC(base_exec_prefix, WSTR_OPT, "base_exec_prefix", -1, WRITE),
+    SPEC(skip_source_first_line, BOOL, NULL, -1, READ_ONLY),
+    SPEC(run_command, WSTR_OPT, NULL, -1, READ_ONLY),
+    SPEC(run_module, WSTR_OPT, NULL, -1, READ_ONLY),
+    SPEC(run_filename, WSTR_OPT, NULL, -1, READ_ONLY),
+    SPEC(_install_importlib, BOOL, NULL, -1, READ_ONLY),
+    SPEC(_init_main, BOOL, NULL, -1, READ_ONLY),
+    SPEC(_is_python_build, BOOL, NULL, -1, READ_ONLY),
 #ifdef Py_STATS
-    SPEC(_pystats, BOOL, NULL),
+    SPEC(_pystats, BOOL, NULL, -1, READ_ONLY),
 #endif
 #ifdef Py_DEBUG
-    SPEC(run_presite, WSTR_OPT, NULL),
+    SPEC(run_presite, WSTR_OPT, NULL, -1, READ_ONLY),
 #endif
     {NULL, 0, 0, NULL},
 };
 
 #undef SPEC
+#undef WRITE
+#undef READ_ONLY
 
 #define SPEC(MEMBER, TYPE) \
-    {#MEMBER, offsetof(PyPreConfig, MEMBER), PyConfig_MEMBER_##TYPE, NULL}
+    {#MEMBER, offsetof(PyPreConfig, MEMBER), PyConfig_MEMBER_##TYPE, NULL, 1}
 
 static const PyConfigSpec PYPRECONFIG_SPEC[] = {
     SPEC(_config_init, INT),
@@ -3436,6 +3442,11 @@ config_get(const PyConfig *config, const PyConfigSpec *spec,
             }
             return PyBool_FromLong(value);
         }
+
+        if (strcmp(spec->name, "int_max_str_digits") == 0) {
+            PyInterpreterState *interp = _PyInterpreterState_GET();
+            return PyLong_FromLong(interp->long_state.max_str_digits);
+        }
     }
 
     char *member = config_spec_get_member(spec, config);
@@ -3624,4 +3635,134 @@ PyConfig_Names(void)
 error:
     Py_XDECREF(names);
     return NULL;
+}
+
+
+// --- PyConfig_Set() -------------------------------------------------------
+
+static int
+config_set_sys_flag(const PyConfigSpec *spec, int int_value)
+{
+    PyInterpreterState *interp = _PyInterpreterState_GET();
+    PyConfig *config = &interp->config;
+
+    if (spec->type == PyConfig_MEMBER_BOOL) {
+        if (int_value != 0) {
+            // convert values < 0 and values > 1 to 1
+            int_value = 1;
+        }
+    }
+
+    PyObject *flags = Py_XNewRef(PySys_GetObject("flags"));
+    if (flags == NULL) {
+        PyErr_SetString(PyExc_RuntimeError, "lost sys.flags");
+        return -1;
+    }
+
+    PyObject *value = PyLong_FromLong(int_value);
+    if (value == NULL) {
+        Py_DECREF(flags);
+        return -1;
+    }
+
+    Py_ssize_t pos = spec->sys_flag;
+    PyObject *old_value = PyStructSequence_GET_ITEM(flags, pos);
+    PyStructSequence_SET_ITEM(flags, pos, value);
+    Py_XDECREF(old_value);
+
+    int *member = config_spec_get_member(spec, config);
+    *member = int_value;
+
+    Py_DECREF(flags);
+    return 0;
+}
+
+
+int
+PyConfig_Set(const char *name, PyObject *value)
+{
+    const PyConfigSpec *spec = config_find_spec(name);
+    if (spec == NULL) {
+        return -1;
+    }
+
+    if (spec->read_only) {
+        PyErr_Format(PyExc_ValueError, "cannot set read-only option %s",
+                     name);
+        return -1;
+    }
+
+    int int_value = 0;
+    int has_int_value = 0;
+
+    switch (spec->type) {
+    case PyConfig_MEMBER_INT:
+    case PyConfig_MEMBER_UINT:
+    case PyConfig_MEMBER_BOOL:
+        if (!PyLong_Check(value)) {
+            PyErr_Format(PyExc_TypeError, "expect int or bool, got %s",
+                         Py_TYPE(value)->tp_name);
+            return -1;
+        }
+        int_value = PyLong_AsInt(value);
+        if (int_value == -1 && PyErr_Occurred()) {
+            return -1;
+        }
+        if (int_value < 0 && spec->type != PyConfig_MEMBER_INT) {
+            PyErr_Format(PyExc_ValueError, "got negative value");
+            return -1;
+        }
+        has_int_value = 1;
+        break;
+
+    case PyConfig_MEMBER_ULONG:
+        goto cannot_set;  // not implemented
+
+    case PyConfig_MEMBER_WSTR:
+        if (!PyUnicode_CheckExact(value)) {
+            PyErr_Format(PyExc_TypeError, "expect str, got %s",
+                         Py_TYPE(value)->tp_name);
+            return -1;
+        }
+        break;
+
+    case PyConfig_MEMBER_WSTR_OPT:
+        if (value != Py_None && !PyUnicode_CheckExact(value)) {
+            PyErr_Format(PyExc_TypeError, "expect str or None, got %s",
+                         Py_TYPE(value)->tp_name);
+            return -1;
+        }
+        break;
+
+    case PyConfig_MEMBER_WSTR_LIST:
+        goto cannot_set;  // not implemented
+    default:
+        Py_UNREACHABLE();
+    }
+
+
+    if (spec->sys_attr != NULL) {
+        return PySys_SetObject(spec->sys_attr, value);
+    }
+    else if (spec->sys_flag >= 0 && has_int_value) {
+        return config_set_sys_flag(spec, int_value);
+    }
+    else {
+cannot_set:
+        PyErr_Format(PyExc_ValueError, "cannot set option %s", name);
+        return -1;
+    }
+}
+
+int
+PyConfig_SetInt(const char *name, int value)
+{
+    PyObject *obj = PyLong_FromLong(value);
+    if (obj == NULL) {
+        return -1;
+    }
+
+    int res = PyConfig_Set(name, obj);
+    Py_DECREF(obj);
+    return res;
 }

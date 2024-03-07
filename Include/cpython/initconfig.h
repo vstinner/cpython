@@ -283,6 +283,9 @@ PyAPI_FUNC(int) PyConfig_GetInt(
     const char *name,
     int *value);
 
+PyAPI_FUNC(int) PyConfig_Set(const char *name, PyObject *value);
+PyAPI_FUNC(int) PyConfig_SetInt(const char *name, int value);
+
 
 /* --- Helper functions --------------------------------------- */
 

@@ -1528,6 +1528,75 @@ exit:
     return return_value;
 }
 
+PyDoc_STRVAR(sys_set_config__doc__,
+"set_config($module, /, name, value)\n"
+"--\n"
+"\n"
+"Set a configuration option.");
+
+#define SYS_SET_CONFIG_METHODDEF    \
+    {"set_config", _PyCFunction_CAST(sys_set_config), METH_FASTCALL|METH_KEYWORDS, sys_set_config__doc__},
+
+static PyObject *
+sys_set_config_impl(PyObject *module, const char *name, PyObject *value);
+
+static PyObject *
+sys_set_config(PyObject *module, PyObject *const *args, Py_ssize_t nargs, PyObject *kwnames)
+{
+    PyObject *return_value = NULL;
+    #if defined(Py_BUILD_CORE) && !defined(Py_BUILD_CORE_MODULE)
+
+    #define NUM_KEYWORDS 2
+    static struct {
+        PyGC_Head _this_is_not_used;
+        PyObject_VAR_HEAD
+        PyObject *ob_item[NUM_KEYWORDS];
+    } _kwtuple = {
+        .ob_base = PyVarObject_HEAD_INIT(&PyTuple_Type, NUM_KEYWORDS)
+        .ob_item = { &_Py_ID(name), &_Py_ID(value), },
+    };
+    #undef NUM_KEYWORDS
+    #define KWTUPLE (&_kwtuple.ob_base.ob_base)
+
+    #else  // !Py_BUILD_CORE
+    #  define KWTUPLE NULL
+    #endif  // !Py_BUILD_CORE
+
+    static const char * const _keywords[] = {"name", "value", NULL};
+    static _PyArg_Parser _parser = {
+        .keywords = _keywords,
+        .fname = "set_config",
+        .kwtuple = KWTUPLE,
+    };
+    #undef KWTUPLE
+    PyObject *argsbuf[2];
+    const char *name;
+    PyObject *value;
+
+    args = _PyArg_UnpackKeywords(args, nargs, NULL, kwnames, &_parser, 2, 2, 0, argsbuf);
+    if (!args) {
+        goto exit;
+    }
+    if (!PyUnicode_Check(args[0])) {
+        _PyArg_BadArgument("set_config", "argument 'name'", "str", args[0]);
+        goto exit;
+    }
+    Py_ssize_t name_length;
+    name = PyUnicode_AsUTF8AndSize(args[0], &name_length);
+    if (name == NULL) {
+        goto exit;
+    }
+    if (strlen(name) != (size_t)name_length) {
+        PyErr_SetString(PyExc_ValueError, "embedded null character");
+        goto exit;
+    }
+    value = args[1];
+    return_value = sys_set_config_impl(module, name, value);
+
+exit:
+    return return_value;
+}
+
 PyDoc_STRVAR(sys_get_config_names__doc__,
 "get_config_names($module, /)\n"
 "--\n"
@@ -1589,4 +1658,4 @@ sys_get_config_names(PyObject *module, PyObject *Py_UNUSED(ignored))
 #ifndef SYS_GETANDROIDAPILEVEL_METHODDEF
     #define SYS_GETANDROIDAPILEVEL_METHODDEF
 #endif /* !defined(SYS_GETANDROIDAPILEVEL_METHODDEF) */
-/*[clinic end generated code: output=18cff38dfdfd9ba6 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=a3d8e6f810c7fc92 input=a9049054013a1b77]*/

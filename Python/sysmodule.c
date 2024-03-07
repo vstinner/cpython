@@ -1829,6 +1829,7 @@ sys_set_int_max_str_digits_impl(PyObject *module, int maxdigits)
     PyThreadState *tstate = _PyThreadState_GET();
     if ((!maxdigits) || (maxdigits >= _PY_LONG_MAX_STR_DIGITS_THRESHOLD)) {
         tstate->interp->long_state.max_str_digits = maxdigits;
+        // FIXME: update sys.flags.int_max_str_digits
         Py_RETURN_NONE;
     } else {
         PyErr_Format(
@@ -2488,6 +2489,27 @@ sys_get_config_impl(PyObject *module, const char *name)
 
 
 /*[clinic input]
+sys.set_config
+
+    name: str
+    value: object
+
+Set a configuration option.
+[clinic start generated code]*/
+
+static PyObject *
+sys_set_config_impl(PyObject *module, const char *name, PyObject *value)
+/*[clinic end generated code: output=45871f99b0f50721 input=a66c03c13063915f]*/
+{
+    int res = PyConfig_Set(name, value);
+    if (res < 0) {
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+
+/*[clinic input]
 sys.get_config_names
 
 Get a configuration option names.
@@ -2570,6 +2592,7 @@ static PyMethodDef sys_methods[] = {
 #endif
     SYS__GET_CPU_COUNT_CONFIG_METHODDEF
     SYS_GET_CONFIG_METHODDEF
+    SYS_SET_CONFIG_METHODDEF
     SYS_GET_CONFIG_NAMES_METHODDEF
     {NULL, NULL}  // sentinel
 };
@@ -3091,8 +3114,9 @@ set_flags_from_config(PyInterpreterState *interp, PyObject *flags)
         if (value == NULL) { \
             return -1; \
         } \
-        Py_XDECREF(PyStructSequence_GET_ITEM(flags, pos)); \
+        PyObject *old_value = PyStructSequence_GET_ITEM(flags, pos); \
         PyStructSequence_SET_ITEM(flags, pos, value); \
+        Py_XDECREF(old_value); \
         pos++; \
     } while (0)
 #define SetFlag(expr) SetFlagObj(PyLong_FromLong(expr))
