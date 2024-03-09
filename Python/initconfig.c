@@ -148,7 +148,7 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(check_hash_pycs_mode, WSTR, READ_ONLY, NO_SYS),
     SPEC(use_frozen_modules, BOOL, READ_ONLY, NO_SYS),
     SPEC(safe_path, BOOL, READ_ONLY, NO_SYS),
-    SPEC(int_max_str_digits, INT, PUBLIC, NO_SYS),  // call _PySys_SetIntMaxStrDigits()
+    SPEC(int_max_str_digits, UINT, PUBLIC, NO_SYS),  // call _PySys_SetIntMaxStrDigits()
     SPEC(cpu_count, INT, READ_ONLY, NO_SYS),
     SPEC(pathconfig_warnings, BOOL, INIT, NO_SYS),
     SPEC(program_name, WSTR, INIT, NO_SYS),

@@ -34,11 +34,11 @@ class CAPITests(unittest.TestCase):
         self.check_config_get(config_get)
 
         for name, config_type, expected in (
-            ('verbose', int, sys.flags.verbose),   # PyConfig_MEMBER_INT
-            ('isolated', int, sys.flags.isolated), # PyConfig_MEMBER_UINT
-            ('platlibdir', str, sys.platlibdir),   # PyConfig_MEMBER_WSTR
-            ('argv', list, sys.argv),              # PyConfig_MEMBER_WSTR_LIST
-            ('xoptions', dict, sys._xoptions),     # xoptions dict
+            ('verbose', int, sys.flags.verbose),    # PyConfig_MEMBER_UINT
+            ('isolated', bool, sys.flags.isolated), # PyConfig_MEMBER_BOOL
+            ('platlibdir', str, sys.platlibdir),    # PyConfig_MEMBER_WSTR
+            ('argv', tuple, tuple(sys.argv)),       # PyConfig_MEMBER_WSTR_LIST
+            ('xoptions', dict, sys._xoptions),      # xoptions dict
         ):
             with self.subTest(name=name):
                 value = config_get(name)
@@ -50,13 +50,9 @@ class CAPITests(unittest.TestCase):
         self.assertIsInstance(hash_seed, int)
         self.assertGreaterEqual(hash_seed, 0)
 
-        # PyConfig_MEMBER_WSTR_OPT type
-        if 'PYTHONDUMPREFSFILE' not in os.environ:
-            self.assertIsNone(config_get('dump_refs_file'))
-
         # attributes read from sys
         value_str = "TEST_MARKER_STR"
-        value_list = ["TEST_MARKER_STRLIST"]
+        value_tuple = ("TEST_MARKER_STR_LIST",)
         value_dict = {"x": "value", "y": True}
         for name, sys_name, value in (
             ("base_exec_prefix", None, value_str),
@@ -68,10 +64,10 @@ class CAPITests(unittest.TestCase):
             ("pycache_prefix", None, value_str),
             ("base_executable", "_base_executable", value_str),
             ("stdlib_dir", "_stdlib_dir", value_str),
-            ("argv", None, value_list),
-            ("orig_argv", None, value_list),
-            ("warnoptions", None, value_list),
-            ("module_search_paths", "path", value_list),
+            ("argv", None, value_tuple),
+            ("orig_argv", None, value_tuple),
+            ("warnoptions", None, value_tuple),
+            ("module_search_paths", "path", value_tuple),
             ("xoptions", "_xoptions", value_dict),
         ):
             with self.subTest(name=name):
