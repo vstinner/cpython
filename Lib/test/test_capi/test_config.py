@@ -37,18 +37,13 @@ class CAPITests(unittest.TestCase):
             ('verbose', int, sys.flags.verbose),    # PyConfig_MEMBER_UINT
             ('isolated', bool, sys.flags.isolated), # PyConfig_MEMBER_BOOL
             ('platlibdir', str, sys.platlibdir),    # PyConfig_MEMBER_WSTR
-            ('argv', tuple, tuple(sys.argv)),       # PyConfig_MEMBER_WSTR_LIST
+            ('argv', list, sys.argv),               # PyConfig_MEMBER_WSTR_LIST
             ('xoptions', dict, sys._xoptions),      # xoptions dict
         ):
             with self.subTest(name=name):
                 value = config_get(name)
                 self.assertEqual(type(value), config_type)
                 self.assertEqual(value, expected)
-
-        # PyConfig_MEMBER_ULONG type
-        hash_seed = config_get('hash_seed')
-        self.assertIsInstance(hash_seed, int)
-        self.assertGreaterEqual(hash_seed, 0)
 
         # attributes read from sys
         value_str = "TEST_MARKER_STR"
@@ -86,11 +81,6 @@ class CAPITests(unittest.TestCase):
 
         # PyConfig_MEMBER_UINT type
         self.assertEqual(config_getint('isolated'), sys.flags.isolated)
-
-        # PyConfig_MEMBER_ULONG type
-        hash_seed = config_getint('hash_seed')
-        self.assertIsInstance(hash_seed, int)
-        self.assertGreaterEqual(hash_seed, 0)
 
         # platlibdir is a str
         with self.assertRaises(TypeError):

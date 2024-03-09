@@ -36,12 +36,6 @@ config_sys_flag_long(int value)
 }
 
 static PyObject*
-config_sys_flag_bool(int value)
-{
-    return PyBool_FromLong(value);
-}
-
-static PyObject*
 config_sys_flag_not(int value)
 {
     value = (!value);
@@ -123,14 +117,14 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(filesystem_encoding, WSTR, READ_ONLY, NO_SYS),
     SPEC(filesystem_errors, WSTR, READ_ONLY, NO_SYS),
     SPEC(pycache_prefix, WSTR_OPT, PUBLIC, SYS_ATTR("pycache_prefix")),
-    SPEC(parse_argv, BOOL, READ_ONLY, NO_SYS),
+    SPEC(parse_argv, BOOL, INIT, NO_SYS),
     SPEC(orig_argv, WSTR_LIST, READ_ONLY, SYS_ATTR("orig_argv")),
     SPEC(argv, WSTR_LIST, READ_ONLY, SYS_ATTR("argv")),  // FIXME: MAKE PUBLIC
     SPEC(xoptions, WSTR_LIST, READ_ONLY, SYS_ATTR("_xoptions")),  // FIXME: MAKE PUBLIC
     SPEC(warnoptions, WSTR_LIST, READ_ONLY, SYS_ATTR("warnoptions")),  // FIXME: MAKE PUBLIC
-    SPEC(site_import, BOOL, PUBLIC, SYS_FLAG_SETTER(6, config_sys_flag_not)),
+    SPEC(site_import, BOOL, READ_ONLY, NO_SYS),  // sys.flags.no_site
     SPEC(bytes_warning, UINT, PUBLIC, SYS_FLAG(9)),
-    SPEC(warn_default_encoding, BOOL, READ_ONLY, NO_SYS),
+    SPEC(warn_default_encoding, BOOL, INIT, NO_SYS),
     SPEC(inspect, BOOL, PUBLIC, SYS_FLAG(1)),
     SPEC(interactive, BOOL, PUBLIC, SYS_FLAG(2)),
     SPEC(optimization_level, UINT, PUBLIC, SYS_FLAG(3)),
@@ -141,19 +135,19 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(write_bytecode, BOOL, PUBLIC, SYS_FLAG_SETTER(4, config_sys_flag_not)),
     SPEC(verbose, UINT, PUBLIC, SYS_FLAG(8)),
     SPEC(quiet, BOOL, PUBLIC, SYS_FLAG(10)),
-    SPEC(user_site_directory, BOOL, PUBLIC, SYS_FLAG(3)),  // FIXME: MAKE PUBLIC
-    SPEC(configure_c_stdio, BOOL, READ_ONLY, NO_SYS),
-    SPEC(buffered_stdio, BOOL, READ_ONLY, NO_SYS),
-    SPEC(stdio_encoding, WSTR, READ_ONLY, NO_SYS),
-    SPEC(stdio_errors, WSTR, READ_ONLY, NO_SYS),
+    SPEC(user_site_directory, BOOL, INIT, NO_SYS),  // sys.flags.no_user_site
+    SPEC(configure_c_stdio, BOOL, INIT, NO_SYS),
+    SPEC(buffered_stdio, BOOL, INIT, NO_SYS),
+    SPEC(stdio_encoding, WSTR, INIT, NO_SYS),
+    SPEC(stdio_errors, WSTR, INIT, NO_SYS),
 #ifdef MS_WINDOWS
-    SPEC(legacy_windows_stdio, BOOL, READ_ONLY, NO_SYS),
+    SPEC(legacy_windows_stdio, BOOL, INIT, NO_SYS),
 #endif
-    SPEC(check_hash_pycs_mode, WSTR, READ_ONLY, NO_SYS),
-    SPEC(use_frozen_modules, BOOL, READ_ONLY, NO_SYS),
-    SPEC(safe_path, BOOL, READ_ONLY, NO_SYS),
+    SPEC(check_hash_pycs_mode, WSTR, INIT, NO_SYS),
+    SPEC(use_frozen_modules, BOOL, INIT, NO_SYS),
+    SPEC(safe_path, BOOL, INIT, NO_SYS),
     SPEC(int_max_str_digits, UINT, PUBLIC, NO_SYS),  // call _PySys_SetIntMaxStrDigits()
-    SPEC(cpu_count, INT, READ_ONLY, NO_SYS),
+    SPEC(cpu_count, INT, READ_ONLY, NO_SYS),  // FIXME: MAKE PUBLIC?
     SPEC(pathconfig_warnings, BOOL, INIT, NO_SYS),
     SPEC(program_name, WSTR, INIT, NO_SYS),
     SPEC(pythonpath_env, WSTR_OPT, INIT, NO_SYS),
@@ -169,10 +163,10 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(base_prefix, WSTR_OPT, PUBLIC, SYS_ATTR("base_prefix")),
     SPEC(exec_prefix, WSTR_OPT, PUBLIC, SYS_ATTR("exec_prefix")),
     SPEC(base_exec_prefix, WSTR_OPT, PUBLIC, SYS_ATTR("base_exec_prefix")),
-    SPEC(skip_source_first_line, BOOL, READ_ONLY, NO_SYS),
-    SPEC(run_command, WSTR_OPT, READ_ONLY, NO_SYS),
-    SPEC(run_module, WSTR_OPT, READ_ONLY, NO_SYS),
-    SPEC(run_filename, WSTR_OPT, READ_ONLY, NO_SYS),
+    SPEC(skip_source_first_line, BOOL, INIT, NO_SYS),
+    SPEC(run_command, WSTR_OPT, INIT, NO_SYS),
+    SPEC(run_module, WSTR_OPT, INIT, NO_SYS),
+    SPEC(run_filename, WSTR_OPT, INIT, NO_SYS),
     SPEC(_install_importlib, BOOL, INIT, NO_SYS),
     SPEC(_init_main, BOOL, INIT, NO_SYS),
     SPEC(_is_python_build, BOOL, INIT, NO_SYS),
@@ -180,7 +174,7 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(_pystats, BOOL, INIT, NO_SYS),
 #endif
 #ifdef Py_DEBUG
-    SPEC(run_presite, WSTR_OPT, READ_ONLY, NO_SYS),
+    SPEC(run_presite, WSTR_OPT, INIT, NO_SYS),
 #endif
 
     {NULL, 0, 0, 0, NO_SYS},
@@ -3464,12 +3458,7 @@ config_get_sys(const char *name)
         PyErr_Format(PyExc_RuntimeError, "lost sys.%s", name);
         return NULL;
     }
-    if (PyList_Check(value)) {
-        return PyList_AsTuple(value);
-    }
-    else {
-        return Py_NewRef(value);
-    }
+    return Py_NewRef(value);
 }
 
 

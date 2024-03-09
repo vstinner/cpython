@@ -1278,9 +1278,6 @@ class SysModuleTest(unittest.TestCase):
             ("prefix", str | None, "prefix"),
             ("pycache_prefix", str | None, "pycache_prefix"),
             ("quiet", bool, None),
-            ("run_command", str | None, None),
-            ("run_filename", str | None, None),
-            ("run_module", str | None, None),
             ("safe_path", bool, None),
             ("site_import", bool, None),
             ("skip_source_first_line", bool, None),
@@ -1303,10 +1300,6 @@ class SysModuleTest(unittest.TestCase):
             options.extend((
                 ("legacy_windows_stdio", bool, None),
                 ("legacy_windows_fs_encoding", bool, None),
-            ))
-        if support.Py_DEBUG:
-            options.extend((
-                ("run_presite", str | None, None),
             ))
         if Py_STATS:
             options.extend((
@@ -1444,13 +1437,13 @@ class SysModuleTest(unittest.TestCase):
             ('optimization_level', 'optimize', unsigned_int, expect_int),
             ('write_bytecode', 'dont_write_bytecode', bool, expect_bool_not),
             # no_user_site
-            ('site_import', 'no_site', bool, expect_bool_not),
+            # no_site
             ('use_environment', 'ignore_environment', bool, expect_bool_not),
             ('verbose', 'verbose', unsigned_int, expect_int),
             ('bytes_warning', 'bytes_warning', unsigned_int, expect_int),
             ('quiet', 'quiet', bool, expect_bool),
-            ('isolated', 'isolated', bool, expect_bool),
-            ('dev_mode', 'dev_mode', bool, expect_bool),
+            # isolated
+            # dev_mode
             # utf8_mode
             # warn_default_encoding
             # safe_path
@@ -1498,10 +1491,10 @@ class SysModuleTest(unittest.TestCase):
     def test_set_config_read_only(self):
         # test some options which cannot be set
         for name, value in (
-            ("utf8", True),
+            ("dev_mode", True),
         ):
             with self.subTest(name=name, value=value):
-                with self.assertRaises(ValueError):
+                with self.assertRaisesRegex(ValueError, r"read-only"):
                     sys.set_config(name, value)
 
 
