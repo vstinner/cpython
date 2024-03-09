@@ -1603,7 +1603,7 @@ class InitConfigTests(EmbeddingTestsMixin, unittest.TestCase):
 
         config = _testinternalcapi.get_configs()['config']
 
-        self.assertEqual(Py_GetPath().split(os.path.pathsep),
+        self.assertEqual(tuple(Py_GetPath().split(os.path.pathsep)),
                          config['module_search_paths'])
         self.assertEqual(Py_GetPrefix(), config['prefix'])
         self.assertEqual(Py_GetExecPrefix(), config['exec_prefix'])

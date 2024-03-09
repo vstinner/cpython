@@ -150,18 +150,22 @@ class SetConfigTests(unittest.TestCase):
 
     def test_flags(self):
         for sys_attr, key, value in (
-            ("debug", "parser_debug", 1),
-            ("inspect", "inspect", 2),
-            ("interactive", "interactive", 3),
-            ("optimize", "optimization_level", 4),
-            ("verbose", "verbose", 1),
-            ("bytes_warning", "bytes_warning", 10),
-            ("quiet", "quiet", 11),
-            ("isolated", "isolated", 12),
+            ("debug", "parser_debug", 2),
+            ("inspect", "inspect", 3),
+            ("interactive", "interactive", 4),
+            ("optimize", "optimization_level", 5),
+            ("verbose", "verbose", 6),
+            ("bytes_warning", "bytes_warning", 7),
+            ("quiet", "quiet", 8),
+            ("isolated", "isolated", 9),
         ):
             with self.subTest(sys=sys_attr, key=key, value=value):
                 self.set_config(**{key: value, 'parse_argv': 0})
-                self.assertEqual(getattr(sys.flags, sys_attr), value)
+                if key in ("bytes_warning", "optimization_level", "verbose"):
+                    expected = value
+                else:
+                    expected = int(bool(value))
+                self.assertEqual(getattr(sys.flags, sys_attr), expected)
 
         self.set_config(write_bytecode=0)
         self.assertEqual(sys.flags.dont_write_bytecode, True)
