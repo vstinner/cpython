@@ -94,9 +94,9 @@ typedef struct {
 
 static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(_config_init, UINT, INIT, NO_SYS),
-    SPEC(isolated, BOOL, READ_ONLY, NO_SYS),
-    SPEC(use_environment, BOOL, READ_ONLY, SYS_FLAG_SETTER(7, config_sys_flag_not)),
-    SPEC(dev_mode, BOOL, READ_ONLY, NO_SYS),
+    SPEC(isolated, BOOL, PUBLIC, SYS_FLAG(12)),
+    SPEC(use_environment, BOOL, PUBLIC, SYS_FLAG_SETTER(7, config_sys_flag_not)),
+    SPEC(dev_mode, BOOL, PUBLIC, SYS_FLAG(13)),
     SPEC(install_signal_handlers, BOOL, READ_ONLY, NO_SYS),
     SPEC(use_hash_seed, BOOL, READ_ONLY, NO_SYS),
     SPEC(hash_seed, ULONG, READ_ONLY, NO_SYS),
@@ -117,7 +117,7 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(argv, WSTR_LIST, READ_ONLY, SYS_ATTR("argv")),  // FIXME: MAKE PUBLIC
     SPEC(xoptions, WSTR_LIST, READ_ONLY, SYS_ATTR("_xoptions")),  // FIXME: MAKE PUBLIC
     SPEC(warnoptions, WSTR_LIST, READ_ONLY, SYS_ATTR("warnoptions")),  // FIXME: MAKE PUBLIC
-    SPEC(site_import, BOOL, READ_ONLY, NO_SYS),  // FIXME: MAKE PUBLIC
+    SPEC(site_import, BOOL, PUBLIC, SYS_FLAG_SETTER(6, config_sys_flag_not)),
     SPEC(bytes_warning, UINT, PUBLIC, SYS_FLAG(9)),
     SPEC(warn_default_encoding, BOOL, READ_ONLY, NO_SYS),
     SPEC(inspect, BOOL, PUBLIC, SYS_FLAG(1)),
@@ -125,7 +125,7 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(optimization_level, UINT, PUBLIC, SYS_FLAG(3)),
     SPEC(parser_debug, BOOL, PUBLIC, SYS_FLAG(0)),
     // config_get_sys_write_bytecode() gets sys.dont_write_bytecode
-    SPEC(write_bytecode, BOOL, READ_ONLY, NO_SYS),  // FIXME: MAKE PUBLIC
+    SPEC(write_bytecode, BOOL, PUBLIC, SYS_FLAG_SETTER(4, config_sys_flag_not)),
     SPEC(verbose, UINT, PUBLIC, SYS_FLAG(8)),
     SPEC(quiet, BOOL, PUBLIC, SYS_FLAG(10)),
     SPEC(user_site_directory, BOOL, PUBLIC, SYS_FLAG(3)),  // FIXME: MAKE PUBLIC
@@ -3722,15 +3722,28 @@ config_set_sys_flag(const PyConfigSpec *spec, int int_value)
         return -1;
     }
 
+    // Set sys.flags.FLAG
     Py_ssize_t pos = spec->sys.flag_index;
     PyObject *old_value = PyStructSequence_GET_ITEM(flags, pos);
-    PyStructSequence_SET_ITEM(flags, pos, value);
+    PyStructSequence_SET_ITEM(flags, pos, Py_NewRef(value));
     Py_XDECREF(old_value);
+    Py_DECREF(flags);
 
+    // Set PyConfig.ATTR
     int *member = config_spec_get_member(spec, config);
     *member = int_value;
 
-    Py_DECREF(flags);
+    // Set sys.dont_write_bytecode
+    if (strcmp(spec->name, "write_bytecode") == 0) {
+        // option stored in 3 places: sys.flags.dont_write_bytecode,
+        // PyConfig and sys.dont_write_bytecode.
+        if (PySys_SetObject("dont_write_bytecode", value) < 0) {
+            Py_DECREF(value);
+            return -1;
+        }
+    }
+
+    Py_DECREF(value);
     return 0;
 }
 

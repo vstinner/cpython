@@ -1443,20 +1443,31 @@ class SysModuleTest(unittest.TestCase):
         class unsigned_int(int):
             pass
 
-        for name, sys_flag, option_type in (
-            ('parser_debug', 'debug', bool),
-            ('inspect', 'inspect', bool),
-            ('interactive', 'interactive', bool),
-            ('optimization_level', 'optimize', unsigned_int),
-            # dont_write_bytecode
+        def expect_same(value):
+            return (value, value)
+
+        def expect_bool(value):
+            value = int(bool(value))
+            return (value, value)
+
+        def expect_bool_not(value):
+            value = bool(value)
+            return (int(value), int(not value))
+
+        for name, sys_flag, option_type, expect_func in (
+            ('parser_debug', 'debug', bool, expect_bool),
+            ('inspect', 'inspect', bool, expect_bool),
+            ('interactive', 'interactive', bool, expect_bool),
+            ('optimization_level', 'optimize', unsigned_int, expect_same),
+            ('write_bytecode', 'dont_write_bytecode', bool, expect_bool_not),
             # no_user_site
-            # no_site
-            # ignore_environment
-            ('verbose', 'verbose', unsigned_int),
-            ('bytes_warning', 'bytes_warning', unsigned_int),
-            ('quiet', 'quiet', bool),
-            # isolated
-            # dev_mode
+            ('site_import', 'no_site', bool, expect_bool_not),
+            ('use_environment', 'ignore_environment', bool, expect_bool_not),
+            ('verbose', 'verbose', unsigned_int, expect_same),
+            ('bytes_warning', 'bytes_warning', unsigned_int, expect_same),
+            ('quiet', 'quiet', bool, expect_bool),
+            ('isolated', 'isolated', bool, expect_bool),
+            ('dev_mode', 'dev_mode', bool, expect_bool),
             # utf8_mode
             # warn_default_encoding
             # safe_path
@@ -1475,16 +1486,14 @@ class SysModuleTest(unittest.TestCase):
                 old_value = sys.get_config(name)
                 try:
                     for value in new_values:
+                        expected, expect_flag = expect_func(value)
+
                         sys.set_config(name, value)
-
-                        expected = value
-                        if option_type == bool:
-                            expected = int(bool(expected))
                         self.assertEqual(sys.get_config(name), expected)
-
-                        if option_type == bool:
-                            expected = int(expected)
-                        self.assertEqual(getattr(sys.flags, sys_flag), expected)
+                        self.assertEqual(getattr(sys.flags, sys_flag), expect_flag)
+                        if name == "write_bytecode":
+                            self.assertEqual(getattr(sys, "dont_write_bytecode"),
+                                             expect_flag)
 
                     for value in invalid_values:
                         with self.assertRaises(ValueError):
