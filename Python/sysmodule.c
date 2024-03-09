@@ -3151,6 +3151,7 @@ set_flags_from_config(PyInterpreterState *interp, PyObject *flags)
             return -1; \
         } \
         sys_set_flag(flags, pos, value); \
+        Py_DECREF(value); \
         pos++; \
     } while (0)
 #define SetFlag(expr) SetFlagObj(PyLong_FromLong(expr))
