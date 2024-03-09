@@ -36,6 +36,12 @@ config_sys_flag_long(int value)
 }
 
 static PyObject*
+config_sys_flag_bool(int value)
+{
+    return PyBool_FromLong(value);
+}
+
+static PyObject*
 config_sys_flag_not(int value)
 {
     value = (!value);
@@ -97,7 +103,7 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(_config_init, UINT, INIT, NO_SYS),
     SPEC(isolated, BOOL, PUBLIC, SYS_FLAG(12)),
     SPEC(use_environment, BOOL, PUBLIC, SYS_FLAG_SETTER(7, config_sys_flag_not)),
-    SPEC(dev_mode, BOOL, PUBLIC, SYS_FLAG(13)),
+    SPEC(dev_mode, BOOL, PUBLIC, SYS_FLAG_SETTER(13, config_sys_flag_bool)),
     SPEC(install_signal_handlers, BOOL, READ_ONLY, NO_SYS),
     SPEC(use_hash_seed, BOOL, READ_ONLY, NO_SYS),
     SPEC(hash_seed, ULONG, READ_ONLY, NO_SYS),
@@ -3778,7 +3784,7 @@ PyConfig_Set(const char *name, PyObject *value)
             return -1;
         }
         if (int_value < 0 && spec->type != PyConfig_MEMBER_INT) {
-            PyErr_Format(PyExc_ValueError, "got negative value");
+            PyErr_Format(PyExc_ValueError, "value must be >= 0");
             return -1;
         }
         has_int_value = 1;
