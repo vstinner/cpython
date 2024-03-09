@@ -108,7 +108,7 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(use_hash_seed, BOOL, READ_ONLY, NO_SYS),
     SPEC(hash_seed, ULONG, READ_ONLY, NO_SYS),
     SPEC(faulthandler, BOOL, INIT, NO_SYS),
-    SPEC(tracemalloc, BOOL, INIT, NO_SYS),
+    SPEC(tracemalloc, UINT, INIT, NO_SYS),
     SPEC(perf_profiling, BOOL, READ_ONLY, NO_SYS),
     SPEC(import_time, BOOL, READ_ONLY, NO_SYS),
     SPEC(code_debug_ranges, BOOL, READ_ONLY, NO_SYS),
