@@ -3653,6 +3653,9 @@ static int
 config_names_add(PyObject *names, const PyConfigSpec *spec)
 {
     for (; spec->name != NULL; spec++) {
+        if (spec->visibility == PyConfig_MEMBER_INIT_ONLY) {
+            continue;
+        }
         PyObject *name = PyUnicode_FromString(spec->name);
         if (name == NULL) {
             return -1;
