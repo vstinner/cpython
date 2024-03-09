@@ -101,12 +101,16 @@ typedef struct {
 
 static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(_config_init, UINT, INIT, NO_SYS),
-    SPEC(isolated, BOOL, PUBLIC, SYS_FLAG(12)),
+    // Cannot set isolated at runtime since it has many side effects only at
+    // startup.
+    SPEC(isolated, BOOL, READ_ONLY, NO_SYS),  // sys.flags.isolated
     SPEC(use_environment, BOOL, PUBLIC, SYS_FLAG_SETTER(7, config_sys_flag_not)),
-    SPEC(dev_mode, BOOL, PUBLIC, SYS_FLAG_SETTER(13, config_sys_flag_bool)),
-    SPEC(install_signal_handlers, BOOL, READ_ONLY, NO_SYS),
-    SPEC(use_hash_seed, BOOL, READ_ONLY, NO_SYS),
-    SPEC(hash_seed, ULONG, READ_ONLY, NO_SYS),
+    // Cannot set dev_mode at runtime since it has many side effects only at
+    // startup.
+    SPEC(dev_mode, BOOL, READ_ONLY, NO_SYS),  // sys.flags.dev_mode
+    SPEC(install_signal_handlers, BOOL, INIT, NO_SYS),
+    SPEC(use_hash_seed, BOOL, INIT, NO_SYS),
+    SPEC(hash_seed, ULONG, INIT, NO_SYS),
     SPEC(faulthandler, BOOL, INIT, NO_SYS),
     SPEC(tracemalloc, UINT, INIT, NO_SYS),
     SPEC(perf_profiling, BOOL, READ_ONLY, NO_SYS),
@@ -188,6 +192,7 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
      visibility, NO_SYS}
 
 static const PyConfigSpec PYPRECONFIG_SPEC[] = {
+    // INIT is used here for members already present in PYCONFIG_SPEC
     SPEC(_config_init, INT, INIT),
     SPEC(parse_argv, BOOL, INIT),
     SPEC(isolated, BOOL, INIT),
