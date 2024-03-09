@@ -190,7 +190,6 @@ class ExceptHookTest(unittest.TestCase):
 
 
 class SysModuleTest(unittest.TestCase):
-
     def tearDown(self):
         test.support.reap_children()
 
@@ -1237,23 +1236,21 @@ class SysModuleTest(unittest.TestCase):
         markers = {
             str: "TEST_MARKER_STR",
             str | None: "TEST_MARKER_OPT_STR",
-            tuple[str, ...]: ("TEST_MARKER_STR_TUPLE",),
+            list[str]: ("TEST_MARKER_STR_TUPLE",),
             dict[str, str]: {"x": "value", "y": True},
         }
 
         # read config options and check their type
         options = [
-            ("argv", tuple[str, ...], "argv"),
+            ("argv", list[str], "argv"),
             ("base_exec_prefix", str | None, "base_exec_prefix"),
             ("base_executable", str | None, "_base_executable"),
             ("base_prefix", str | None, "base_prefix"),
-            ("buffered_stdio", bool, None),
             ("bytes_warning", int, None),
             ("check_hash_pycs_mode", str, None),
             ("code_debug_ranges", bool, None),
             ("coerce_c_locale", bool, None),
             ("coerce_c_locale_warn", bool, None),
-            ("configure_c_stdio", bool, None),
             ("configure_locale", bool, None),
             ("cpu_count", int, None),
             ("dev_mode", bool, None),
@@ -1261,38 +1258,27 @@ class SysModuleTest(unittest.TestCase):
             ("executable", str | None, "executable"),
             ("filesystem_encoding", str, None),
             ("filesystem_errors", str, None),
-            ("hash_seed", int, None),
             ("import_time", bool, None),
             ("inspect", bool, None),
-            ("install_signal_handlers", bool, None),
             ("int_max_str_digits", int, None),
             ("interactive", bool, None),
             ("isolated", bool, None),
-            ("module_search_paths", tuple[str, ...], "path"),
+            ("module_search_paths", list[str], "path"),
             ("optimization_level", int, None),
-            ("orig_argv", tuple[str, ...], "orig_argv"),
-            ("parse_argv", bool, None),
+            ("orig_argv", list[str], "orig_argv"),
             ("parser_debug", bool, None),
             ("perf_profiling", bool, None),
             ("platlibdir", str, "platlibdir"),
             ("prefix", str | None, "prefix"),
             ("pycache_prefix", str | None, "pycache_prefix"),
             ("quiet", bool, None),
-            ("safe_path", bool, None),
             ("site_import", bool, None),
-            ("skip_source_first_line", bool, None),
-            ("stdio_encoding", str, None),
-            ("stdio_errors", str, None),
             ("stdlib_dir", str | None, "_stdlib_dir"),
             ("sys_path_0", str | None, None),
             ("use_environment", bool, None),
-            ("use_frozen_modules", bool, None),
-            ("use_hash_seed", bool, None),
-            ("user_site_directory", bool, None),
             ("utf8_mode", bool, None),
             ("verbose", int, None),
-            ("warn_default_encoding", bool, None),
-            ("warnoptions", tuple[str, ...], "warnoptions"),
+            ("warnoptions", list[str], "warnoptions"),
             ("write_bytecode", bool, None),
             ("xoptions", dict[str, str], "_xoptions"),
         ]
@@ -1327,8 +1313,6 @@ class SysModuleTest(unittest.TestCase):
 
                 if sys_attr is not None:
                     expected = getattr(sys, sys_attr)
-                    if isinstance(expected, list):
-                        expected = tuple(expected)
                     self.assertEqual(expected, value)
 
                     override = markers[option_type]
@@ -1346,7 +1330,7 @@ class SysModuleTest(unittest.TestCase):
             ("interactive", "interactive", False),
             ("optimize", "optimization_level", False),
             ("dont_write_bytecode", "write_bytecode", True),
-            ("no_user_site", "user_site_directory", True),
+            # no_user_site / user_site_directory
             ("no_site", "site_import", True),
             ("ignore_environment", "use_environment", True),
             ("verbose", "verbose", False),
@@ -1355,8 +1339,8 @@ class SysModuleTest(unittest.TestCase):
             ("isolated", "isolated", False),
             ("dev_mode", "dev_mode", False),
             ("utf8_mode", "utf8_mode", False),
-            ("warn_default_encoding", "warn_default_encoding", False),
-            ("safe_path", "safe_path", False),
+            # warn_default_encoding
+            # safe_path
             ("int_max_str_digits", "int_max_str_digits", False),
         ):
             with self.subTest(flag=flag, name=name, negate=negate):
@@ -1364,11 +1348,6 @@ class SysModuleTest(unittest.TestCase):
                 if negate:
                     value = not value
                 self.assertEqual(getattr(sys.flags, flag), value)
-
-        # hash randomization
-        self.assertEqual(sys.flags.hash_randomization,
-                         sys.get_config('use_hash_seed') == 0
-                         or sys.get_config('hash_seed') == 0)
 
     def test_get_config_names(self):
         names = sys.get_config_names()

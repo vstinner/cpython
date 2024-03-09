@@ -143,7 +143,7 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
 #ifdef MS_WINDOWS
     SPEC(legacy_windows_stdio, BOOL, INIT, NO_SYS),
 #endif
-    SPEC(check_hash_pycs_mode, WSTR, INIT, NO_SYS),
+    SPEC(check_hash_pycs_mode, WSTR, READ_ONLY, NO_SYS),
     SPEC(use_frozen_modules, BOOL, INIT, NO_SYS),
     SPEC(safe_path, BOOL, INIT, NO_SYS),
     SPEC(int_max_str_digits, UINT, PUBLIC, NO_SYS),  // call _PySys_SetIntMaxStrDigits()
