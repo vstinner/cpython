@@ -37,57 +37,70 @@ typedef enum {
     PyConfig_MEMBER_WSTR_LIST = 12,
 } PyConfigMemberType;
 
+typedef enum {
+    // Option which cannot get or set by PyConfig_Get() and PyConfig_Set()
+    PyConfig_MEMBER_INIT_ONLY = 0,
+
+    // Option which cannot be set by PyConfig_Set()
+    PyConfig_MEMBER_READ_ONLY = 1,
+
+    // Public option: can be get or set by PyConfig_Get() and PyConfig_Set()
+    PyConfig_MEMBER_PUBLIC = 2,
+} PyConfigMemberVisibility;
+
 typedef struct {
     const char *name;
     size_t offset;
     PyConfigMemberType type;
     const char *sys_attr;
     int sys_flag;
-    int read_only;
+    PyConfigMemberVisibility visibility;
 } PyConfigSpec;
 
-#define SPEC(MEMBER, TYPE, SYS_ATTR, SYS_FLAG, read_only) \
-    {#MEMBER, offsetof(PyConfig, MEMBER), PyConfig_MEMBER_##TYPE, SYS_ATTR, SYS_FLAG, read_only}
-#define WRITE 0
-#define READ_ONLY 1
+#define SPEC(MEMBER, TYPE, SYS_ATTR, SYS_FLAG, visibility) \
+    {#MEMBER, offsetof(PyConfig, MEMBER), PyConfig_MEMBER_##TYPE, SYS_ATTR, SYS_FLAG, visibility}
+
+#define INIT PyConfig_MEMBER_INIT_ONLY
+#define READ_ONLY PyConfig_MEMBER_READ_ONLY
+#define PUBLIC PyConfig_MEMBER_PUBLIC
 
 static const PyConfigSpec PYCONFIG_SPEC[] = {
-    SPEC(_config_init, UINT, NULL, -1, READ_ONLY),
+    SPEC(_config_init, UINT, NULL, -1, INIT),
     SPEC(isolated, BOOL, NULL, -1, READ_ONLY),
-    SPEC(use_environment, BOOL, NULL, -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(use_environment, BOOL, NULL, -1, READ_ONLY),  // FIXME: MAKE PUBLIC
     SPEC(dev_mode, BOOL, NULL, -1, READ_ONLY),
     SPEC(install_signal_handlers, BOOL, NULL, -1, READ_ONLY),
     SPEC(use_hash_seed, BOOL, NULL, -1, READ_ONLY),
     SPEC(hash_seed, ULONG, NULL, -1, READ_ONLY),
-    SPEC(faulthandler, BOOL, NULL, -1, READ_ONLY),
-    SPEC(tracemalloc, BOOL, NULL, -1, READ_ONLY),
+    SPEC(faulthandler, BOOL, NULL, -1, INIT),
+    SPEC(tracemalloc, BOOL, NULL, -1, INIT),
     SPEC(perf_profiling, BOOL, NULL, -1, READ_ONLY),
     SPEC(import_time, BOOL, NULL, -1, READ_ONLY),
     SPEC(code_debug_ranges, BOOL, NULL, -1, READ_ONLY),
-    SPEC(show_ref_count, BOOL, NULL, -1, READ_ONLY),
-    SPEC(dump_refs, BOOL, NULL, -1, READ_ONLY),
-    SPEC(dump_refs_file, WSTR_OPT, NULL, -1, READ_ONLY),
-    SPEC(malloc_stats, BOOL, NULL, -1, READ_ONLY),
+    SPEC(show_ref_count, BOOL, NULL, -1, INIT),
+    SPEC(dump_refs, BOOL, NULL, -1, INIT),
+    SPEC(dump_refs_file, WSTR_OPT, NULL, -1, INIT),
+    SPEC(malloc_stats, BOOL, NULL, -1, INIT),
     SPEC(filesystem_encoding, WSTR, NULL, -1, READ_ONLY),
     SPEC(filesystem_errors, WSTR, NULL, -1, READ_ONLY),
-    SPEC(pycache_prefix, WSTR_OPT, "pycache_prefix", -1, WRITE),
+    SPEC(pycache_prefix, WSTR_OPT, "pycache_prefix", -1, PUBLIC),
     SPEC(parse_argv, BOOL, NULL, -1, READ_ONLY),
-    SPEC(orig_argv, WSTR_LIST, "orig_argv", -1, READ_ONLY),  // FIXME: MAKE WRITE
-    SPEC(argv, WSTR_LIST, "argv", -1, READ_ONLY),  // FIXME: MAKE WRITE
-    SPEC(xoptions, WSTR_LIST, "_xoptions", -1, READ_ONLY),  // FIXME: MAKE WRITE
-    SPEC(warnoptions, WSTR_LIST, "warnoptions", -1, READ_ONLY),  // FIXME: MAKE WRITE
-    SPEC(site_import, BOOL, NULL, -1, READ_ONLY),  // FIXME: MAKE WRITE
-    SPEC(bytes_warning, UINT, NULL, 9, WRITE),
+    SPEC(orig_argv, WSTR_LIST, "orig_argv", -1, READ_ONLY),
+    SPEC(argv, WSTR_LIST, "argv", -1, READ_ONLY),  // FIXME: MAKE PUBLIC
+    SPEC(xoptions, WSTR_LIST, "_xoptions", -1, READ_ONLY),  // FIXME: MAKE PUBLIC
+    SPEC(warnoptions, WSTR_LIST, "warnoptions", -1, READ_ONLY),  // FIXME: MAKE PUBLIC
+    SPEC(site_import, BOOL, NULL, -1, READ_ONLY),  // FIXME: MAKE PUBLIC
+    SPEC(bytes_warning, UINT, NULL, 9, PUBLIC),
     SPEC(warn_default_encoding, BOOL, NULL, -1, READ_ONLY),
-    SPEC(inspect, BOOL, NULL, 1, WRITE),
-    SPEC(interactive, BOOL, NULL, 2, WRITE),
-    SPEC(optimization_level, UINT, NULL, 3, WRITE),
-    SPEC(parser_debug, BOOL, NULL, 0, WRITE),
+    SPEC(inspect, BOOL, NULL, 1, PUBLIC),
+    SPEC(interactive, BOOL, NULL, 2, PUBLIC),
+    SPEC(optimization_level, UINT, NULL, 3, PUBLIC),
+    SPEC(parser_debug, BOOL, NULL, 0, PUBLIC),
     // config_get_sys_write_bytecode() gets sys.dont_write_bytecode
-    SPEC(write_bytecode, BOOL, NULL, -1, READ_ONLY),  // FIXME: MAKE WRITE
-    SPEC(verbose, UINT, NULL, 8, WRITE),
-    SPEC(quiet, BOOL, NULL, 10, WRITE),
-    SPEC(user_site_directory, BOOL, NULL, 3, WRITE),  // FIXME: MAKE WRITE
+    SPEC(write_bytecode, BOOL, NULL, -1, READ_ONLY),  // FIXME: MAKE PUBLIC
+    SPEC(verbose, UINT, NULL, 8, PUBLIC),
+    SPEC(quiet, BOOL, NULL, 10, PUBLIC),
+    SPEC(user_site_directory, BOOL, NULL, 3, PUBLIC),  // FIXME: MAKE PUBLIC
     SPEC(configure_c_stdio, BOOL, NULL, -1, READ_ONLY),
     SPEC(buffered_stdio, BOOL, NULL, -1, READ_ONLY),
     SPEC(stdio_encoding, WSTR, NULL, -1, READ_ONLY),
@@ -98,64 +111,66 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(check_hash_pycs_mode, WSTR, NULL, -1, READ_ONLY),
     SPEC(use_frozen_modules, BOOL, NULL, -1, READ_ONLY),
     SPEC(safe_path, BOOL, NULL, -1, READ_ONLY),
-    SPEC(int_max_str_digits, INT, NULL, -1, READ_ONLY),  // FIXME: MAKE WRITE
+    SPEC(int_max_str_digits, INT, NULL, -1, READ_ONLY),  // FIXME: MAKE PUBLIC
     SPEC(cpu_count, INT, NULL, -1, READ_ONLY),
-    SPEC(pathconfig_warnings, BOOL, NULL, -1, READ_ONLY),
-    SPEC(program_name, WSTR, NULL, -1, READ_ONLY),
-    SPEC(pythonpath_env, WSTR_OPT, NULL, -1, READ_ONLY),
-    SPEC(home, WSTR_OPT, NULL, -1, READ_ONLY),
-    SPEC(platlibdir, WSTR, "platlibdir", -1, WRITE),
+    SPEC(pathconfig_warnings, BOOL, NULL, -1, INIT),
+    SPEC(program_name, WSTR, NULL, -1, INIT),
+    SPEC(pythonpath_env, WSTR_OPT, NULL, -1, INIT),
+    SPEC(home, WSTR_OPT, NULL, -1, INIT),
+    SPEC(platlibdir, WSTR, "platlibdir", -1, PUBLIC),
     SPEC(sys_path_0, WSTR_OPT, NULL, -1, READ_ONLY),
-    SPEC(module_search_paths_set, BOOL, NULL, -1, READ_ONLY),
-    SPEC(module_search_paths, WSTR_LIST, "path", -1, READ_ONLY),  // FIXME: MAKE WRITE
-    SPEC(stdlib_dir, WSTR_OPT, "_stdlib_dir", -1, WRITE),
-    SPEC(executable, WSTR_OPT, "executable", -1, WRITE),
-    SPEC(base_executable, WSTR_OPT, "_base_executable", -1, WRITE),
-    SPEC(prefix, WSTR_OPT, "prefix", -1, WRITE),
-    SPEC(base_prefix, WSTR_OPT, "base_prefix", -1, WRITE),
-    SPEC(exec_prefix, WSTR_OPT, "exec_prefix", -1, WRITE),
-    SPEC(base_exec_prefix, WSTR_OPT, "base_exec_prefix", -1, WRITE),
+    SPEC(module_search_paths_set, BOOL, NULL, -1, INIT_ONLY),
+    SPEC(module_search_paths, WSTR_LIST, "path", -1, READ_ONLY),  // FIXME: MAKE PUBLIC
+    SPEC(stdlib_dir, WSTR_OPT, "_stdlib_dir", -1, PUBLIC),
+    SPEC(executable, WSTR_OPT, "executable", -1, PUBLIC),
+    SPEC(base_executable, WSTR_OPT, "_base_executable", -1, PUBLIC),
+    SPEC(prefix, WSTR_OPT, "prefix", -1, PUBLIC),
+    SPEC(base_prefix, WSTR_OPT, "base_prefix", -1, PUBLIC),
+    SPEC(exec_prefix, WSTR_OPT, "exec_prefix", -1, PUBLIC),
+    SPEC(base_exec_prefix, WSTR_OPT, "base_exec_prefix", -1, PUBLIC),
     SPEC(skip_source_first_line, BOOL, NULL, -1, READ_ONLY),
     SPEC(run_command, WSTR_OPT, NULL, -1, READ_ONLY),
     SPEC(run_module, WSTR_OPT, NULL, -1, READ_ONLY),
     SPEC(run_filename, WSTR_OPT, NULL, -1, READ_ONLY),
-    SPEC(_install_importlib, BOOL, NULL, -1, READ_ONLY),
-    SPEC(_init_main, BOOL, NULL, -1, READ_ONLY),
-    SPEC(_is_python_build, BOOL, NULL, -1, READ_ONLY),
+    SPEC(_install_importlib, BOOL, NULL, -1, INIT),
+    SPEC(_init_main, BOOL, NULL, -1, INIT),
+    SPEC(_is_python_build, BOOL, NULL, -1, INIT),
 #ifdef Py_STATS
-    SPEC(_pystats, BOOL, NULL, -1, READ_ONLY),
+    SPEC(_pystats, BOOL, NULL, -1, INIT),
 #endif
 #ifdef Py_DEBUG
     SPEC(run_presite, WSTR_OPT, NULL, -1, READ_ONLY),
 #endif
-    {NULL, 0, 0, NULL},
+
+    {NULL, 0, 0, NULL, 0, 0},
 };
 
 #undef SPEC
-#undef WRITE
-#undef READ_ONLY
-
-#define SPEC(MEMBER, TYPE) \
-    {#MEMBER, offsetof(PyPreConfig, MEMBER), PyConfig_MEMBER_##TYPE, NULL, 1}
+#define SPEC(MEMBER, TYPE, visibility) \
+    {#MEMBER, offsetof(PyPreConfig, MEMBER), PyConfig_MEMBER_##TYPE, NULL, -1, visibility}
 
 static const PyConfigSpec PYPRECONFIG_SPEC[] = {
-    SPEC(_config_init, INT),
-    SPEC(parse_argv, BOOL),
-    SPEC(isolated, BOOL),
-    SPEC(use_environment, BOOL),
-    SPEC(configure_locale, BOOL),
-    SPEC(coerce_c_locale, BOOL),
-    SPEC(coerce_c_locale_warn, BOOL),
+    SPEC(_config_init, INT, INIT),
+    SPEC(parse_argv, BOOL, INIT),
+    SPEC(isolated, BOOL, INIT),
+    SPEC(use_environment, BOOL, INIT),
+    SPEC(configure_locale, BOOL, READ_ONLY),
+    SPEC(coerce_c_locale, BOOL, READ_ONLY),
+    SPEC(coerce_c_locale_warn, BOOL, READ_ONLY),
 #ifdef MS_WINDOWS
-    SPEC(legacy_windows_fs_encoding, BOOL),
+    SPEC(legacy_windows_fs_encoding, BOOL, READ_ONLY),
 #endif
-    SPEC(utf8_mode, BOOL),
-    SPEC(dev_mode, BOOL),
-    SPEC(allocator, INT),
-    {NULL, 0, 0, NULL},
+    SPEC(utf8_mode, BOOL, READ_ONLY),
+    SPEC(dev_mode, BOOL, INIT),
+    SPEC(allocator, INT, INIT),
+
+    {NULL, 0, 0, NULL, 0, 0},
 };
 
 #undef SPEC
+#undef INIT
+#undef READ_ONLY
+#undef PUBLIC
 
 
 // Forward declarations
@@ -3309,6 +3324,9 @@ static const PyConfigSpec*
 config_generic_find_spec(const PyConfigSpec *spec, const char *name)
 {
     for (; spec->name != NULL; spec++) {
+        if (spec->visibility == PyConfig_MEMBER_INIT_ONLY) {
+            continue;
+        }
         if (strcmp(name, spec->name) == 0) {
             return spec;
         }
@@ -3686,7 +3704,7 @@ PyConfig_Set(const char *name, PyObject *value)
         return -1;
     }
 
-    if (spec->read_only) {
+    if (spec->visibility != PyConfig_MEMBER_PUBLIC) {
         PyErr_Format(PyExc_ValueError, "cannot set read-only option %s",
                      name);
         return -1;
