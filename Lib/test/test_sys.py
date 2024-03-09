@@ -1443,7 +1443,8 @@ class SysModuleTest(unittest.TestCase):
         class unsigned_int(int):
             pass
 
-        def expect_same(value):
+        def expect_int(value):
+            value = int(value)
             return (value, value)
 
         def expect_bool(value):
@@ -1458,22 +1459,26 @@ class SysModuleTest(unittest.TestCase):
             ('parser_debug', 'debug', bool, expect_bool),
             ('inspect', 'inspect', bool, expect_bool),
             ('interactive', 'interactive', bool, expect_bool),
-            ('optimization_level', 'optimize', unsigned_int, expect_same),
+            ('optimization_level', 'optimize', unsigned_int, expect_int),
             ('write_bytecode', 'dont_write_bytecode', bool, expect_bool_not),
             # no_user_site
             ('site_import', 'no_site', bool, expect_bool_not),
             ('use_environment', 'ignore_environment', bool, expect_bool_not),
-            ('verbose', 'verbose', unsigned_int, expect_same),
-            ('bytes_warning', 'bytes_warning', unsigned_int, expect_same),
+            ('verbose', 'verbose', unsigned_int, expect_int),
+            ('bytes_warning', 'bytes_warning', unsigned_int, expect_int),
             ('quiet', 'quiet', bool, expect_bool),
             ('isolated', 'isolated', bool, expect_bool),
             ('dev_mode', 'dev_mode', bool, expect_bool),
             # utf8_mode
             # warn_default_encoding
             # safe_path
-            # int_max_str_digits
+            ('int_max_str_digits', 'int_max_str_digits', unsigned_int, expect_int),
         ):
-            if option_type == int:
+            if name == "int_max_str_digits":
+                new_values = (0, 5_000, 999_999)
+                invalid_values = (-1, 40)  # value must 0 or >= 4300
+                invalid_types = (1.0, "abc")
+            elif option_type == int:
                 new_values = (False, True, 0, 1, 5, -5)
                 invalid_values = ()
                 invalid_types = (1.0, "abc")
@@ -1493,6 +1498,9 @@ class SysModuleTest(unittest.TestCase):
                         self.assertEqual(getattr(sys.flags, sys_flag), expect_flag)
                         if name == "write_bytecode":
                             self.assertEqual(getattr(sys, "dont_write_bytecode"),
+                                             expect_flag)
+                        if name == "int_max_str_digits":
+                            self.assertEqual(sys.get_int_max_str_digits(),
                                              expect_flag)
 
                     for value in invalid_values:

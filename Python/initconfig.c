@@ -10,6 +10,7 @@
 #include "pycore_pymem.h"         // _PyMem_SetDefaultAllocator()
 #include "pycore_pystate.h"       // _PyThreadState_GET()
 #include "pycore_pystats.h"       // _Py_StatsOn()
+#include "pycore_sysmodule.h"     // _PySys_SetIntMaxStrDigits()
 
 #include "osdefs.h"               // DELIM
 
@@ -124,7 +125,9 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(interactive, BOOL, PUBLIC, SYS_FLAG(2)),
     SPEC(optimization_level, UINT, PUBLIC, SYS_FLAG(3)),
     SPEC(parser_debug, BOOL, PUBLIC, SYS_FLAG(0)),
-    // config_get_sys_write_bytecode() gets sys.dont_write_bytecode
+    // Option stored in 3 places: PyConfig.write_bytecode,
+    // sys.flags.dont_write_bytecode and sys.dont_write_bytecode.
+    // PyConfig_Get() gets sys.dont_write_bytecode.
     SPEC(write_bytecode, BOOL, PUBLIC, SYS_FLAG_SETTER(4, config_sys_flag_not)),
     SPEC(verbose, UINT, PUBLIC, SYS_FLAG(8)),
     SPEC(quiet, BOOL, PUBLIC, SYS_FLAG(10)),
@@ -139,7 +142,7 @@ static const PyConfigSpec PYCONFIG_SPEC[] = {
     SPEC(check_hash_pycs_mode, WSTR, READ_ONLY, NO_SYS),
     SPEC(use_frozen_modules, BOOL, READ_ONLY, NO_SYS),
     SPEC(safe_path, BOOL, READ_ONLY, NO_SYS),
-    SPEC(int_max_str_digits, INT, READ_ONLY, NO_SYS),  // FIXME: MAKE PUBLIC
+    SPEC(int_max_str_digits, INT, PUBLIC, NO_SYS),  // call _PySys_SetIntMaxStrDigits()
     SPEC(cpu_count, INT, READ_ONLY, NO_SYS),
     SPEC(pathconfig_warnings, BOOL, INIT, NO_SYS),
     SPEC(program_name, WSTR, INIT, NO_SYS),
@@ -3704,12 +3707,6 @@ config_set_sys_flag(const PyConfigSpec *spec, int int_value)
         }
     }
 
-    PyObject *flags = Py_XNewRef(PySys_GetObject("flags"));
-    if (flags == NULL) {
-        PyErr_SetString(PyExc_RuntimeError, "lost sys.flags");
-        return -1;
-    }
-
     PyObject *value;
     if (spec->sys.flag_setter) {
         value = spec->sys.flag_setter(int_value);
@@ -3718,16 +3715,14 @@ config_set_sys_flag(const PyConfigSpec *spec, int int_value)
         value = config_sys_flag_long(int_value);
     }
     if (value == NULL) {
-        Py_DECREF(flags);
         return -1;
     }
 
     // Set sys.flags.FLAG
     Py_ssize_t pos = spec->sys.flag_index;
-    PyObject *old_value = PyStructSequence_GET_ITEM(flags, pos);
-    PyStructSequence_SET_ITEM(flags, pos, Py_NewRef(value));
-    Py_XDECREF(old_value);
-    Py_DECREF(flags);
+    if (_PySys_SetFlagObj(pos, value) < 0) {
+        goto error;
+    }
 
     // Set PyConfig.ATTR
     int *member = config_spec_get_member(spec, config);
@@ -3735,16 +3730,17 @@ config_set_sys_flag(const PyConfigSpec *spec, int int_value)
 
     // Set sys.dont_write_bytecode
     if (strcmp(spec->name, "write_bytecode") == 0) {
-        // option stored in 3 places: sys.flags.dont_write_bytecode,
-        // PyConfig and sys.dont_write_bytecode.
         if (PySys_SetObject("dont_write_bytecode", value) < 0) {
-            Py_DECREF(value);
-            return -1;
+            goto error;
         }
     }
 
     Py_DECREF(value);
     return 0;
+
+error:
+    Py_DECREF(value);
+    return -1;
 }
 
 
@@ -3811,17 +3807,27 @@ PyConfig_Set(const char *name, PyObject *value)
     }
 
 
+    int res = 0;
     if (spec->sys.attr != NULL) {
-        return PySys_SetObject(spec->sys.attr, value);
+        res = PySys_SetObject(spec->sys.attr, value);
     }
     else if (spec->sys.flag_index >= 0 && has_int_value) {
-        return config_set_sys_flag(spec, int_value);
+        res = config_set_sys_flag(spec, int_value);
+    }
+    else if (strcmp(spec->name, "int_max_str_digits") == 0 && has_int_value) {
+        res = _PySys_SetIntMaxStrDigits(int_value);
     }
     else {
 cannot_set:
         PyErr_Format(PyExc_ValueError, "cannot set option %s", name);
         return -1;
     }
+
+    if (res < 0) {
+        return -1;
+    }
+
+    return 0;
 }
 
 int
