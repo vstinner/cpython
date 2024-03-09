@@ -634,18 +634,17 @@ class CmdLineTest(unittest.TestCase):
                 PYTHONDONTWRITEBYTECODE=value,
                 PYTHONVERBOSE=value,
             )
-            dont_write_bytecode = int(bool(value))
+            bool_value = int(bool(value))
             code = (
                 "import sys; "
-                "sys.stderr.write(str(sys.flags)); "
+                "flags = sys.flags; "
+                "sys.stderr.write(str(flags)); "
                 f"""sys.exit(not (
-                    sys.flags.debug == sys.flags.optimize ==
-                    sys.flags.verbose ==
-                    {expected}
-                    and sys.flags.dont_write_bytecode == {dont_write_bytecode}
+                    flags.optimize == flags.verbose == {expected}
+                    and flags.debug == flags.dont_write_bytecode == {bool_value}
                 ))"""
             )
-            with self.subTest(envar_value=value):
+            with self.subTest(envar_value=value, expected=expected):
                 assert_python_ok('-c', code, **env_vars)
 
     def test_set_pycache_prefix(self):
