@@ -27,8 +27,23 @@ tuple_index(PyTupleObject *self, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t start = 0;
     Py_ssize_t stop = PY_SSIZE_T_MAX;
 
-    if (!_PyArg_CheckPositional("index", nargs, 1, 3)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "index", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "index", nargs);
+            goto exit;
+        }
     }
     value = args[0];
     if (nargs < 2) {
@@ -84,8 +99,23 @@ tuple_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
         !_PyArg_NoKeywords("tuple", kwargs)) {
         goto exit;
     }
-    if (!_PyArg_CheckPositional("tuple", PyTuple_GET_SIZE(args), 0, 1)) {
-        goto exit;
+    {
+        if (PyTuple_GET_SIZE(args) < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "tuple", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (PyTuple_GET_SIZE(args) != 0 && PyTuple_GET_SIZE(args) > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "tuple", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
     }
     if (PyTuple_GET_SIZE(args) < 1) {
         goto skip_optional;
@@ -114,4 +144,4 @@ tuple___getnewargs__(PyTupleObject *self, PyObject *Py_UNUSED(ignored))
 {
     return tuple___getnewargs___impl(self);
 }
-/*[clinic end generated code: output=a6a9abba5d121f4c input=a9049054013a1b77]*/
+/*[clinic end generated code: output=cb582e73e96c0669 input=a9049054013a1b77]*/

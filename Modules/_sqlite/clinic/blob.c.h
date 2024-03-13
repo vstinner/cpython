@@ -47,8 +47,23 @@ blob_read(pysqlite_Blob *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     int length = -1;
 
-    if (!_PyArg_CheckPositional("read", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "read", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "read", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -122,8 +137,23 @@ blob_seek(pysqlite_Blob *self, PyObject *const *args, Py_ssize_t nargs)
     int offset;
     int origin = 0;
 
-    if (!_PyArg_CheckPositional("seek", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "seek", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "seek", nargs);
+            goto exit;
+        }
     }
     offset = PyLong_AsInt(args[0]);
     if (offset == -1 && PyErr_Occurred()) {
@@ -200,8 +230,23 @@ blob_exit(pysqlite_Blob *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *val;
     PyObject *tb;
 
-    if (!_PyArg_CheckPositional("__exit__", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "__exit__", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "__exit__", nargs);
+            goto exit;
+        }
     }
     type = args[0];
     val = args[1];
@@ -211,4 +256,4 @@ blob_exit(pysqlite_Blob *self, PyObject *const *args, Py_ssize_t nargs)
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=31abd55660e0c5af input=a9049054013a1b77]*/
+/*[clinic end generated code: output=5ae45d4708ac2005 input=a9049054013a1b77]*/

@@ -45,8 +45,23 @@ objects_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b = NULL;
 
-    if (!_PyArg_CheckPositional("objects_converter", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "objects_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "objects_converter", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     if (nargs < 2) {
@@ -163,8 +178,23 @@ bool_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int b = 1;
     int c = 1;
 
-    if (!_PyArg_CheckPositional("bool_converter", nargs, 0, 3)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "bool_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "bool_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -228,8 +258,23 @@ char_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     char m = '\x00';
     char n = '\xff';
 
-    if (!_PyArg_CheckPositional("char_converter", nargs, 0, 14)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "char_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 14;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 14 arguments, got %zd",
+                "char_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -440,8 +485,23 @@ unsigned_char_converter(PyObject *module, PyObject *const *args, Py_ssize_t narg
     unsigned char b = 34;
     unsigned char c = 56;
 
-    if (!_PyArg_CheckPositional("unsigned_char_converter", nargs, 0, 3)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "unsigned_char_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "unsigned_char_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -523,8 +583,23 @@ short_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     short a = 12;
 
-    if (!_PyArg_CheckPositional("short_converter", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "short_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "short_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -575,8 +650,23 @@ unsigned_short_converter(PyObject *module, PyObject *const *args, Py_ssize_t nar
     unsigned short b = 34;
     unsigned short c = 56;
 
-    if (!_PyArg_CheckPositional("unsigned_short_converter", nargs, 0, 3)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "unsigned_short_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "unsigned_short_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -623,8 +713,23 @@ int_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int b = 34;
     int c = 45;
 
-    if (!_PyArg_CheckPositional("int_converter", nargs, 0, 3)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "int_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "int_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -679,8 +784,23 @@ unsigned_int_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs
     unsigned int b = 34;
     unsigned int c = 56;
 
-    if (!_PyArg_CheckPositional("unsigned_int_converter", nargs, 0, 3)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "unsigned_int_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "unsigned_int_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -725,8 +845,23 @@ long_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     long a = 12;
 
-    if (!_PyArg_CheckPositional("long_converter", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "long_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "long_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -762,8 +897,23 @@ unsigned_long_converter(PyObject *module, PyObject *const *args, Py_ssize_t narg
     unsigned long b = 34;
     unsigned long c = 56;
 
-    if (!_PyArg_CheckPositional("unsigned_long_converter", nargs, 0, 3)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "unsigned_long_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "unsigned_long_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -809,8 +959,23 @@ long_long_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     long long a = 12;
 
-    if (!_PyArg_CheckPositional("long_long_converter", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "long_long_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "long_long_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -846,8 +1011,23 @@ unsigned_long_long_converter(PyObject *module, PyObject *const *args, Py_ssize_t
     unsigned long long b = 34;
     unsigned long long c = 56;
 
-    if (!_PyArg_CheckPositional("unsigned_long_long_converter", nargs, 0, 3)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "unsigned_long_long_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "unsigned_long_long_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -896,8 +1076,23 @@ py_ssize_t_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t b = 34;
     Py_ssize_t c = 56;
 
-    if (!_PyArg_CheckPositional("py_ssize_t_converter", nargs, 0, 3)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "py_ssize_t_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "py_ssize_t_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -962,8 +1157,23 @@ slice_index_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t b = 34;
     Py_ssize_t c = 56;
 
-    if (!_PyArg_CheckPositional("slice_index_converter", nargs, 0, 3)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "slice_index_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "slice_index_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1007,8 +1217,23 @@ size_t_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     size_t a = 12;
 
-    if (!_PyArg_CheckPositional("size_t_converter", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "size_t_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "size_t_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1040,8 +1265,23 @@ float_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     float a = 12.5;
 
-    if (!_PyArg_CheckPositional("float_converter", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "float_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "float_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1080,8 +1320,23 @@ double_converter(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     double a = 12.5;
 
-    if (!_PyArg_CheckPositional("double_converter", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "double_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "double_converter", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -2400,8 +2655,14 @@ vararg_and_posonly(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *__clinic_args = NULL;
 
-    if (!_PyArg_CheckPositional("vararg_and_posonly", nargs, 1, PY_SSIZE_T_MAX)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "vararg_and_posonly", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     __clinic_args = PyTuple_New(nargs - 1);
@@ -2764,8 +3025,14 @@ gh_99233_refcount(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *__clinic_args = NULL;
 
-    if (!_PyArg_CheckPositional("gh_99233_refcount", nargs, 0, PY_SSIZE_T_MAX)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "gh_99233_refcount", nargs);
+            goto exit;
+        }
     }
     __clinic_args = PyTuple_New(nargs - 0);
     if (!__clinic_args) {
@@ -3163,4 +3430,4 @@ _testclinic_TestClass_meth_method_no_params(PyObject *self, PyTypeObject *cls, P
     }
     return _testclinic_TestClass_meth_method_no_params_impl(self, cls);
 }
-/*[clinic end generated code: output=6520c1ca5392a3f0 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=b78956d81675ef17 input=a9049054013a1b77]*/

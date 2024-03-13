@@ -1008,10 +1008,49 @@ class CLanguage(Language):
             else:
                 clinic.add_include('pycore_modsupport.h',
                                    '_PyArg_CheckPositional()')
-                parser_code = [libclinic.normalize_snippet(f"""
-                    if (!_PyArg_CheckPositional("{{name}}", {nargs}, {min_pos}, {max_args})) {{{{
-                        goto exit;
-                    }}}}
+
+                assert min_pos >= 0, min_pos
+                min_nargs_plural = ("" if min_pos == 1 else "s")
+                nargs_atleast = ("" if min_pos == max_args else "at least ")
+                # Don't format the name to reduce the size of the Python
+                # executable, C compilers merge same format strings.
+                check_min_args = (f"""
+                            if ({nargs} < {min_pos}) {{{{
+                                PyErr_Format(
+                                    PyExc_TypeError,
+                                    "%s expected {nargs_atleast}{min_pos} argument{min_nargs_plural}, got %zd",
+                                    "{{name}}", {nargs});
+                                goto exit;
+                            }}}}
+                """).strip()
+
+                assert (max_args == self.NO_VARARG or min_pos <= max_args), (min_pos, max_args)
+                nargs_atmost = ("" if min_pos == max_args else "at most ")
+                max_nargs_plural = ("" if max_args == 1 else "s")
+                check_max_args = (f"""
+                            const Py_ssize_t max_nargs = {max_args};
+                            if ({nargs} != 0 && {nargs} > max_nargs) {{{{
+                                PyErr_Format(
+                                    PyExc_TypeError,
+                                    "%s expected {nargs_atmost}{max_args} argument{max_nargs_plural}, got %zd",
+                                    "{{name}}", {nargs});
+                                goto exit;
+                            }}}}
+                """).strip()
+
+                if max_args == self.NO_VARARG:
+                    parser_code = [libclinic.normalize_snippet(f"""
+                        {{{{
+                            {check_min_args}
+                        }}}}
+                    """, indent=4)]
+                else:
+                    parser_code = [libclinic.normalize_snippet(f"""
+                        {{{{
+                            {check_min_args}
+
+                            {check_max_args}
+                        }}}}
                     """, indent=4)]
 
             has_optional = False

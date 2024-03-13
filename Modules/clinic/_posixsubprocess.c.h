@@ -78,8 +78,23 @@ subprocess_fork_exec(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *preexec_fn;
     int allow_vfork;
 
-    if (!_PyArg_CheckPositional("fork_exec", nargs, 23, 23)) {
-        goto exit;
+    {
+        if (nargs < 23) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 23 arguments, got %zd",
+                "fork_exec", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 23;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 23 arguments, got %zd",
+                "fork_exec", nargs);
+            goto exit;
+        }
     }
     process_args = args[0];
     executable_list = args[1];
@@ -155,4 +170,4 @@ subprocess_fork_exec(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=48555f5965a871be input=a9049054013a1b77]*/
+/*[clinic end generated code: output=2b7af5359c289337 input=a9049054013a1b77]*/

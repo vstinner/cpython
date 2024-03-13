@@ -35,8 +35,23 @@ fcntl_fcntl(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int code;
     PyObject *arg = NULL;
 
-    if (!_PyArg_CheckPositional("fcntl", nargs, 2, 3)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 2 arguments, got %zd",
+                "fcntl", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "fcntl", nargs);
+            goto exit;
+        }
     }
     if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
         goto exit;
@@ -105,8 +120,23 @@ fcntl_ioctl(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *ob_arg = NULL;
     int mutate_arg = 1;
 
-    if (!_PyArg_CheckPositional("ioctl", nargs, 2, 4)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 2 arguments, got %zd",
+                "ioctl", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 4 arguments, got %zd",
+                "ioctl", nargs);
+            goto exit;
+        }
     }
     if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
         goto exit;
@@ -155,8 +185,23 @@ fcntl_flock(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int fd;
     int code;
 
-    if (!_PyArg_CheckPositional("flock", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "flock", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "flock", nargs);
+            goto exit;
+        }
     }
     if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
         goto exit;
@@ -215,8 +260,23 @@ fcntl_lockf(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *startobj = NULL;
     int whence = 0;
 
-    if (!_PyArg_CheckPositional("lockf", nargs, 2, 5)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 2 arguments, got %zd",
+                "lockf", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 5;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 5 arguments, got %zd",
+                "lockf", nargs);
+            goto exit;
+        }
     }
     if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
         goto exit;
@@ -246,4 +306,4 @@ skip_optional:
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=732e33ba92042031 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=aa2300ab381e12a3 input=a9049054013a1b77]*/

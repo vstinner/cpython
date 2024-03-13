@@ -93,8 +93,23 @@ sys_excepthook(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *value;
     PyObject *traceback;
 
-    if (!_PyArg_CheckPositional("excepthook", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "excepthook", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "excepthook", nargs);
+            goto exit;
+        }
     }
     exctype = args[0];
     value = args[1];
@@ -188,8 +203,23 @@ sys_exit(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *status = Py_None;
 
-    if (!_PyArg_CheckPositional("exit", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "exit", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "exit", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -997,8 +1027,23 @@ sys__getframe(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     int depth = 0;
 
-    if (!_PyArg_CheckPositional("_getframe", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "_getframe", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "_getframe", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1077,8 +1122,23 @@ sys_call_tracing(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *func;
     PyObject *funcargs;
 
-    if (!_PyArg_CheckPositional("call_tracing", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "call_tracing", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "call_tracing", nargs);
+            goto exit;
+        }
     }
     func = args[0];
     if (!PyTuple_Check(args[1])) {
@@ -1504,4 +1564,4 @@ exit:
 #ifndef SYS_GETANDROIDAPILEVEL_METHODDEF
     #define SYS_GETANDROIDAPILEVEL_METHODDEF
 #endif /* !defined(SYS_GETANDROIDAPILEVEL_METHODDEF) */
-/*[clinic end generated code: output=b8b1c53e04c3b20c input=a9049054013a1b77]*/
+/*[clinic end generated code: output=8b142a5ec3cdac36 input=a9049054013a1b77]*/

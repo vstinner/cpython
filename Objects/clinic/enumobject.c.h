@@ -98,8 +98,23 @@ reversed_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
         !_PyArg_NoKeywords("reversed", kwargs)) {
         goto exit;
     }
-    if (!_PyArg_CheckPositional("reversed", PyTuple_GET_SIZE(args), 1, 1)) {
-        goto exit;
+    {
+        if (PyTuple_GET_SIZE(args) < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 1 argument, got %zd",
+                "reversed", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (PyTuple_GET_SIZE(args) != 0 && PyTuple_GET_SIZE(args) > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 1 argument, got %zd",
+                "reversed", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
     }
     seq = PyTuple_GET_ITEM(args, 0);
     return_value = reversed_new_impl(type, seq);
@@ -107,4 +122,4 @@ reversed_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=5c48a9a482a52e91 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=17ffa2d21f19da4b input=a9049054013a1b77]*/

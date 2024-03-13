@@ -93,8 +93,23 @@ _bz2_BZ2Compressor(PyTypeObject *type, PyObject *args, PyObject *kwargs)
         !_PyArg_NoKeywords("BZ2Compressor", kwargs)) {
         goto exit;
     }
-    if (!_PyArg_CheckPositional("BZ2Compressor", PyTuple_GET_SIZE(args), 0, 1)) {
-        goto exit;
+    {
+        if (PyTuple_GET_SIZE(args) < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "BZ2Compressor", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (PyTuple_GET_SIZE(args) != 0 && PyTuple_GET_SIZE(args) > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "BZ2Compressor", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
     }
     if (PyTuple_GET_SIZE(args) < 1) {
         goto skip_optional;
@@ -234,4 +249,4 @@ _bz2_BZ2Decompressor(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=8daa62f47cc4853d input=a9049054013a1b77]*/
+/*[clinic end generated code: output=fb5b721cef0cb353 input=a9049054013a1b77]*/

@@ -1778,8 +1778,23 @@ _hashlib_compare_digest(PyObject *module, PyObject *const *args, Py_ssize_t narg
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("compare_digest", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "compare_digest", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "compare_digest", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1824,4 +1839,4 @@ exit:
 #ifndef _HASHLIB_SCRYPT_METHODDEF
     #define _HASHLIB_SCRYPT_METHODDEF
 #endif /* !defined(_HASHLIB_SCRYPT_METHODDEF) */
-/*[clinic end generated code: output=b7eddeb3d6ccdeec input=a9049054013a1b77]*/
+/*[clinic end generated code: output=5fdec335cc174ed7 input=a9049054013a1b77]*/

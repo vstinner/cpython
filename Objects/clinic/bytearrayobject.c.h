@@ -302,8 +302,23 @@ bytearray_maketrans(void *null, PyObject *const *args, Py_ssize_t nargs)
     Py_buffer frm = {NULL, NULL};
     Py_buffer to = {NULL, NULL};
 
-    if (!_PyArg_CheckPositional("maketrans", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "maketrans", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "maketrans", nargs);
+            goto exit;
+        }
     }
     if (PyObject_GetBuffer(args[0], &frm, PyBUF_SIMPLE) != 0) {
         goto exit;
@@ -354,8 +369,23 @@ bytearray_replace(PyByteArrayObject *self, PyObject *const *args, Py_ssize_t nar
     Py_buffer new = {NULL, NULL};
     Py_ssize_t count = -1;
 
-    if (!_PyArg_CheckPositional("replace", nargs, 2, 3)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 2 arguments, got %zd",
+                "replace", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "replace", nargs);
+            goto exit;
+        }
     }
     if (PyObject_GetBuffer(args[0], &old, PyBUF_SIMPLE) != 0) {
         goto exit;
@@ -645,8 +675,23 @@ bytearray_insert(PyByteArrayObject *self, PyObject *const *args, Py_ssize_t narg
     Py_ssize_t index;
     int item;
 
-    if (!_PyArg_CheckPositional("insert", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "insert", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "insert", nargs);
+            goto exit;
+        }
     }
     {
         Py_ssize_t ival = -1;
@@ -735,8 +780,23 @@ bytearray_pop(PyByteArrayObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     Py_ssize_t index = -1;
 
-    if (!_PyArg_CheckPositional("pop", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "pop", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "pop", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -810,8 +870,23 @@ bytearray_strip(PyByteArrayObject *self, PyObject *const *args, Py_ssize_t nargs
     PyObject *return_value = NULL;
     PyObject *bytes = Py_None;
 
-    if (!_PyArg_CheckPositional("strip", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "strip", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "strip", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -844,8 +919,23 @@ bytearray_lstrip(PyByteArrayObject *self, PyObject *const *args, Py_ssize_t narg
     PyObject *return_value = NULL;
     PyObject *bytes = Py_None;
 
-    if (!_PyArg_CheckPositional("lstrip", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "lstrip", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "lstrip", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -878,8 +968,23 @@ bytearray_rstrip(PyByteArrayObject *self, PyObject *const *args, Py_ssize_t narg
     PyObject *return_value = NULL;
     PyObject *bytes = Py_None;
 
-    if (!_PyArg_CheckPositional("rstrip", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "rstrip", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "rstrip", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1227,8 +1332,23 @@ bytearray_reduce_ex(PyByteArrayObject *self, PyObject *const *args, Py_ssize_t n
     PyObject *return_value = NULL;
     int proto = 0;
 
-    if (!_PyArg_CheckPositional("__reduce_ex__", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "__reduce_ex__", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "__reduce_ex__", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1261,4 +1381,4 @@ bytearray_sizeof(PyByteArrayObject *self, PyObject *Py_UNUSED(ignored))
 {
     return bytearray_sizeof_impl(self);
 }
-/*[clinic end generated code: output=0797a5e03cda2a16 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=46238a6cf3009059 input=a9049054013a1b77]*/

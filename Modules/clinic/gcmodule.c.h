@@ -320,8 +320,14 @@ gc_get_referrers(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *__clinic_args = NULL;
 
-    if (!_PyArg_CheckPositional("get_referrers", nargs, 0, PY_SSIZE_T_MAX)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "get_referrers", nargs);
+            goto exit;
+        }
     }
     __clinic_args = PyTuple_New(nargs - 0);
     if (!__clinic_args) {
@@ -355,8 +361,14 @@ gc_get_referents(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *__clinic_args = NULL;
 
-    if (!_PyArg_CheckPositional("get_referents", nargs, 0, PY_SSIZE_T_MAX)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "get_referents", nargs);
+            goto exit;
+        }
     }
     __clinic_args = PyTuple_New(nargs - 0);
     if (!__clinic_args) {
@@ -585,4 +597,4 @@ gc_get_freeze_count(PyObject *module, PyObject *Py_UNUSED(ignored))
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=0a7e91917adcb937 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=bf2473afb577d25d input=a9049054013a1b77]*/

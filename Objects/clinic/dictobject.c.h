@@ -24,8 +24,23 @@ dict_fromkeys(PyTypeObject *type, PyObject *const *args, Py_ssize_t nargs)
     PyObject *iterable;
     PyObject *value = Py_None;
 
-    if (!_PyArg_CheckPositional("fromkeys", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "fromkeys", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "fromkeys", nargs);
+            goto exit;
+        }
     }
     iterable = args[0];
     if (nargs < 2) {
@@ -85,8 +100,23 @@ dict_get(PyDictObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *key;
     PyObject *default_value = Py_None;
 
-    if (!_PyArg_CheckPositional("get", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "get", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "get", nargs);
+            goto exit;
+        }
     }
     key = args[0];
     if (nargs < 2) {
@@ -124,8 +154,23 @@ dict_setdefault(PyDictObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *key;
     PyObject *default_value = Py_None;
 
-    if (!_PyArg_CheckPositional("setdefault", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "setdefault", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "setdefault", nargs);
+            goto exit;
+        }
     }
     key = args[0];
     if (nargs < 2) {
@@ -181,8 +226,23 @@ dict_pop(PyDictObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *key;
     PyObject *default_value = NULL;
 
-    if (!_PyArg_CheckPositional("pop", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "pop", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "pop", nargs);
+            goto exit;
+        }
     }
     key = args[0];
     if (nargs < 2) {
@@ -312,4 +372,4 @@ dict_values(PyDictObject *self, PyObject *Py_UNUSED(ignored))
 {
     return dict_values_impl(self);
 }
-/*[clinic end generated code: output=f3dd5f3fb8122aef input=a9049054013a1b77]*/
+/*[clinic end generated code: output=a8312fbc292393c6 input=a9049054013a1b77]*/

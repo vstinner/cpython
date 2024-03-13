@@ -3372,8 +3372,23 @@ os_execv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     path_t path = PATH_T_INITIALIZE("execv", "path", 0, 0);
     PyObject *argv;
 
-    if (!_PyArg_CheckPositional("execv", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "execv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "execv", nargs);
+            goto exit;
+        }
     }
     if (!path_converter(args[0], &path)) {
         goto exit;
@@ -3794,8 +3809,23 @@ os_spawnv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     path_t path = PATH_T_INITIALIZE("spawnv", "path", 0, 0);
     PyObject *argv;
 
-    if (!_PyArg_CheckPositional("spawnv", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "spawnv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "spawnv", nargs);
+            goto exit;
+        }
     }
     mode = PyLong_AsInt(args[0]);
     if (mode == -1 && PyErr_Occurred()) {
@@ -3849,8 +3879,23 @@ os_spawnve(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *argv;
     PyObject *env;
 
-    if (!_PyArg_CheckPositional("spawnve", nargs, 4, 4)) {
-        goto exit;
+    {
+        if (nargs < 4) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "spawnve", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "spawnve", nargs);
+            goto exit;
+        }
     }
     mode = PyLong_AsInt(args[0]);
     if (mode == -1 && PyErr_Occurred()) {
@@ -4816,8 +4861,23 @@ os_getgrouplist(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     const char *user;
     int basegid;
 
-    if (!_PyArg_CheckPositional("getgrouplist", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "getgrouplist", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "getgrouplist", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_Check(args[0])) {
         _PyArg_BadArgument("getgrouplist", "argument 1", "str", args[0]);
@@ -4870,8 +4930,23 @@ os_getgrouplist(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     const char *user;
     gid_t basegid;
 
-    if (!_PyArg_CheckPositional("getgrouplist", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "getgrouplist", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "getgrouplist", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_Check(args[0])) {
         _PyArg_BadArgument("getgrouplist", "argument 1", "str", args[0]);
@@ -4944,8 +5019,23 @@ os_initgroups(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *oname = NULL;
     int gid;
 
-    if (!_PyArg_CheckPositional("initgroups", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "initgroups", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "initgroups", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_FSConverter(args[0], &oname)) {
         goto exit;
@@ -4990,8 +5080,23 @@ os_initgroups(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *oname = NULL;
     gid_t gid;
 
-    if (!_PyArg_CheckPositional("initgroups", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "initgroups", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "initgroups", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_FSConverter(args[0], &oname)) {
         goto exit;
@@ -5392,8 +5497,23 @@ os_setreuid(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     uid_t ruid;
     uid_t euid;
 
-    if (!_PyArg_CheckPositional("setreuid", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "setreuid", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "setreuid", nargs);
+            goto exit;
+        }
     }
     if (!_Py_Uid_Converter(args[0], &ruid)) {
         goto exit;
@@ -5430,8 +5550,23 @@ os_setregid(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     gid_t rgid;
     gid_t egid;
 
-    if (!_PyArg_CheckPositional("setregid", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "setregid", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "setregid", nargs);
+            goto exit;
+        }
     }
     if (!_Py_Gid_Converter(args[0], &rgid)) {
         goto exit;
@@ -6866,8 +7001,23 @@ os_closerange(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int fd_low;
     int fd_high;
 
-    if (!_PyArg_CheckPositional("closerange", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "closerange", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "closerange", nargs);
+            goto exit;
+        }
     }
     fd_low = PyLong_AsInt(args[0]);
     if (fd_low == -1 && PyErr_Occurred()) {
@@ -7027,8 +7177,23 @@ os_lockf(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int command;
     Py_off_t length;
 
-    if (!_PyArg_CheckPositional("lockf", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "lockf", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "lockf", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -7082,8 +7247,23 @@ os_lseek(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int how;
     Py_off_t _return_value;
 
-    if (!_PyArg_CheckPositional("lseek", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "lseek", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "lseek", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -7125,8 +7305,23 @@ os_read(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int fd;
     Py_ssize_t length;
 
-    if (!_PyArg_CheckPositional("read", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "read", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "read", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -7180,8 +7375,23 @@ os_readv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *buffers;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("readv", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "readv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "readv", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -7225,8 +7435,23 @@ os_pread(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t length;
     Py_off_t offset;
 
-    if (!_PyArg_CheckPositional("pread", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "pread", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "pread", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -7294,8 +7519,23 @@ os_preadv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int flags = 0;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("preadv", nargs, 3, 4)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 3 arguments, got %zd",
+                "preadv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 4 arguments, got %zd",
+                "preadv", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -7345,8 +7585,23 @@ os_write(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_buffer data = {NULL, NULL};
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("write", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "write", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "write", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -7688,8 +7943,23 @@ os__fcopyfile(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int out_fd;
     int flags;
 
-    if (!_PyArg_CheckPositional("_fcopyfile", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "_fcopyfile", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "_fcopyfile", nargs);
+            goto exit;
+        }
     }
     in_fd = PyLong_AsInt(args[0]);
     if (in_fd == -1 && PyErr_Occurred()) {
@@ -7896,8 +8166,23 @@ os_writev(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *buffers;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("writev", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "writev", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "writev", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -7943,8 +8228,23 @@ os_pwrite(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_off_t offset;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("pwrite", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "pwrite", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "pwrite", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -8013,8 +8313,23 @@ os_pwritev(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int flags = 0;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("pwritev", nargs, 3, 4)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 3 arguments, got %zd",
+                "pwritev", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 4 arguments, got %zd",
+                "pwritev", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -8572,8 +8887,23 @@ os_makedev(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int minor;
     dev_t _return_value;
 
-    if (!_PyArg_CheckPositional("makedev", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "makedev", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "makedev", nargs);
+            goto exit;
+        }
     }
     major = PyLong_AsInt(args[0]);
     if (major == -1 && PyErr_Occurred()) {
@@ -8616,8 +8946,23 @@ os_ftruncate(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int fd;
     Py_off_t length;
 
-    if (!_PyArg_CheckPositional("ftruncate", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ftruncate", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ftruncate", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -8731,8 +9076,23 @@ os_posix_fallocate(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_off_t offset;
     Py_off_t length;
 
-    if (!_PyArg_CheckPositional("posix_fallocate", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "posix_fallocate", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "posix_fallocate", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -8784,8 +9144,23 @@ os_posix_fadvise(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_off_t length;
     int advice;
 
-    if (!_PyArg_CheckPositional("posix_fadvise", nargs, 4, 4)) {
-        goto exit;
+    {
+        if (nargs < 4) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "posix_fadvise", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "posix_fadvise", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -8830,8 +9205,23 @@ os_putenv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *name;
     PyObject *value;
 
-    if (!_PyArg_CheckPositional("putenv", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "putenv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "putenv", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_Check(args[0])) {
         _PyArg_BadArgument("putenv", "argument 1", "str", args[0]);
@@ -8872,8 +9262,23 @@ os_putenv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *name = NULL;
     PyObject *value = NULL;
 
-    if (!_PyArg_CheckPositional("putenv", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "putenv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "putenv", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_FSConverter(args[0], &name)) {
         goto exit;
@@ -9688,8 +10093,23 @@ os_fpathconf(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int name;
     long _return_value;
 
-    if (!_PyArg_CheckPositional("fpathconf", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "fpathconf", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "fpathconf", nargs);
+            goto exit;
+        }
     }
     if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
         goto exit;
@@ -10128,8 +10548,23 @@ os_setresuid(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     uid_t euid;
     uid_t suid;
 
-    if (!_PyArg_CheckPositional("setresuid", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "setresuid", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "setresuid", nargs);
+            goto exit;
+        }
     }
     if (!_Py_Uid_Converter(args[0], &ruid)) {
         goto exit;
@@ -10170,8 +10605,23 @@ os_setresgid(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     gid_t egid;
     gid_t sgid;
 
-    if (!_PyArg_CheckPositional("setresgid", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "setresgid", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "setresgid", nargs);
+            goto exit;
+        }
     }
     if (!_Py_Gid_Converter(args[0], &rgid)) {
         goto exit;
@@ -10942,8 +11392,23 @@ os_get_terminal_size(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     int fd = fileno(stdout);
 
-    if (!_PyArg_CheckPositional("get_terminal_size", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "get_terminal_size", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "get_terminal_size", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -11033,8 +11498,23 @@ os_set_inheritable(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int fd;
     int inheritable;
 
-    if (!_PyArg_CheckPositional("set_inheritable", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "set_inheritable", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "set_inheritable", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -11177,8 +11657,23 @@ os_set_blocking(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int fd;
     int blocking;
 
-    if (!_PyArg_CheckPositional("set_blocking", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "set_blocking", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "set_blocking", nargs);
+            goto exit;
+        }
     }
     fd = PyLong_AsInt(args[0]);
     if (fd == -1 && PyErr_Occurred()) {
@@ -12588,4 +13083,4 @@ os__supports_virtual_terminal(PyObject *module, PyObject *Py_UNUSED(ignored))
 #ifndef OS__SUPPORTS_VIRTUAL_TERMINAL_METHODDEF
     #define OS__SUPPORTS_VIRTUAL_TERMINAL_METHODDEF
 #endif /* !defined(OS__SUPPORTS_VIRTUAL_TERMINAL_METHODDEF) */
-/*[clinic end generated code: output=2965306970f31c5d input=a9049054013a1b77]*/
+/*[clinic end generated code: output=549a3cb0956a5e31 input=a9049054013a1b77]*/

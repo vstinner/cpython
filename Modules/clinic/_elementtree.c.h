@@ -670,8 +670,23 @@ _elementtree_Element_insert(ElementObject *self, PyObject *const *args, Py_ssize
     Py_ssize_t index;
     PyObject *subelement;
 
-    if (!_PyArg_CheckPositional("insert", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "insert", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "insert", nargs);
+            goto exit;
+        }
     }
     {
         Py_ssize_t ival = -1;
@@ -826,8 +841,23 @@ _elementtree_Element_set(ElementObject *self, PyObject *const *args, Py_ssize_t 
     PyObject *key;
     PyObject *value;
 
-    if (!_PyArg_CheckPositional("set", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "set", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "set", nargs);
+            goto exit;
+        }
     }
     key = args[0];
     value = args[1];
@@ -954,8 +984,23 @@ _elementtree__set_factories(PyObject *module, PyObject *const *args, Py_ssize_t 
     PyObject *comment_factory;
     PyObject *pi_factory;
 
-    if (!_PyArg_CheckPositional("_set_factories", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "_set_factories", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "_set_factories", nargs);
+            goto exit;
+        }
     }
     comment_factory = args[0];
     pi_factory = args[1];
@@ -1008,8 +1053,23 @@ _elementtree_TreeBuilder_pi(TreeBuilderObject *self, PyObject *const *args, Py_s
     PyObject *target;
     PyObject *text = Py_None;
 
-    if (!_PyArg_CheckPositional("pi", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "pi", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "pi", nargs);
+            goto exit;
+        }
     }
     target = args[0];
     if (nargs < 2) {
@@ -1059,8 +1119,23 @@ _elementtree_TreeBuilder_start(TreeBuilderObject *self, PyObject *const *args, P
     PyObject *tag;
     PyObject *attrs;
 
-    if (!_PyArg_CheckPositional("start", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "start", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "start", nargs);
+            goto exit;
+        }
     }
     tag = args[0];
     if (!PyDict_Check(args[1])) {
@@ -1222,8 +1297,23 @@ _elementtree_XMLParser__setevents(XMLParserObject *self, PyObject *const *args, 
     PyObject *events_queue;
     PyObject *events_to_report = Py_None;
 
-    if (!_PyArg_CheckPositional("_setevents", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "_setevents", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "_setevents", nargs);
+            goto exit;
+        }
     }
     events_queue = args[0];
     if (nargs < 2) {
@@ -1236,4 +1326,4 @@ skip_optional:
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=aed9f53eeb0404e0 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=d03bf5ce71d489eb input=a9049054013a1b77]*/

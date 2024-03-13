@@ -52,8 +52,23 @@ _operator_add(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("add", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "add", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "add", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -82,8 +97,23 @@ _operator_sub(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("sub", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "sub", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "sub", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -112,8 +142,23 @@ _operator_mul(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("mul", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "mul", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "mul", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -142,8 +187,23 @@ _operator_matmul(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("matmul", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "matmul", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "matmul", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -172,8 +232,23 @@ _operator_floordiv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("floordiv", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "floordiv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "floordiv", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -202,8 +277,23 @@ _operator_truediv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("truediv", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "truediv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "truediv", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -232,8 +322,23 @@ _operator_mod(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("mod", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "mod", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "mod", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -307,8 +412,23 @@ _operator_lshift(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("lshift", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "lshift", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "lshift", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -337,8 +457,23 @@ _operator_rshift(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("rshift", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "rshift", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "rshift", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -395,8 +530,23 @@ _operator_and_(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("and_", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "and_", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "and_", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -425,8 +575,23 @@ _operator_xor(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("xor", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "xor", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "xor", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -455,8 +620,23 @@ _operator_or_(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("or_", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "or_", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "or_", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -485,8 +665,23 @@ _operator_iadd(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("iadd", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "iadd", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "iadd", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -515,8 +710,23 @@ _operator_isub(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("isub", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "isub", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "isub", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -545,8 +755,23 @@ _operator_imul(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("imul", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "imul", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "imul", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -575,8 +800,23 @@ _operator_imatmul(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("imatmul", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "imatmul", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "imatmul", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -605,8 +845,23 @@ _operator_ifloordiv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("ifloordiv", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ifloordiv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ifloordiv", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -635,8 +890,23 @@ _operator_itruediv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("itruediv", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "itruediv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "itruediv", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -665,8 +935,23 @@ _operator_imod(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("imod", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "imod", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "imod", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -695,8 +980,23 @@ _operator_ilshift(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("ilshift", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ilshift", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ilshift", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -725,8 +1025,23 @@ _operator_irshift(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("irshift", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "irshift", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "irshift", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -755,8 +1070,23 @@ _operator_iand(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("iand", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "iand", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "iand", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -785,8 +1115,23 @@ _operator_ixor(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("ixor", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ixor", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ixor", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -815,8 +1160,23 @@ _operator_ior(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("ior", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ior", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ior", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -845,8 +1205,23 @@ _operator_concat(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("concat", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "concat", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "concat", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -875,8 +1250,23 @@ _operator_iconcat(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("iconcat", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "iconcat", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "iconcat", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -906,8 +1296,23 @@ _operator_contains(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *b;
     int _return_value;
 
-    if (!_PyArg_CheckPositional("contains", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "contains", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "contains", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -941,8 +1346,23 @@ _operator_indexOf(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *b;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("indexOf", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "indexOf", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "indexOf", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -976,8 +1396,23 @@ _operator_countOf(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *b;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("countOf", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "countOf", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "countOf", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1010,8 +1445,23 @@ _operator_getitem(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("getitem", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "getitem", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "getitem", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1042,8 +1492,23 @@ _operator_setitem(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *b;
     PyObject *c;
 
-    if (!_PyArg_CheckPositional("setitem", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "setitem", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "setitem", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1073,8 +1538,23 @@ _operator_delitem(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("delitem", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "delitem", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "delitem", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1103,8 +1583,23 @@ _operator_eq(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("eq", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "eq", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "eq", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1133,8 +1628,23 @@ _operator_ne(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("ne", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ne", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ne", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1163,8 +1673,23 @@ _operator_lt(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("lt", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "lt", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "lt", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1193,8 +1718,23 @@ _operator_le(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("le", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "le", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "le", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1223,8 +1763,23 @@ _operator_gt(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("gt", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "gt", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "gt", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1253,8 +1808,23 @@ _operator_ge(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("ge", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ge", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ge", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1283,8 +1853,23 @@ _operator_pow(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("pow", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "pow", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "pow", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1313,8 +1898,23 @@ _operator_ipow(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("ipow", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ipow", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ipow", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1352,8 +1952,23 @@ _operator_is_(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("is_", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "is_", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "is_", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1382,8 +1997,23 @@ _operator_is_not(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("is_not", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "is_not", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "is_not", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1420,8 +2050,23 @@ _operator_length_hint(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t default_value = 0;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("length_hint", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "length_hint", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "length_hint", nargs);
+            goto exit;
+        }
     }
     obj = args[0];
     if (nargs < 2) {
@@ -1479,8 +2124,23 @@ _operator__compare_digest(PyObject *module, PyObject *const *args, Py_ssize_t na
     PyObject *a;
     PyObject *b;
 
-    if (!_PyArg_CheckPositional("_compare_digest", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "_compare_digest", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "_compare_digest", nargs);
+            goto exit;
+        }
     }
     a = args[0];
     b = args[1];
@@ -1489,4 +2149,4 @@ _operator__compare_digest(PyObject *module, PyObject *const *args, Py_ssize_t na
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=ddbba2cd943571eb input=a9049054013a1b77]*/
+/*[clinic end generated code: output=f07c2ac229d6cefb input=a9049054013a1b77]*/

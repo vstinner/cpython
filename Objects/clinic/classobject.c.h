@@ -42,8 +42,23 @@ method_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
         !_PyArg_NoKeywords("method", kwargs)) {
         goto exit;
     }
-    if (!_PyArg_CheckPositional("method", PyTuple_GET_SIZE(args), 2, 2)) {
-        goto exit;
+    {
+        if (PyTuple_GET_SIZE(args) < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "method", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (PyTuple_GET_SIZE(args) != 0 && PyTuple_GET_SIZE(args) > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "method", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
     }
     function = PyTuple_GET_ITEM(args, 0);
     instance = PyTuple_GET_ITEM(args, 1);
@@ -73,8 +88,23 @@ instancemethod_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
         !_PyArg_NoKeywords("instancemethod", kwargs)) {
         goto exit;
     }
-    if (!_PyArg_CheckPositional("instancemethod", PyTuple_GET_SIZE(args), 1, 1)) {
-        goto exit;
+    {
+        if (PyTuple_GET_SIZE(args) < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 1 argument, got %zd",
+                "instancemethod", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (PyTuple_GET_SIZE(args) != 0 && PyTuple_GET_SIZE(args) > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 1 argument, got %zd",
+                "instancemethod", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
     }
     function = PyTuple_GET_ITEM(args, 0);
     return_value = instancemethod_new_impl(type, function);
@@ -82,4 +112,4 @@ instancemethod_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=5a5e3f2d0726f189 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=d46ec5a0c1600055 input=a9049054013a1b77]*/

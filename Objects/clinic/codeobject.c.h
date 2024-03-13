@@ -54,8 +54,23 @@ code_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
         !_PyArg_NoKeywords("code", kwargs)) {
         goto exit;
     }
-    if (!_PyArg_CheckPositional("code", PyTuple_GET_SIZE(args), 16, 18)) {
-        goto exit;
+    {
+        if (PyTuple_GET_SIZE(args) < 16) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 16 arguments, got %zd",
+                "code", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 18;
+        if (PyTuple_GET_SIZE(args) != 0 && PyTuple_GET_SIZE(args) > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 18 arguments, got %zd",
+                "code", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
     }
     argcount = PyLong_AsInt(PyTuple_GET_ITEM(args, 0));
     if (argcount == -1 && PyErr_Occurred()) {
@@ -464,4 +479,4 @@ code__varname_from_oparg(PyCodeObject *self, PyObject *const *args, Py_ssize_t n
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=d604263a3ca72a0f input=a9049054013a1b77]*/
+/*[clinic end generated code: output=785e385421d8ce0a input=a9049054013a1b77]*/

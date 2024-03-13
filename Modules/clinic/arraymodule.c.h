@@ -82,8 +82,23 @@ array_array_index(arrayobject *self, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t start = 0;
     Py_ssize_t stop = PY_SSIZE_T_MAX;
 
-    if (!_PyArg_CheckPositional("index", nargs, 1, 3)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "index", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "index", nargs);
+            goto exit;
+        }
     }
     v = args[0];
     if (nargs < 2) {
@@ -134,8 +149,23 @@ array_array_pop(arrayobject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     Py_ssize_t i = -1;
 
-    if (!_PyArg_CheckPositional("pop", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "pop", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "pop", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -221,8 +251,23 @@ array_array_insert(arrayobject *self, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t i;
     PyObject *v;
 
-    if (!_PyArg_CheckPositional("insert", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "insert", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "insert", nargs);
+            goto exit;
+        }
     }
     {
         Py_ssize_t ival = -1;
@@ -587,8 +632,23 @@ array__array_reconstructor(PyObject *module, PyObject *const *args, Py_ssize_t n
     enum machine_format_code mformat_code;
     PyObject *items;
 
-    if (!_PyArg_CheckPositional("_array_reconstructor", nargs, 4, 4)) {
-        goto exit;
+    {
+        if (nargs < 4) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "_array_reconstructor", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "_array_reconstructor", nargs);
+            goto exit;
+        }
     }
     arraytype = (PyTypeObject *)args[0];
     if (!PyUnicode_Check(args[1])) {
@@ -685,4 +745,4 @@ PyDoc_STRVAR(array_arrayiterator___setstate____doc__,
 
 #define ARRAY_ARRAYITERATOR___SETSTATE___METHODDEF    \
     {"__setstate__", (PyCFunction)array_arrayiterator___setstate__, METH_O, array_arrayiterator___setstate____doc__},
-/*[clinic end generated code: output=52c55d9b1d026c1c input=a9049054013a1b77]*/
+/*[clinic end generated code: output=87275bcdb543d55d input=a9049054013a1b77]*/

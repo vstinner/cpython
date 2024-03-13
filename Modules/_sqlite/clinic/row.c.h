@@ -20,8 +20,23 @@ pysqlite_row_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
         !_PyArg_NoKeywords("Row", kwargs)) {
         goto exit;
     }
-    if (!_PyArg_CheckPositional("Row", PyTuple_GET_SIZE(args), 2, 2)) {
-        goto exit;
+    {
+        if (PyTuple_GET_SIZE(args) < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "Row", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (PyTuple_GET_SIZE(args) != 0 && PyTuple_GET_SIZE(args) > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "Row", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
     }
     if (!PyObject_TypeCheck(PyTuple_GET_ITEM(args, 0), clinic_state()->CursorType)) {
         _PyArg_BadArgument("Row", "argument 1", (clinic_state()->CursorType)->tp_name, PyTuple_GET_ITEM(args, 0));
@@ -56,4 +71,4 @@ pysqlite_row_keys(pysqlite_Row *self, PyObject *Py_UNUSED(ignored))
 {
     return pysqlite_row_keys_impl(self);
 }
-/*[clinic end generated code: output=788bf817acc02b8e input=a9049054013a1b77]*/
+/*[clinic end generated code: output=4a9bd060b1f86a78 input=a9049054013a1b77]*/

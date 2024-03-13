@@ -244,8 +244,23 @@ deque_rotate(dequeobject *deque, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     Py_ssize_t n = 1;
 
-    if (!_PyArg_CheckPositional("rotate", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "rotate", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "rotate", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -342,8 +357,23 @@ deque_index(dequeobject *deque, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t start = 0;
     Py_ssize_t stop = Py_SIZE(deque);
 
-    if (!_PyArg_CheckPositional("index", nargs, 1, 3)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "index", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "index", nargs);
+            goto exit;
+        }
     }
     v = args[0];
     if (nargs < 2) {
@@ -386,8 +416,23 @@ deque_insert(dequeobject *deque, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t index;
     PyObject *value;
 
-    if (!_PyArg_CheckPositional("insert", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "insert", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "insert", nargs);
+            goto exit;
+        }
     }
     {
         Py_ssize_t ival = -1;
@@ -582,8 +627,23 @@ _collections__count_elements(PyObject *module, PyObject *const *args, Py_ssize_t
     PyObject *mapping;
     PyObject *iterable;
 
-    if (!_PyArg_CheckPositional("_count_elements", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "_count_elements", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "_count_elements", nargs);
+            goto exit;
+        }
     }
     mapping = args[0];
     iterable = args[1];
@@ -608,8 +668,23 @@ tuplegetter_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
         !_PyArg_NoKeywords("_tuplegetter", kwargs)) {
         goto exit;
     }
-    if (!_PyArg_CheckPositional("_tuplegetter", PyTuple_GET_SIZE(args), 2, 2)) {
-        goto exit;
+    {
+        if (PyTuple_GET_SIZE(args) < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "_tuplegetter", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (PyTuple_GET_SIZE(args) != 0 && PyTuple_GET_SIZE(args) > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "_tuplegetter", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
     }
     {
         Py_ssize_t ival = -1;
@@ -629,4 +704,4 @@ tuplegetter_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=64c32b16df7be07a input=a9049054013a1b77]*/
+/*[clinic end generated code: output=d9bf8123f60eb948 input=a9049054013a1b77]*/

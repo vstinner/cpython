@@ -25,8 +25,23 @@ _statistics__normal_dist_inv_cdf(PyObject *module, PyObject *const *args, Py_ssi
     double sigma;
     double _return_value;
 
-    if (!_PyArg_CheckPositional("_normal_dist_inv_cdf", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "_normal_dist_inv_cdf", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "_normal_dist_inv_cdf", nargs);
+            goto exit;
+        }
     }
     if (PyFloat_CheckExact(args[0])) {
         p = PyFloat_AS_DOUBLE(args[0]);
@@ -67,4 +82,4 @@ _statistics__normal_dist_inv_cdf(PyObject *module, PyObject *const *args, Py_ssi
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=e7cead17f9f3e19f input=a9049054013a1b77]*/
+/*[clinic end generated code: output=195cea79841f5ff6 input=a9049054013a1b77]*/

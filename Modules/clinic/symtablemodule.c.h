@@ -25,8 +25,23 @@ _symtable_symtable(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *filename;
     const char *startstr;
 
-    if (!_PyArg_CheckPositional("symtable", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "symtable", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "symtable", nargs);
+            goto exit;
+        }
     }
     source = args[0];
     if (!PyUnicode_FSDecoder(args[1], &filename)) {
@@ -50,4 +65,4 @@ _symtable_symtable(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=931964a76a72f850 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=6bb35ee4da5fbaba input=a9049054013a1b77]*/

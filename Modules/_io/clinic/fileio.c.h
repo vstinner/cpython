@@ -415,8 +415,23 @@ _io_FileIO_seek(fileio *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *pos;
     int whence = 0;
 
-    if (!_PyArg_CheckPositional("seek", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "seek", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "seek", nargs);
+            goto exit;
+        }
     }
     pos = args[0];
     if (nargs < 2) {
@@ -528,4 +543,4 @@ _io_FileIO_isatty(fileio *self, PyObject *Py_UNUSED(ignored))
 #ifndef _IO_FILEIO_TRUNCATE_METHODDEF
     #define _IO_FILEIO_TRUNCATE_METHODDEF
 #endif /* !defined(_IO_FILEIO_TRUNCATE_METHODDEF) */
-/*[clinic end generated code: output=e3d9446b4087020e input=a9049054013a1b77]*/
+/*[clinic end generated code: output=ba45021a245131ca input=a9049054013a1b77]*/

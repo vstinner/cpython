@@ -23,8 +23,23 @@ _gdbm_gdbm_get(gdbmobject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *key;
     PyObject *default_value = Py_None;
 
-    if (!_PyArg_CheckPositional("get", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "get", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "get", nargs);
+            goto exit;
+        }
     }
     key = args[0];
     if (nargs < 2) {
@@ -58,8 +73,23 @@ _gdbm_gdbm_setdefault(gdbmobject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *key;
     PyObject *default_value = Py_None;
 
-    if (!_PyArg_CheckPositional("setdefault", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "setdefault", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "setdefault", nargs);
+            goto exit;
+        }
     }
     key = args[0];
     if (nargs < 2) {
@@ -307,8 +337,23 @@ dbmopen(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     const char *flags = "r";
     int mode = 438;
 
-    if (!_PyArg_CheckPositional("open", nargs, 1, 3)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "open", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "open", nargs);
+            goto exit;
+        }
     }
     filename = args[0];
     if (nargs < 2) {
@@ -340,4 +385,4 @@ skip_optional:
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=6b4c19905ac9967d input=a9049054013a1b77]*/
+/*[clinic end generated code: output=38a18206061262e9 input=a9049054013a1b77]*/

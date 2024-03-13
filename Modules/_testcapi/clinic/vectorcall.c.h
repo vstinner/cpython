@@ -24,8 +24,23 @@ _testcapi_pyobject_fastcalldict(PyObject *module, PyObject *const *args, Py_ssiz
     PyObject *func_args;
     PyObject *__clinic_kwargs;
 
-    if (!_PyArg_CheckPositional("pyobject_fastcalldict", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "pyobject_fastcalldict", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "pyobject_fastcalldict", nargs);
+            goto exit;
+        }
     }
     func = args[0];
     func_args = args[1];
@@ -56,8 +71,23 @@ _testcapi_pyobject_vectorcall(PyObject *module, PyObject *const *args, Py_ssize_
     PyObject *func_args;
     PyObject *__clinic_kwnames;
 
-    if (!_PyArg_CheckPositional("pyobject_vectorcall", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "pyobject_vectorcall", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "pyobject_vectorcall", nargs);
+            goto exit;
+        }
     }
     func = args[0];
     func_args = args[1];
@@ -88,8 +118,23 @@ _testcapi_pyvectorcall_call(PyObject *module, PyObject *const *args, Py_ssize_t 
     PyObject *argstuple;
     PyObject *__clinic_kwargs = NULL;
 
-    if (!_PyArg_CheckPositional("pyvectorcall_call", nargs, 2, 3)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 2 arguments, got %zd",
+                "pyvectorcall_call", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "pyvectorcall_call", nargs);
+            goto exit;
+        }
     }
     func = args[0];
     argstuple = args[1];
@@ -155,8 +200,23 @@ _testcapi_make_vectorcall_class(PyObject *module, PyObject *const *args, Py_ssiz
     PyObject *return_value = NULL;
     PyTypeObject *base = NULL;
 
-    if (!_PyArg_CheckPositional("make_vectorcall_class", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "make_vectorcall_class", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "make_vectorcall_class", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -206,4 +266,4 @@ _testcapi_has_vectorcall_flag(PyObject *module, PyObject *arg)
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=210ae67caab177ba input=a9049054013a1b77]*/
+/*[clinic end generated code: output=ea4e79aff54e66e7 input=a9049054013a1b77]*/

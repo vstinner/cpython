@@ -24,8 +24,23 @@ _suggestions__generate_suggestions(PyObject *module, PyObject *const *args, Py_s
     PyObject *candidates;
     PyObject *item;
 
-    if (!_PyArg_CheckPositional("_generate_suggestions", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "_generate_suggestions", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "_generate_suggestions", nargs);
+            goto exit;
+        }
     }
     candidates = args[0];
     if (!PyUnicode_Check(args[1])) {
@@ -38,4 +53,4 @@ _suggestions__generate_suggestions(PyObject *module, PyObject *const *args, Py_s
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=1d8e963cdae30b13 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=1308a56068fce1ad input=a9049054013a1b77]*/

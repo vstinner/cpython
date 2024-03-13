@@ -33,8 +33,23 @@ _overlapped_CreateIoCompletionPort(PyObject *module, PyObject *const *args, Py_s
     ULONG_PTR CompletionKey;
     DWORD NumberOfConcurrentThreads;
 
-    if (!_PyArg_CheckPositional("CreateIoCompletionPort", nargs, 4, 4)) {
-        goto exit;
+    {
+        if (nargs < 4) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "CreateIoCompletionPort", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "CreateIoCompletionPort", nargs);
+            goto exit;
+        }
     }
     FileHandle = PyLong_AsVoidPtr(args[0]);
     if (!FileHandle && PyErr_Occurred()) {
@@ -80,8 +95,23 @@ _overlapped_GetQueuedCompletionStatus(PyObject *module, PyObject *const *args, P
     HANDLE CompletionPort;
     DWORD Milliseconds;
 
-    if (!_PyArg_CheckPositional("GetQueuedCompletionStatus", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "GetQueuedCompletionStatus", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "GetQueuedCompletionStatus", nargs);
+            goto exit;
+        }
     }
     CompletionPort = PyLong_AsVoidPtr(args[0]);
     if (!CompletionPort && PyErr_Occurred()) {
@@ -121,8 +151,23 @@ _overlapped_PostQueuedCompletionStatus(PyObject *module, PyObject *const *args, 
     ULONG_PTR CompletionKey;
     OVERLAPPED *Overlapped;
 
-    if (!_PyArg_CheckPositional("PostQueuedCompletionStatus", nargs, 4, 4)) {
-        goto exit;
+    {
+        if (nargs < 4) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "PostQueuedCompletionStatus", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "PostQueuedCompletionStatus", nargs);
+            goto exit;
+        }
     }
     CompletionPort = PyLong_AsVoidPtr(args[0]);
     if (!CompletionPort && PyErr_Occurred()) {
@@ -170,8 +215,23 @@ _overlapped_RegisterWaitWithQueue(PyObject *module, PyObject *const *args, Py_ss
     OVERLAPPED *Overlapped;
     DWORD Milliseconds;
 
-    if (!_PyArg_CheckPositional("RegisterWaitWithQueue", nargs, 4, 4)) {
-        goto exit;
+    {
+        if (nargs < 4) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "RegisterWaitWithQueue", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "RegisterWaitWithQueue", nargs);
+            goto exit;
+        }
     }
     Object = PyLong_AsVoidPtr(args[0]);
     if (!Object && PyErr_Occurred()) {
@@ -242,8 +302,23 @@ _overlapped_UnregisterWaitEx(PyObject *module, PyObject *const *args, Py_ssize_t
     HANDLE WaitHandle;
     HANDLE Event;
 
-    if (!_PyArg_CheckPositional("UnregisterWaitEx", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "UnregisterWaitEx", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "UnregisterWaitEx", nargs);
+            goto exit;
+        }
     }
     WaitHandle = PyLong_AsVoidPtr(args[0]);
     if (!WaitHandle && PyErr_Occurred()) {
@@ -285,8 +360,23 @@ _overlapped_CreateEvent(PyObject *module, PyObject *const *args, Py_ssize_t narg
     BOOL InitialState;
     const wchar_t *Name = NULL;
 
-    if (!_PyArg_CheckPositional("CreateEvent", nargs, 4, 4)) {
-        goto exit;
+    {
+        if (nargs < 4) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "CreateEvent", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "CreateEvent", nargs);
+            goto exit;
+        }
     }
     EventAttributes = args[0];
     ManualReset = PyLong_AsInt(args[1]);
@@ -396,8 +486,23 @@ _overlapped_BindLocal(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     HANDLE Socket;
     int Family;
 
-    if (!_PyArg_CheckPositional("BindLocal", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "BindLocal", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "BindLocal", nargs);
+            goto exit;
+        }
     }
     Socket = PyLong_AsVoidPtr(args[0]);
     if (!Socket && PyErr_Occurred()) {
@@ -541,8 +646,23 @@ _overlapped_Overlapped_getresult(OverlappedObject *self, PyObject *const *args, 
     PyObject *return_value = NULL;
     BOOL wait = FALSE;
 
-    if (!_PyArg_CheckPositional("getresult", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "getresult", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "getresult", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -578,8 +698,23 @@ _overlapped_Overlapped_ReadFile(OverlappedObject *self, PyObject *const *args, P
     HANDLE handle;
     DWORD size;
 
-    if (!_PyArg_CheckPositional("ReadFile", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ReadFile", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ReadFile", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -614,8 +749,23 @@ _overlapped_Overlapped_ReadFileInto(OverlappedObject *self, PyObject *const *arg
     HANDLE handle;
     Py_buffer bufobj = {NULL, NULL};
 
-    if (!_PyArg_CheckPositional("ReadFileInto", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ReadFileInto", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ReadFileInto", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -656,8 +806,23 @@ _overlapped_Overlapped_WSARecv(OverlappedObject *self, PyObject *const *args, Py
     DWORD size;
     DWORD flags = 0;
 
-    if (!_PyArg_CheckPositional("WSARecv", nargs, 2, 3)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 2 arguments, got %zd",
+                "WSARecv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "WSARecv", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -701,8 +866,23 @@ _overlapped_Overlapped_WSARecvInto(OverlappedObject *self, PyObject *const *args
     Py_buffer bufobj = {NULL, NULL};
     DWORD flags;
 
-    if (!_PyArg_CheckPositional("WSARecvInto", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "WSARecvInto", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "WSARecvInto", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -745,8 +925,23 @@ _overlapped_Overlapped_WriteFile(OverlappedObject *self, PyObject *const *args, 
     HANDLE handle;
     Py_buffer bufobj = {NULL, NULL};
 
-    if (!_PyArg_CheckPositional("WriteFile", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "WriteFile", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "WriteFile", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -787,8 +982,23 @@ _overlapped_Overlapped_WSASend(OverlappedObject *self, PyObject *const *args, Py
     Py_buffer bufobj = {NULL, NULL};
     DWORD flags;
 
-    if (!_PyArg_CheckPositional("WSASend", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "WSASend", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "WSASend", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -832,8 +1042,23 @@ _overlapped_Overlapped_AcceptEx(OverlappedObject *self, PyObject *const *args, P
     HANDLE ListenSocket;
     HANDLE AcceptSocket;
 
-    if (!_PyArg_CheckPositional("AcceptEx", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "AcceptEx", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "AcceptEx", nargs);
+            goto exit;
+        }
     }
     ListenSocket = PyLong_AsVoidPtr(args[0]);
     if (!ListenSocket && PyErr_Occurred()) {
@@ -872,8 +1097,23 @@ _overlapped_Overlapped_ConnectEx(OverlappedObject *self, PyObject *const *args, 
     HANDLE ConnectSocket;
     PyObject *AddressObj;
 
-    if (!_PyArg_CheckPositional("ConnectEx", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ConnectEx", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ConnectEx", nargs);
+            goto exit;
+        }
     }
     ConnectSocket = PyLong_AsVoidPtr(args[0]);
     if (!ConnectSocket && PyErr_Occurred()) {
@@ -909,8 +1149,23 @@ _overlapped_Overlapped_DisconnectEx(OverlappedObject *self, PyObject *const *arg
     HANDLE Socket;
     DWORD flags;
 
-    if (!_PyArg_CheckPositional("DisconnectEx", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "DisconnectEx", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "DisconnectEx", nargs);
+            goto exit;
+        }
     }
     Socket = PyLong_AsVoidPtr(args[0]);
     if (!Socket && PyErr_Occurred()) {
@@ -954,8 +1209,23 @@ _overlapped_Overlapped_TransmitFile(OverlappedObject *self, PyObject *const *arg
     DWORD count_per_send;
     DWORD flags;
 
-    if (!_PyArg_CheckPositional("TransmitFile", nargs, 7, 7)) {
-        goto exit;
+    {
+        if (nargs < 7) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 7 arguments, got %zd",
+                "TransmitFile", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 7;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 7 arguments, got %zd",
+                "TransmitFile", nargs);
+            goto exit;
+        }
     }
     Socket = PyLong_AsVoidPtr(args[0]);
     if (!Socket && PyErr_Occurred()) {
@@ -1071,8 +1341,23 @@ _overlapped_WSAConnect(PyObject *module, PyObject *const *args, Py_ssize_t nargs
     HANDLE ConnectSocket;
     PyObject *AddressObj;
 
-    if (!_PyArg_CheckPositional("WSAConnect", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "WSAConnect", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "WSAConnect", nargs);
+            goto exit;
+        }
     }
     ConnectSocket = PyLong_AsVoidPtr(args[0]);
     if (!ConnectSocket && PyErr_Occurred()) {
@@ -1112,8 +1397,23 @@ _overlapped_Overlapped_WSASendTo(OverlappedObject *self, PyObject *const *args, 
     DWORD flags;
     PyObject *AddressObj;
 
-    if (!_PyArg_CheckPositional("WSASendTo", nargs, 4, 4)) {
-        goto exit;
+    {
+        if (nargs < 4) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "WSASendTo", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "WSASendTo", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -1163,8 +1463,23 @@ _overlapped_Overlapped_WSARecvFrom(OverlappedObject *self, PyObject *const *args
     DWORD size;
     DWORD flags = 0;
 
-    if (!_PyArg_CheckPositional("WSARecvFrom", nargs, 2, 3)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 2 arguments, got %zd",
+                "WSARecvFrom", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "WSARecvFrom", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -1209,8 +1524,23 @@ _overlapped_Overlapped_WSARecvFromInto(OverlappedObject *self, PyObject *const *
     DWORD size;
     DWORD flags = 0;
 
-    if (!_PyArg_CheckPositional("WSARecvFromInto", nargs, 3, 4)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 3 arguments, got %zd",
+                "WSARecvFromInto", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 4 arguments, got %zd",
+                "WSARecvFromInto", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -1239,4 +1569,4 @@ exit:
 
     return return_value;
 }
-/*[clinic end generated code: output=958cbddbcc355f47 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=fe4aeecc5e7e0596 input=a9049054013a1b77]*/

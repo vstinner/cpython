@@ -33,8 +33,23 @@ readline_read_init_file(PyObject *module, PyObject *const *args, Py_ssize_t narg
     PyObject *return_value = NULL;
     PyObject *filename_obj = Py_None;
 
-    if (!_PyArg_CheckPositional("read_init_file", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "read_init_file", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "read_init_file", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -67,8 +82,23 @@ readline_read_history_file(PyObject *module, PyObject *const *args, Py_ssize_t n
     PyObject *return_value = NULL;
     PyObject *filename_obj = Py_None;
 
-    if (!_PyArg_CheckPositional("read_history_file", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "read_history_file", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "read_history_file", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -101,8 +131,23 @@ readline_write_history_file(PyObject *module, PyObject *const *args, Py_ssize_t 
     PyObject *return_value = NULL;
     PyObject *filename_obj = Py_None;
 
-    if (!_PyArg_CheckPositional("write_history_file", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "write_history_file", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "write_history_file", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -139,8 +184,23 @@ readline_append_history_file(PyObject *module, PyObject *const *args, Py_ssize_t
     int nelements;
     PyObject *filename_obj = Py_None;
 
-    if (!_PyArg_CheckPositional("append_history_file", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "append_history_file", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "append_history_file", nargs);
+            goto exit;
+        }
     }
     nelements = PyLong_AsInt(args[0]);
     if (nelements == -1 && PyErr_Occurred()) {
@@ -230,8 +290,23 @@ readline_set_completion_display_matches_hook(PyObject *module, PyObject *const *
     PyObject *return_value = NULL;
     PyObject *function = Py_None;
 
-    if (!_PyArg_CheckPositional("set_completion_display_matches_hook", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "set_completion_display_matches_hook", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "set_completion_display_matches_hook", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -265,8 +340,23 @@ readline_set_startup_hook(PyObject *module, PyObject *const *args, Py_ssize_t na
     PyObject *return_value = NULL;
     PyObject *function = Py_None;
 
-    if (!_PyArg_CheckPositional("set_startup_hook", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "set_startup_hook", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "set_startup_hook", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -303,8 +393,23 @@ readline_set_pre_input_hook(PyObject *module, PyObject *const *args, Py_ssize_t 
     PyObject *return_value = NULL;
     PyObject *function = Py_None;
 
-    if (!_PyArg_CheckPositional("set_pre_input_hook", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "set_pre_input_hook", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "set_pre_input_hook", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -432,8 +537,23 @@ readline_replace_history_item(PyObject *module, PyObject *const *args, Py_ssize_
     int entry_number;
     PyObject *line;
 
-    if (!_PyArg_CheckPositional("replace_history_item", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "replace_history_item", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "replace_history_item", nargs);
+            goto exit;
+        }
     }
     entry_number = PyLong_AsInt(args[0]);
     if (entry_number == -1 && PyErr_Occurred()) {
@@ -528,8 +648,23 @@ readline_set_completer(PyObject *module, PyObject *const *args, Py_ssize_t nargs
     PyObject *return_value = NULL;
     PyObject *function = Py_None;
 
-    if (!_PyArg_CheckPositional("set_completer", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "set_completer", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "set_completer", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -684,4 +819,4 @@ readline_redisplay(PyObject *module, PyObject *Py_UNUSED(ignored))
 #ifndef READLINE_CLEAR_HISTORY_METHODDEF
     #define READLINE_CLEAR_HISTORY_METHODDEF
 #endif /* !defined(READLINE_CLEAR_HISTORY_METHODDEF) */
-/*[clinic end generated code: output=358ab465285c7949 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=9b6141854380d3cf input=a9049054013a1b77]*/

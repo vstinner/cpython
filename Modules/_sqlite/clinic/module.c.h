@@ -95,8 +95,23 @@ pysqlite_register_adapter(PyObject *module, PyObject *const *args, Py_ssize_t na
     PyTypeObject *type;
     PyObject *caster;
 
-    if (!_PyArg_CheckPositional("register_adapter", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "register_adapter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "register_adapter", nargs);
+            goto exit;
+        }
     }
     type = (PyTypeObject *)args[0];
     caster = args[1];
@@ -126,8 +141,23 @@ pysqlite_register_converter(PyObject *module, PyObject *const *args, Py_ssize_t 
     PyObject *orig_name;
     PyObject *callable;
 
-    if (!_PyArg_CheckPositional("register_converter", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "register_converter", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "register_converter", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_Check(args[0])) {
         _PyArg_BadArgument("register_converter", "argument 1", "str", args[0]);
@@ -190,8 +220,23 @@ pysqlite_adapt(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *proto = (PyObject *)clinic_state()->PrepareProtocolType;
     PyObject *alt = NULL;
 
-    if (!_PyArg_CheckPositional("adapt", nargs, 1, 3)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "adapt", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "adapt", nargs);
+            goto exit;
+        }
     }
     obj = args[0];
     if (nargs < 2) {
@@ -208,4 +253,4 @@ skip_optional:
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=457ab0fdbb9e1880 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=5d63f2af4c439fd8 input=a9049054013a1b77]*/

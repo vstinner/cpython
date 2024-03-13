@@ -108,8 +108,23 @@ unicode_center(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t width;
     Py_UCS4 fillchar = ' ';
 
-    if (!_PyArg_CheckPositional("center", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "center", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "center", nargs);
+            goto exit;
+        }
     }
     {
         Py_ssize_t ival = -1;
@@ -588,8 +603,23 @@ unicode_ljust(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t width;
     Py_UCS4 fillchar = ' ';
 
-    if (!_PyArg_CheckPositional("ljust", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "ljust", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "ljust", nargs);
+            goto exit;
+        }
     }
     {
         Py_ssize_t ival = -1;
@@ -654,8 +684,23 @@ unicode_strip(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *chars = Py_None;
 
-    if (!_PyArg_CheckPositional("strip", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "strip", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "strip", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -688,8 +733,23 @@ unicode_lstrip(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *chars = Py_None;
 
-    if (!_PyArg_CheckPositional("lstrip", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "lstrip", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "lstrip", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -722,8 +782,23 @@ unicode_rstrip(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *chars = Py_None;
 
-    if (!_PyArg_CheckPositional("rstrip", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "rstrip", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "rstrip", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -913,8 +988,23 @@ unicode_rjust(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t width;
     Py_UCS4 fillchar = ' ';
 
-    if (!_PyArg_CheckPositional("rjust", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "rjust", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "rjust", nargs);
+            goto exit;
+        }
     }
     {
         Py_ssize_t ival = -1;
@@ -1269,8 +1359,23 @@ unicode_maketrans(void *null, PyObject *const *args, Py_ssize_t nargs)
     PyObject *y = NULL;
     PyObject *z = NULL;
 
-    if (!_PyArg_CheckPositional("maketrans", nargs, 1, 3)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "maketrans", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "maketrans", nargs);
+            goto exit;
+        }
     }
     x = args[0];
     if (nargs < 2) {
@@ -1507,4 +1612,4 @@ skip_optional_pos:
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=1aab29bab5201c78 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=95ef709dd5ed43b1 input=a9049054013a1b77]*/

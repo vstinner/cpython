@@ -26,14 +26,6 @@ PyAPI_FUNC(int) _PyArg_NoKeywords(const char *funcname, PyObject *kwargs);
 #define _PyArg_NoKeywords(funcname, kwargs) \
     ((kwargs) == NULL || _PyArg_NoKeywords((funcname), (kwargs)))
 
-// Export for 'zlib' shared extension
-PyAPI_FUNC(int) _PyArg_CheckPositional(const char *, Py_ssize_t,
-                                       Py_ssize_t, Py_ssize_t);
-#define _Py_ANY_VARARGS(n) ((n) == PY_SSIZE_T_MAX)
-#define _PyArg_CheckPositional(funcname, nargs, min, max) \
-    ((!_Py_ANY_VARARGS(max) && (min) <= (nargs) && (nargs) <= (max)) \
-     || _PyArg_CheckPositional((funcname), (nargs), (min), (max)))
-
 extern PyObject ** _Py_VaBuildStack(
     PyObject **small_stack,
     Py_ssize_t small_stack_len,

@@ -23,8 +23,23 @@ _locale_setlocale(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int category;
     const char *locale = NULL;
 
-    if (!_PyArg_CheckPositional("setlocale", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "setlocale", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "setlocale", nargs);
+            goto exit;
+        }
     }
     category = PyLong_AsInt(args[0]);
     if (category == -1 && PyErr_Occurred()) {
@@ -97,8 +112,23 @@ _locale_strcoll(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *os1;
     PyObject *os2;
 
-    if (!_PyArg_CheckPositional("strcoll", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "strcoll", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "strcoll", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_Check(args[0])) {
         _PyArg_BadArgument("strcoll", "argument 1", "str", args[0]);
@@ -270,8 +300,23 @@ _locale_dgettext(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     const char *domain;
     const char *in;
 
-    if (!_PyArg_CheckPositional("dgettext", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "dgettext", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "dgettext", nargs);
+            goto exit;
+        }
     }
     if (args[0] == Py_None) {
         domain = NULL;
@@ -335,8 +380,23 @@ _locale_dcgettext(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     const char *msgid;
     int category;
 
-    if (!_PyArg_CheckPositional("dcgettext", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "dcgettext", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "dcgettext", nargs);
+            goto exit;
+        }
     }
     if (args[0] == Py_None) {
         domain = NULL;
@@ -449,8 +509,23 @@ _locale_bindtextdomain(PyObject *module, PyObject *const *args, Py_ssize_t nargs
     const char *domain;
     PyObject *dirname_obj;
 
-    if (!_PyArg_CheckPositional("bindtextdomain", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "bindtextdomain", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "bindtextdomain", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_Check(args[0])) {
         _PyArg_BadArgument("bindtextdomain", "argument 1", "str", args[0]);
@@ -496,8 +571,23 @@ _locale_bind_textdomain_codeset(PyObject *module, PyObject *const *args, Py_ssiz
     const char *domain;
     const char *codeset;
 
-    if (!_PyArg_CheckPositional("bind_textdomain_codeset", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "bind_textdomain_codeset", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "bind_textdomain_codeset", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_Check(args[0])) {
         _PyArg_BadArgument("bind_textdomain_codeset", "argument 1", "str", args[0]);
@@ -595,4 +685,4 @@ _locale_getencoding(PyObject *module, PyObject *Py_UNUSED(ignored))
 #ifndef _LOCALE_BIND_TEXTDOMAIN_CODESET_METHODDEF
     #define _LOCALE_BIND_TEXTDOMAIN_CODESET_METHODDEF
 #endif /* !defined(_LOCALE_BIND_TEXTDOMAIN_CODESET_METHODDEF) */
-/*[clinic end generated code: output=034a3c219466d207 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=0e9bbd18044bfc76 input=a9049054013a1b77]*/

@@ -53,8 +53,23 @@ select_select(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *xlist;
     PyObject *timeout_obj = Py_None;
 
-    if (!_PyArg_CheckPositional("select", nargs, 3, 4)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 3 arguments, got %zd",
+                "select", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 4 arguments, got %zd",
+                "select", nargs);
+            goto exit;
+        }
     }
     rlist = args[0];
     wlist = args[1];
@@ -97,8 +112,23 @@ select_poll_register(pollObject *self, PyObject *const *args, Py_ssize_t nargs)
     int fd;
     unsigned short eventmask = POLLIN | POLLPRI | POLLOUT;
 
-    if (!_PyArg_CheckPositional("register", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "register", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "register", nargs);
+            goto exit;
+        }
     }
     if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
         goto exit;
@@ -145,8 +175,23 @@ select_poll_modify(pollObject *self, PyObject *const *args, Py_ssize_t nargs)
     int fd;
     unsigned short eventmask;
 
-    if (!_PyArg_CheckPositional("modify", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "modify", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "modify", nargs);
+            goto exit;
+        }
     }
     if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
         goto exit;
@@ -220,8 +265,23 @@ select_poll_poll(pollObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *timeout_obj = Py_None;
 
-    if (!_PyArg_CheckPositional("poll", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "poll", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "poll", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -265,8 +325,23 @@ select_devpoll_register(devpollObject *self, PyObject *const *args, Py_ssize_t n
     int fd;
     unsigned short eventmask = POLLIN | POLLPRI | POLLOUT;
 
-    if (!_PyArg_CheckPositional("register", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "register", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "register", nargs);
+            goto exit;
+        }
     }
     if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
         goto exit;
@@ -315,8 +390,23 @@ select_devpoll_modify(devpollObject *self, PyObject *const *args, Py_ssize_t nar
     int fd;
     unsigned short eventmask = POLLIN | POLLPRI | POLLOUT;
 
-    if (!_PyArg_CheckPositional("modify", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "modify", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "modify", nargs);
+            goto exit;
+        }
     }
     if (!_PyLong_FileDescriptor_Converter(args[0], &fd)) {
         goto exit;
@@ -394,8 +484,23 @@ select_devpoll_poll(devpollObject *self, PyObject *const *args, Py_ssize_t nargs
     PyObject *return_value = NULL;
     PyObject *timeout_obj = Py_None;
 
-    if (!_PyArg_CheckPositional("poll", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "poll", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "poll", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1012,8 +1117,23 @@ select_epoll___exit__(pyEpoll_Object *self, PyObject *const *args, Py_ssize_t na
     PyObject *exc_value = Py_None;
     PyObject *exc_tb = Py_None;
 
-    if (!_PyArg_CheckPositional("__exit__", nargs, 0, 3)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "__exit__", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "__exit__", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1191,8 +1311,23 @@ select_kqueue_control(kqueue_queue_Object *self, PyObject *const *args, Py_ssize
     int maxevents;
     PyObject *otimeout = Py_None;
 
-    if (!_PyArg_CheckPositional("control", nargs, 2, 3)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 2 arguments, got %zd",
+                "control", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "control", nargs);
+            goto exit;
+        }
     }
     changelist = args[0];
     maxevents = PyLong_AsInt(args[1]);
@@ -1311,4 +1446,4 @@ exit:
 #ifndef SELECT_KQUEUE_CONTROL_METHODDEF
     #define SELECT_KQUEUE_CONTROL_METHODDEF
 #endif /* !defined(SELECT_KQUEUE_CONTROL_METHODDEF) */
-/*[clinic end generated code: output=4c2dcb31cb17c2c6 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=3e853196f5f0d5f5 input=a9049054013a1b77]*/

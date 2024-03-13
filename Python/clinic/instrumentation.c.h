@@ -22,8 +22,23 @@ monitoring_use_tool_id(PyObject *module, PyObject *const *args, Py_ssize_t nargs
     int tool_id;
     PyObject *name;
 
-    if (!_PyArg_CheckPositional("use_tool_id", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "use_tool_id", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "use_tool_id", nargs);
+            goto exit;
+        }
     }
     tool_id = PyLong_AsInt(args[0]);
     if (tool_id == -1 && PyErr_Occurred()) {
@@ -110,8 +125,23 @@ monitoring_register_callback(PyObject *module, PyObject *const *args, Py_ssize_t
     int event;
     PyObject *func;
 
-    if (!_PyArg_CheckPositional("register_callback", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "register_callback", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "register_callback", nargs);
+            goto exit;
+        }
     }
     tool_id = PyLong_AsInt(args[0]);
     if (tool_id == -1 && PyErr_Occurred()) {
@@ -178,8 +208,23 @@ monitoring_set_events(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     int tool_id;
     int event_set;
 
-    if (!_PyArg_CheckPositional("set_events", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "set_events", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "set_events", nargs);
+            goto exit;
+        }
     }
     tool_id = PyLong_AsInt(args[0]);
     if (tool_id == -1 && PyErr_Occurred()) {
@@ -215,8 +260,23 @@ monitoring_get_local_events(PyObject *module, PyObject *const *args, Py_ssize_t 
     PyObject *code;
     int _return_value;
 
-    if (!_PyArg_CheckPositional("get_local_events", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "get_local_events", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "get_local_events", nargs);
+            goto exit;
+        }
     }
     tool_id = PyLong_AsInt(args[0]);
     if (tool_id == -1 && PyErr_Occurred()) {
@@ -253,8 +313,23 @@ monitoring_set_local_events(PyObject *module, PyObject *const *args, Py_ssize_t 
     PyObject *code;
     int event_set;
 
-    if (!_PyArg_CheckPositional("set_local_events", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "set_local_events", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "set_local_events", nargs);
+            goto exit;
+        }
     }
     tool_id = PyLong_AsInt(args[0]);
     if (tool_id == -1 && PyErr_Occurred()) {
@@ -304,4 +379,4 @@ monitoring__all_events(PyObject *module, PyObject *Py_UNUSED(ignored))
 {
     return monitoring__all_events_impl(module);
 }
-/*[clinic end generated code: output=14ffc0884a6de50a input=a9049054013a1b77]*/
+/*[clinic end generated code: output=8961dce583fdac69 input=a9049054013a1b77]*/

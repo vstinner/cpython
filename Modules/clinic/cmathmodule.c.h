@@ -659,8 +659,23 @@ cmath_log(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_complex x;
     PyObject *y_obj = NULL;
 
-    if (!_PyArg_CheckPositional("log", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "log", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "log", nargs);
+            goto exit;
+        }
     }
     x = PyComplex_AsCComplex(args[0]);
     if (PyErr_Occurred()) {
@@ -754,8 +769,23 @@ cmath_rect(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     double r;
     double phi;
 
-    if (!_PyArg_CheckPositional("rect", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "rect", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "rect", nargs);
+            goto exit;
+        }
     }
     if (PyFloat_CheckExact(args[0])) {
         r = PyFloat_AS_DOUBLE(args[0]);
@@ -982,4 +1012,4 @@ skip_optional_kwonly:
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=364093af55bfe53f input=a9049054013a1b77]*/
+/*[clinic end generated code: output=0345eb6899b2319d input=a9049054013a1b77]*/

@@ -50,8 +50,23 @@ _random_Random_seed(RandomObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *n = Py_None;
 
-    if (!_PyArg_CheckPositional("seed", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "seed", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "seed", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -143,4 +158,4 @@ _random_Random_getrandbits(RandomObject *self, PyObject *arg)
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=bf49ece1d341b1b6 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=806d0428c43e7e80 input=a9049054013a1b77]*/

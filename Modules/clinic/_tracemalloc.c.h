@@ -97,8 +97,23 @@ _tracemalloc_start(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     int nframe = 1;
 
-    if (!_PyArg_CheckPositional("start", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "start", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "start", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -214,4 +229,4 @@ _tracemalloc_reset_peak(PyObject *module, PyObject *Py_UNUSED(ignored))
 {
     return _tracemalloc_reset_peak_impl(module);
 }
-/*[clinic end generated code: output=9d4d884b156c2ddb input=a9049054013a1b77]*/
+/*[clinic end generated code: output=17e7e2ba4f621e81 input=a9049054013a1b77]*/

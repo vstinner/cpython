@@ -277,8 +277,23 @@ binascii_crc_hqx(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_buffer data = {NULL, NULL};
     unsigned int crc;
 
-    if (!_PyArg_CheckPositional("crc_hqx", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "crc_hqx", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "crc_hqx", nargs);
+            goto exit;
+        }
     }
     if (PyObject_GetBuffer(args[0], &data, PyBUF_SIMPLE) != 0) {
         goto exit;
@@ -318,8 +333,23 @@ binascii_crc32(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     unsigned int crc = 0;
     unsigned int _return_value;
 
-    if (!_PyArg_CheckPositional("crc32", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "crc32", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "crc32", nargs);
+            goto exit;
+        }
     }
     if (PyObject_GetBuffer(args[0], &data, PyBUF_SIMPLE) != 0) {
         goto exit;
@@ -767,4 +797,4 @@ exit:
 
     return return_value;
 }
-/*[clinic end generated code: output=968767b663ed889d input=a9049054013a1b77]*/
+/*[clinic end generated code: output=ddca90eb2ea94740 input=a9049054013a1b77]*/

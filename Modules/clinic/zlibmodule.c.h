@@ -996,8 +996,23 @@ zlib_adler32(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     Py_buffer data = {NULL, NULL};
     unsigned int value = 1;
 
-    if (!_PyArg_CheckPositional("adler32", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "adler32", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "adler32", nargs);
+            goto exit;
+        }
     }
     if (PyObject_GetBuffer(args[0], &data, PyBUF_SIMPLE) != 0) {
         goto exit;
@@ -1046,8 +1061,23 @@ zlib_crc32(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     unsigned int value = 0;
     unsigned int _return_value;
 
-    if (!_PyArg_CheckPositional("crc32", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "crc32", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "crc32", nargs);
+            goto exit;
+        }
     }
     if (PyObject_GetBuffer(args[0], &data, PyBUF_SIMPLE) != 0) {
         goto exit;
@@ -1098,4 +1128,4 @@ exit:
 #ifndef ZLIB_DECOMPRESS___DEEPCOPY___METHODDEF
     #define ZLIB_DECOMPRESS___DEEPCOPY___METHODDEF
 #endif /* !defined(ZLIB_DECOMPRESS___DEEPCOPY___METHODDEF) */
-/*[clinic end generated code: output=8bb840fb6af43dd4 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=46276c0f74067a3a input=a9049054013a1b77]*/

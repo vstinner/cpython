@@ -29,8 +29,23 @@ list_insert(PyListObject *self, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t index;
     PyObject *object;
 
-    if (!_PyArg_CheckPositional("insert", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "insert", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "insert", nargs);
+            goto exit;
+        }
     }
     {
         Py_ssize_t ival = -1;
@@ -154,8 +169,23 @@ list_pop(PyListObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     Py_ssize_t index = -1;
 
-    if (!_PyArg_CheckPositional("pop", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "pop", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "pop", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -308,8 +338,23 @@ list_index(PyListObject *self, PyObject *const *args, Py_ssize_t nargs)
     Py_ssize_t start = 0;
     Py_ssize_t stop = PY_SSIZE_T_MAX;
 
-    if (!_PyArg_CheckPositional("index", nargs, 1, 3)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "index", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 3 arguments, got %zd",
+                "index", nargs);
+            goto exit;
+        }
     }
     value = args[0];
     if (nargs < 2) {
@@ -390,8 +435,23 @@ list___init__(PyObject *self, PyObject *args, PyObject *kwargs)
         !_PyArg_NoKeywords("list", kwargs)) {
         goto exit;
     }
-    if (!_PyArg_CheckPositional("list", PyTuple_GET_SIZE(args), 0, 1)) {
-        goto exit;
+    {
+        if (PyTuple_GET_SIZE(args) < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "list", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (PyTuple_GET_SIZE(args) != 0 && PyTuple_GET_SIZE(args) > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "list", PyTuple_GET_SIZE(args));
+            goto exit;
+        }
     }
     if (PyTuple_GET_SIZE(args) < 1) {
         goto skip_optional;
@@ -439,4 +499,4 @@ list___reversed__(PyListObject *self, PyObject *Py_UNUSED(ignored))
 {
     return list___reversed___impl(self);
 }
-/*[clinic end generated code: output=854957a1d4a89bbd input=a9049054013a1b77]*/
+/*[clinic end generated code: output=a62064a31d2b14a3 input=a9049054013a1b77]*/

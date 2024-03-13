@@ -55,8 +55,23 @@ _multiprocessing_recv(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     HANDLE handle;
     int size;
 
-    if (!_PyArg_CheckPositional("recv", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "recv", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "recv", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -94,8 +109,23 @@ _multiprocessing_send(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     HANDLE handle;
     Py_buffer buf = {NULL, NULL};
 
-    if (!_PyArg_CheckPositional("send", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "send", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "send", nargs);
+            goto exit;
+        }
     }
     handle = PyLong_AsVoidPtr(args[0]);
     if (!handle && PyErr_Occurred()) {
@@ -164,4 +194,4 @@ exit:
 #ifndef _MULTIPROCESSING_SEND_METHODDEF
     #define _MULTIPROCESSING_SEND_METHODDEF
 #endif /* !defined(_MULTIPROCESSING_SEND_METHODDEF) */
-/*[clinic end generated code: output=73b4cb8428d816da input=a9049054013a1b77]*/
+/*[clinic end generated code: output=6dd8df139cbdb4d0 input=a9049054013a1b77]*/

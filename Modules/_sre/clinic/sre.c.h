@@ -1093,8 +1093,23 @@ _sre_template(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *pattern;
     PyObject *template;
 
-    if (!_PyArg_CheckPositional("template", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "template", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "template", nargs);
+            goto exit;
+        }
     }
     pattern = args[0];
     if (!PyList_Check(args[1])) {
@@ -1308,8 +1323,23 @@ _sre_SRE_Match_start(MatchObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *group = NULL;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("start", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "start", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "start", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1345,8 +1375,23 @@ _sre_SRE_Match_end(MatchObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *group = NULL;
     Py_ssize_t _return_value;
 
-    if (!_PyArg_CheckPositional("end", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "end", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "end", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1381,8 +1426,23 @@ _sre_SRE_Match_span(MatchObject *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *group = NULL;
 
-    if (!_PyArg_CheckPositional("span", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "span", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "span", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1461,4 +1521,4 @@ _sre_SRE_Scanner_search(ScannerObject *self, PyTypeObject *cls, PyObject *const 
     }
     return _sre_SRE_Scanner_search_impl(self, cls);
 }
-/*[clinic end generated code: output=c3e711f0b2f43d66 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=dab184da6847f031 input=a9049054013a1b77]*/

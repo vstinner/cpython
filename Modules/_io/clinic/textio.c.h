@@ -792,8 +792,23 @@ _io_TextIOWrapper_read(textio *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     Py_ssize_t n = -1;
 
-    if (!_PyArg_CheckPositional("read", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "read", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "read", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -827,8 +842,23 @@ _io_TextIOWrapper_readline(textio *self, PyObject *const *args, Py_ssize_t nargs
     PyObject *return_value = NULL;
     Py_ssize_t size = -1;
 
-    if (!_PyArg_CheckPositional("readline", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "readline", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "readline", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -890,8 +920,23 @@ _io_TextIOWrapper_seek(textio *self, PyObject *const *args, Py_ssize_t nargs)
     PyObject *cookieObj;
     int whence = 0;
 
-    if (!_PyArg_CheckPositional("seek", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "seek", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "seek", nargs);
+            goto exit;
+        }
     }
     cookieObj = args[0];
     if (nargs < 2) {
@@ -954,8 +999,23 @@ _io_TextIOWrapper_truncate(textio *self, PyObject *const *args, Py_ssize_t nargs
     PyObject *return_value = NULL;
     PyObject *pos = Py_None;
 
-    if (!_PyArg_CheckPositional("truncate", nargs, 0, 1)) {
-        goto exit;
+    {
+        if (nargs < 0) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 0 arguments, got %zd",
+                "truncate", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 1;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 1 argument, got %zd",
+                "truncate", nargs);
+            goto exit;
+        }
     }
     if (nargs < 1) {
         goto skip_optional;
@@ -1292,4 +1352,4 @@ _io_TextIOWrapper__CHUNK_SIZE_set(textio *self, PyObject *value, void *Py_UNUSED
 
     return return_value;
 }
-/*[clinic end generated code: output=93a5a91a22100a28 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=b4d48beeb8c1e142 input=a9049054013a1b77]*/

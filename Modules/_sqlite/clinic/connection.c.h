@@ -1122,8 +1122,23 @@ pysqlite_connection_execute(pysqlite_Connection *self, PyObject *const *args, Py
     PyObject *sql;
     PyObject *parameters = NULL;
 
-    if (!_PyArg_CheckPositional("execute", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "execute", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "execute", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_Check(args[0])) {
         _PyArg_BadArgument("execute", "argument 1", "str", args[0]);
@@ -1161,8 +1176,23 @@ pysqlite_connection_executemany(pysqlite_Connection *self, PyObject *const *args
     PyObject *sql;
     PyObject *parameters;
 
-    if (!_PyArg_CheckPositional("executemany", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "executemany", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "executemany", nargs);
+            goto exit;
+        }
     }
     if (!PyUnicode_Check(args[0])) {
         _PyArg_BadArgument("executemany", "argument 1", "str", args[0]);
@@ -1679,8 +1709,23 @@ pysqlite_connection_exit(pysqlite_Connection *self, PyObject *const *args, Py_ss
     PyObject *exc_value;
     PyObject *exc_tb;
 
-    if (!_PyArg_CheckPositional("__exit__", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "__exit__", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "__exit__", nargs);
+            goto exit;
+        }
     }
     exc_type = args[0];
     exc_value = args[1];
@@ -1720,8 +1765,23 @@ setlimit(pysqlite_Connection *self, PyObject *const *args, Py_ssize_t nargs)
     int category;
     int limit;
 
-    if (!_PyArg_CheckPositional("setlimit", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "setlimit", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "setlimit", nargs);
+            goto exit;
+        }
     }
     category = PyLong_AsInt(args[0]);
     if (category == -1 && PyErr_Occurred()) {
@@ -1790,8 +1850,23 @@ setconfig(pysqlite_Connection *self, PyObject *const *args, Py_ssize_t nargs)
     int op;
     int enable = 1;
 
-    if (!_PyArg_CheckPositional("setconfig", nargs, 1, 2)) {
-        goto exit;
+    {
+        if (nargs < 1) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at least 1 argument, got %zd",
+                "setconfig", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected at most 2 arguments, got %zd",
+                "setconfig", nargs);
+            goto exit;
+        }
     }
     op = PyLong_AsInt(args[0]);
     if (op == -1 && PyErr_Occurred()) {
@@ -1866,4 +1941,4 @@ exit:
 #ifndef DESERIALIZE_METHODDEF
     #define DESERIALIZE_METHODDEF
 #endif /* !defined(DESERIALIZE_METHODDEF) */
-/*[clinic end generated code: output=3c6d0b748fac016f input=a9049054013a1b77]*/
+/*[clinic end generated code: output=689f587440a865c8 input=a9049054013a1b77]*/

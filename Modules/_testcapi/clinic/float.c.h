@@ -24,8 +24,23 @@ _testcapi_float_pack(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     double d;
     int le;
 
-    if (!_PyArg_CheckPositional("float_pack", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "float_pack", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "float_pack", nargs);
+            goto exit;
+        }
     }
     size = PyLong_AsInt(args[0]);
     if (size == -1 && PyErr_Occurred()) {
@@ -81,4 +96,4 @@ _testcapi_float_unpack(PyObject *module, PyObject *const *args, Py_ssize_t nargs
 exit:
     return return_value;
 }
-/*[clinic end generated code: output=b43dfd3a77fe04ba input=a9049054013a1b77]*/
+/*[clinic end generated code: output=3310ec9e66489bd3 input=a9049054013a1b77]*/

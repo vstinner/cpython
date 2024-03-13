@@ -112,8 +112,23 @@ winreg_HKEYType___exit__(PyHKEYObject *self, PyObject *const *args, Py_ssize_t n
     PyObject *exc_value;
     PyObject *traceback;
 
-    if (!_PyArg_CheckPositional("__exit__", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "__exit__", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "__exit__", nargs);
+            goto exit;
+        }
     }
     exc_type = args[0];
     exc_value = args[1];
@@ -177,8 +192,23 @@ winreg_ConnectRegistry(PyObject *module, PyObject *const *args, Py_ssize_t nargs
     HKEY key;
     HKEY _return_value;
 
-    if (!_PyArg_CheckPositional("ConnectRegistry", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ConnectRegistry", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "ConnectRegistry", nargs);
+            goto exit;
+        }
     }
     if (args[0] == Py_None) {
         computer_name = NULL;
@@ -246,8 +276,23 @@ winreg_CreateKey(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     const wchar_t *sub_key = NULL;
     HKEY _return_value;
 
-    if (!_PyArg_CheckPositional("CreateKey", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "CreateKey", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "CreateKey", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -436,8 +481,23 @@ winreg_DeleteKey(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     HKEY key;
     const wchar_t *sub_key = NULL;
 
-    if (!_PyArg_CheckPositional("DeleteKey", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "DeleteKey", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "DeleteKey", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -603,8 +663,23 @@ winreg_DeleteValue(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     HKEY key;
     const wchar_t *value = NULL;
 
-    if (!_PyArg_CheckPositional("DeleteValue", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "DeleteValue", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "DeleteValue", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -663,8 +738,23 @@ winreg_EnumKey(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     HKEY key;
     int index;
 
-    if (!_PyArg_CheckPositional("EnumKey", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "EnumKey", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "EnumKey", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -720,8 +810,23 @@ winreg_EnumValue(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     HKEY key;
     int index;
 
-    if (!_PyArg_CheckPositional("EnumValue", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "EnumValue", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "EnumValue", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -866,8 +971,23 @@ winreg_LoadKey(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     const wchar_t *sub_key = NULL;
     const wchar_t *file_name = NULL;
 
-    if (!_PyArg_CheckPositional("LoadKey", nargs, 3, 3)) {
-        goto exit;
+    {
+        if (nargs < 3) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "LoadKey", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 3;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 3 arguments, got %zd",
+                "LoadKey", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -1210,8 +1330,23 @@ winreg_QueryValue(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     HKEY key;
     const wchar_t *sub_key = NULL;
 
-    if (!_PyArg_CheckPositional("QueryValue", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "QueryValue", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "QueryValue", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -1271,8 +1406,23 @@ winreg_QueryValueEx(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     HKEY key;
     const wchar_t *name = NULL;
 
-    if (!_PyArg_CheckPositional("QueryValueEx", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "QueryValueEx", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "QueryValueEx", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -1337,8 +1487,23 @@ winreg_SaveKey(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     HKEY key;
     const wchar_t *file_name = NULL;
 
-    if (!_PyArg_CheckPositional("SaveKey", nargs, 2, 2)) {
-        goto exit;
+    {
+        if (nargs < 2) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "SaveKey", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 2;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 2 arguments, got %zd",
+                "SaveKey", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -1406,8 +1571,23 @@ winreg_SetValue(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     DWORD type;
     PyObject *value_obj;
 
-    if (!_PyArg_CheckPositional("SetValue", nargs, 4, 4)) {
-        goto exit;
+    {
+        if (nargs < 4) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "SetValue", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 4;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 4 arguments, got %zd",
+                "SetValue", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -1506,8 +1686,23 @@ winreg_SetValueEx(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     DWORD type;
     PyObject *value;
 
-    if (!_PyArg_CheckPositional("SetValueEx", nargs, 5, 5)) {
-        goto exit;
+    {
+        if (nargs < 5) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 5 arguments, got %zd",
+                "SetValueEx", nargs);
+            goto exit;
+        }
+
+        const Py_ssize_t max_nargs = 5;
+        if (nargs != 0 && nargs > max_nargs) {
+            PyErr_Format(
+                PyExc_TypeError,
+                "%s expected 5 arguments, got %zd",
+                "SetValueEx", nargs);
+            goto exit;
+        }
     }
     if (!clinic_HKEY_converter(_PyModule_GetState(module), args[0], &key)) {
         goto exit;
@@ -1762,4 +1957,4 @@ exit:
 #ifndef WINREG_QUERYREFLECTIONKEY_METHODDEF
     #define WINREG_QUERYREFLECTIONKEY_METHODDEF
 #endif /* !defined(WINREG_QUERYREFLECTIONKEY_METHODDEF) */
-/*[clinic end generated code: output=1ee4098b2f143b6a input=a9049054013a1b77]*/
+/*[clinic end generated code: output=19eda62e86351bc1 input=a9049054013a1b77]*/
