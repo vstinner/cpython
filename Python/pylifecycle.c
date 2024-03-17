@@ -1837,6 +1837,10 @@ finalize_interp_clear(PyThreadState *tstate)
 
     finalize_interp_types(tstate->interp);
 
+    if (is_main_interp) {
+        PyArgParser_Fini();
+    }
+
     /* Free any delayed free requests immediately */
     _PyMem_FiniDelayed(tstate->interp);
 

@@ -135,6 +135,7 @@
     <ClInclude Include="..\Include\compile.h" />
     <ClInclude Include="..\Include\complexobject.h" />
     <ClInclude Include="..\Include\cpython\abstract.h" />
+    <ClInclude Include="..\Include\cpython\argparser.h" />
     <ClInclude Include="..\Include\cpython\bytearrayobject.h" />
     <ClInclude Include="..\Include\cpython\bytesobject.h" />
     <ClInclude Include="..\Include\cpython\cellobject.h" />
@@ -549,6 +550,7 @@
     <ClCompile Include="..\PC\msvcrtmodule.c" />
     <ClCompile Include="..\Python\pyhash.c" />
     <ClCompile Include="..\Python\_warnings.c" />
+    <ClCompile Include="..\Python\argparser.c" />
     <ClCompile Include="..\Python\asdl.c" />
     <ClCompile Include="..\Python\assemble.c" />
     <ClCompile Include="..\Python\ast.c" />

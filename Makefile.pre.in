@@ -401,6 +401,7 @@ PYTHON_OBJS=	\
 		Python/_warnings.o \
 		Python/Python-ast.o \
 		Python/Python-tokenize.o \
+		Python/argparser.o \
 		Python/asdl.o \
 		Python/assemble.o \
 		Python/ast.o \
@@ -1058,6 +1059,7 @@ PYTHON_HEADERS= \
 		$(PARSER_HEADERS) \
 		\
 		$(srcdir)/Include/cpython/abstract.h \
+		$(srcdir)/Include/cpython/argparser.h \
 		$(srcdir)/Include/cpython/bytearrayobject.h \
 		$(srcdir)/Include/cpython/bytesobject.h \
 		$(srcdir)/Include/cpython/cellobject.h \

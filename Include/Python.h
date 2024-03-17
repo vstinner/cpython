@@ -103,6 +103,7 @@
 #include "pythread.h"
 #include "cpython/context.h"
 #include "modsupport.h"
+#include "cpython/argparser.h"
 #include "compile.h"
 #include "pythonrun.h"
 #include "pylifecycle.h"

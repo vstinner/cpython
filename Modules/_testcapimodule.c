@@ -3241,6 +3241,18 @@ test_weakref_capi(PyObject *Py_UNUSED(module), PyObject *Py_UNUSED(args))
 }
 
 
+static PyObject *
+pyargparser_test(PyObject *Py_UNUSED(module), PyObject *args)
+{
+    extern int PyArgParser_Test(PyObject *args);
+
+    if (PyArgParser_Test(args) < 0) {
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+
 static PyMethodDef TestMethods[] = {
     {"set_errno",               set_errno,                       METH_VARARGS},
     {"test_config",             test_config,                     METH_NOARGS},
@@ -3381,6 +3393,7 @@ static PyMethodDef TestMethods[] = {
     {"function_set_kw_defaults", function_set_kw_defaults, METH_VARARGS, NULL},
     {"check_pyimport_addmodule", check_pyimport_addmodule, METH_VARARGS},
     {"test_weakref_capi", test_weakref_capi, METH_NOARGS},
+    {"PyArgParser_Test", pyargparser_test, METH_VARARGS},
     {NULL, NULL} /* sentinel */
 };
 

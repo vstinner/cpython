@@ -1244,6 +1244,9 @@
     <ClCompile Include="..\Python\_warnings.c">
       <Filter>Python</Filter>
     </ClCompile>
+    <ClCompile Include="..\Python\argparser.c">
+      <Filter>Python</Filter>
+    </ClCompile>
     <ClCompile Include="..\Python\asdl.c">
       <Filter>Python</Filter>
     </ClCompile>
