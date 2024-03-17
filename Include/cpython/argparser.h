@@ -13,17 +13,24 @@ extern "C" {
 #define PyArgKind_KWARGS 4
 
 #define PyArgType_OBJECT 0
+// FIXME: support more types
+// FIXME: support converter API
 
 typedef struct PyArgSpec {
+    // FIXME: add name for keyword argument
+
     int arg_kind;
     int arg_type;
-    // FIXME: default value
+
+    // FIXME: default value for optional argument
 } PyArgSpec;
 
 
 typedef struct PyArgParser {
+    // Name used in error message
     const char *func_name_utf8;
     PyObject *func_name;
+
     Py_ssize_t nspec;
     PyArgSpec *specs;
     // FIXME: keyword names

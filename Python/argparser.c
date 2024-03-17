@@ -20,7 +20,10 @@ typedef struct PyArgParserImpl {
 } PyArgParserImpl;
 
 
-static PyArgParserImpl *parser_head = NULL;  // FIXME: make it per-interpreter?
+// FIXME: make it per-interpreter?
+// Or pyargparser_create() must allocate static immortal str objects on the
+// heap memory!
+static PyArgParserImpl *parser_head = NULL;
 
 
 static void pyargparser_dealloc(PyArgParserImpl *parser)
@@ -179,7 +182,7 @@ static PyArgSpec test_specs[] = {
 };
 
 static PyArgParser test_parser = {
-    .func_name_utf8 = "myfunc",
+    .func_name_utf8 = "PyArgParser_Test",
     .nspec = Py_ARRAY_LENGTH(test_specs),
     .specs = test_specs,
 };
