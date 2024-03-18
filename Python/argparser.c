@@ -28,7 +28,9 @@ static PyArgParserImpl *parser_head = NULL;
 
 static void pyargparser_dealloc(PyArgParserImpl *parser)
 {
-    parser->parser->impl = NULL;
+    if (parser->parser != NULL) {
+        parser->parser->impl = NULL;
+    }
     Py_XDECREF(parser->func_name);
     PyMem_Free(parser);
 }
@@ -43,7 +45,6 @@ static PyArgParserImpl* pyargparser_create(PyArgParser *parser)
         return NULL;
     }
     size += sizeof(PyArgSpecImpl) * parser->nspec;
-
 
     PyArgParserImpl *impl = PyMem_Malloc(size);
     if (impl == NULL) {
@@ -72,8 +73,25 @@ static PyArgParserImpl* pyargparser_create(PyArgParser *parser)
         spec_impl->arg_type = spec->arg_type;
     }
 
-    impl->next = parser_head;
-    parser_head = impl;
+
+    PyArgParserImpl *other_impl = NULL;
+    if (!_Py_atomic_compare_exchange_ptr(&parser->impl, &other_impl, impl)) {
+        // Concurrent call: use the race winner, delete our copy.
+        impl->parser = NULL;
+        pyargparser_dealloc(impl);
+        return other_impl;
+    }
+
+    // FIXME: use a regular mutex instead?
+    while (1) {
+        PyArgParserImpl *next = NULL;
+        if (_Py_atomic_compare_exchange_ptr(&parser_head, &next, impl)) {
+            impl->next = next;
+            break;
+        }
+        // lost race, retry
+    }
+
     return impl;
 
 error:
@@ -95,7 +113,6 @@ static int pyargparser_get_impl(PyArgParser *parser, PyArgParserImpl **result)
     if (impl == NULL) {
         return -1;
     }
-    parser->impl = impl;
     return 0;
 }
 
