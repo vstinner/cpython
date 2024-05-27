@@ -1,0 +1,3 @@
+Add :c:func:`PyUnicode_AsNativeFormat` and
+:c:func:`PyUnicode_FromNativeFormat` functions to import and export strings
+in their native format. Patch by Victor Stinner.

@@ -1837,6 +1837,35 @@ test_string_from_format(PyObject *self, PyObject *Py_UNUSED(ignored))
 #undef CHECK_FORMAT_0
 }
 
+
+// Test PyUnicode_AsNativeFormat()
+static PyObject*
+unicode_asnativeformat(PyObject *self, PyObject *obj)
+{
+    Py_ssize_t size;
+    int native_format;
+    const void *data = PyUnicode_AsNativeFormat(obj, &size, &native_format);
+    if (data == NULL) {
+        return NULL;
+    }
+    return Py_BuildValue("y#i", data, size, native_format);
+}
+
+
+// Test PyUnicode_FromNativeFormat()
+static PyObject*
+unicode_fromnativeformat(PyObject *self, PyObject *args)
+{
+    const void *data;
+    Py_ssize_t size;
+    int native_format;
+    if (!PyArg_ParseTuple(args, "y#i", &data, &size, &native_format)) {
+        return NULL;
+    }
+    return PyUnicode_FromNativeFormat(data, size, native_format);
+}
+
+
 static PyMethodDef TestMethods[] = {
     {"codec_incrementalencoder", codec_incrementalencoder,       METH_VARARGS},
     {"codec_incrementaldecoder", codec_incrementaldecoder,       METH_VARARGS},
@@ -1924,6 +1953,8 @@ static PyMethodDef TestMethods[] = {
     {"unicode_format",           unicode_format,                 METH_VARARGS},
     {"unicode_contains",         unicode_contains,               METH_VARARGS},
     {"unicode_isidentifier",     unicode_isidentifier,           METH_O},
+    {"unicode_asnativeformat",   unicode_asnativeformat,         METH_O},
+    {"unicode_fromnativeformat", unicode_fromnativeformat,       METH_VARARGS},
     {NULL},
 };
 

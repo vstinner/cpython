@@ -2097,6 +2097,89 @@ _PyUnicode_FromUCS4(const Py_UCS4 *u, Py_ssize_t size)
     return res;
 }
 
+const void*
+PyUnicode_AsNativeFormat(PyObject *unicode,
+                         Py_ssize_t *size, int *native_format)
+{
+    if (!PyUnicode_Check(unicode)) {
+        *size = 0;
+        *native_format = 0;
+        PyErr_Format(PyExc_TypeError, "must be str, not %T", unicode);
+        return NULL;
+    }
+
+    Py_ssize_t len = PyUnicode_GET_LENGTH(unicode);
+
+    if (PyUnicode_IS_ASCII(unicode)) {
+        *native_format = PyUnicode_NATIVE_ASCII;
+        *size = len;
+        return PyUnicode_1BYTE_DATA(unicode);
+    }
+    int kind = PyUnicode_KIND(unicode);
+
+    switch (kind)
+    {
+    case PyUnicode_1BYTE_KIND:
+        *native_format = PyUnicode_NATIVE_UCS1;
+        *size = len;
+        return PyUnicode_1BYTE_DATA(unicode);
+
+    case PyUnicode_2BYTE_KIND:
+        *native_format = PyUnicode_NATIVE_UCS2;
+        *size = len * 2;
+        return PyUnicode_2BYTE_DATA(unicode);
+
+    default:
+        assert(kind == PyUnicode_4BYTE_KIND);
+        *native_format = PyUnicode_NATIVE_UCS4;
+        *size = len * 4;
+        return PyUnicode_4BYTE_DATA(unicode);
+    }
+}
+
+PyObject*
+PyUnicode_FromNativeFormat(const void *data, Py_ssize_t size,
+                           int native_format)
+{
+    if (size < 0) {
+        PyErr_SetString(PyExc_ValueError, "Negative size");
+        return NULL;
+    }
+
+    switch (native_format)
+    {
+    case PyUnicode_NATIVE_ASCII:
+        return PyUnicode_DecodeASCII((const char*)data, size, NULL);
+
+    case PyUnicode_NATIVE_UCS1:
+        return _PyUnicode_FromUCS1(data, size);
+
+    case PyUnicode_NATIVE_UCS2:
+        if (size % 2) {
+            PyErr_Format(PyExc_ValueError, "size must be a multiple of 2: %zd",
+                         size);
+            return NULL;
+        }
+        return _PyUnicode_FromUCS2(data, size / 2);
+
+    case PyUnicode_NATIVE_UCS4:
+        if (size % 4) {
+            PyErr_Format(PyExc_ValueError, "size must be a multiple of 4: %zd",
+                         size);
+            return NULL;
+        }
+        return _PyUnicode_FromUCS4(data, size / 4);
+
+    case PyUnicode_NATIVE_UTF8:
+        return PyUnicode_DecodeUTF8((const char*)data, size, NULL);
+
+    default:
+        PyErr_Format(PyExc_ValueError, "unknown native format %i",
+                     native_format);
+        return NULL;
+    }
+}
+
 PyObject*
 PyUnicode_FromKindAndData(int kind, const void *buffer, Py_ssize_t size)
 {

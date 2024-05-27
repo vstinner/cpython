@@ -2507,3 +2507,7 @@
     added = '3.13'
 [function.PyEval_GetFrameLocals]
     added = '3.13'
+[function.PyUnicode_AsNativeFormat]
+    added = '3.14'
+[function.PyUnicode_FromNativeFormat]
+    added = '3.14'

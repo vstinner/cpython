@@ -265,6 +265,12 @@ New Features
 * Add :c:func:`PyLong_GetSign` function to get the sign of :class:`int` objects.
   (Contributed by Sergey B Kirpichev in :gh:`116560`.)
 
+* Add :c:func:`PyUnicode_AsNativeFormat` and
+  :c:func:`PyUnicode_FromNativeFormat` functions to import and export strings
+  in their native format.
+  (Contributed by Victor Stinner in :gh:`119609`.)
+
+
 Porting to Python 3.14
 ----------------------
 

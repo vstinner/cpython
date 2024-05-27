@@ -24,6 +24,14 @@ class Str(str):
     pass
 
 
+PyUnicode_NATIVE_ASCII = 1
+PyUnicode_NATIVE_UCS1 = 2
+PyUnicode_NATIVE_UCS2 = 3
+PyUnicode_NATIVE_UCS4 = 4
+PyUnicode_NATIVE_UTF8 = 5
+# Invalid native format
+PyUnicode_NATIVE_INVALID = 0
+
 class CAPITest(unittest.TestCase):
 
     @support.cpython_only
@@ -1675,6 +1683,75 @@ class CAPITest(unittest.TestCase):
                 # Check that the second call returns the same result
                 self.assertEqual(getargs_s_hash(s), chr(k).encode() * (i + 1))
 
+    def test_unicode_asnativeformat(self):
+        # Test PyUnicode_AsNativeFormat()
+        asnativeformat = _testlimitedcapi.unicode_asnativeformat
+        self.assertEqual(asnativeformat("abc"),
+                         (b'abc', PyUnicode_NATIVE_ASCII))
+        self.assertEqual(asnativeformat("latin1:\xe9"),
+                         (b'latin1:\xe9', PyUnicode_NATIVE_UCS1))
 
-if __name__ == "__main__":
+        ucs2_enc = 'utf-16le' if sys.byteorder == 'little' else 'utf-16be'
+        self.assertEqual(asnativeformat('ucs2:\u20ac'),
+                         ('ucs2:\u20ac'.encode(ucs2_enc),
+                          PyUnicode_NATIVE_UCS2))
+
+        ucs4_enc = 'utf-32le' if sys.byteorder == 'little' else 'utf-32be'
+        self.assertEqual(asnativeformat('ucs4:\U0010ffff'),
+                         ('ucs4:\U0010ffff'.encode(ucs4_enc),
+                          PyUnicode_NATIVE_UCS4))
+
+    def test_unicode_fromnativeformat(self):
+        # Test PyUnicode_FromNativeFormat()
+        fromnativeformat = _testlimitedcapi.unicode_fromnativeformat
+        self.assertEqual(fromnativeformat(b'abc', PyUnicode_NATIVE_ASCII),
+                         "abc")
+        self.assertEqual(fromnativeformat(b'latin1:\xe9', PyUnicode_NATIVE_UCS1),
+                         "latin1:\xe9")
+
+        ucs2_enc = 'utf-16le' if sys.byteorder == 'little' else 'utf-16be'
+        self.assertEqual(fromnativeformat('ucs2:\u20ac'.encode(ucs2_enc),
+                                          PyUnicode_NATIVE_UCS2),
+                         'ucs2:\u20ac')
+
+        ucs4_enc = 'utf-32le' if sys.byteorder == 'little' else 'utf-32be'
+        self.assertEqual(fromnativeformat('ucs4:\U0010ffff'.encode(ucs4_enc),
+                                          PyUnicode_NATIVE_UCS4),
+                         'ucs4:\U0010ffff')
+
+        text = "abc\xe9\U0010ffff"
+        self.assertEqual(fromnativeformat(text.encode('utf8'),
+                                          PyUnicode_NATIVE_UTF8),
+                         text)
+
+        # Empty string
+        for native_format in (
+            PyUnicode_NATIVE_ASCII,
+            PyUnicode_NATIVE_UCS1,
+            PyUnicode_NATIVE_UCS2,
+            PyUnicode_NATIVE_UCS4,
+            PyUnicode_NATIVE_UTF8,
+        ):
+            with self.subTest(native_format=native_format):
+                self.assertEqual(fromnativeformat(b'', native_format),
+                                 '')
+
+        # Invalid format
+        with self.assertRaises(ValueError):
+            fromnativeformat(b'', PyUnicode_NATIVE_INVALID)
+
+        # Invalid size
+        ucs2 = 'ucs2:\u20ac'.encode(ucs2_enc)
+        with self.assertRaises(ValueError):
+            fromnativeformat(ucs2[:-1], PyUnicode_NATIVE_UCS2)
+        ucs4 = 'ucs4:\U0010ffff'.encode(ucs4_enc)
+        with self.assertRaises(ValueError):
+            fromnativeformat(ucs4[:-1], PyUnicode_NATIVE_UCS4)
+        with self.assertRaises(ValueError):
+            fromnativeformat(ucs4[:-2], PyUnicode_NATIVE_UCS4)
+        with self.assertRaises(ValueError):
+            fromnativeformat(ucs4[:-3], PyUnicode_NATIVE_UCS4)
+
+
+if __name__ == '__main__':
     unittest.main()

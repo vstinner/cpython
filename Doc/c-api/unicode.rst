@@ -341,6 +341,53 @@ APIs:
    .. versionadded:: 3.3
 
 
+.. c:function:: const void* PyUnicode_AsNativeFormat(PyObject *unicode, Py_ssize_t *size, int *native_format)
+
+   Get the contents of a string in its native format.
+
+   * Return the contents, set *\*size* and *\*native_format* on success.
+   * Set an exception and return ``NULL`` on error.
+
+   The contents is valid as long as *unicode* is valid.
+
+   *unicode*, *size* and *native_format* must not be NULL.
+
+   *\*native_format* is set to one of these native formats:
+
+   .. c:namespace:: NULL
+
+   ========================================  =====  ============================
+   Constant Identifier                       Value  Description
+   ========================================  =====  ============================
+   .. c:macro:: PyUnicode_NATIVE_ASCII       ``1``  ASCII string (``Py_UCS1*``)
+   .. c:macro:: PyUnicode_NATIVE_UCS1        ``2``  UCS-1 string (``Py_UCS1*``)
+   .. c:macro:: PyUnicode_NATIVE_UCS2        ``3``  UCS-2 string (``Py_UCS2*``)
+   .. c:macro:: PyUnicode_NATIVE_UCS4        ``4``  UCS-4 string (``Py_UCS4*``)
+   .. c:macro:: PyUnicode_NATIVE_UTF8        ``5``  UTF-8 string (``char*``)
+   ========================================  =====  ============================
+
+   .. impl-detail::
+      In CPython, the :c:macro:`PyUnicode_NATIVE_UTF8` format is not used by
+      :c:func:`PyUnicode_AsNativeFormat`, but it's accepted by
+      :c:func:`PyUnicode_FromNativeFormat`.
+
+   .. versionadded:: 3.14
+
+
+.. c:function:: PyObject* PyUnicode_FromNativeFormat(const void *data, Py_ssize_t size, int native_format)
+
+   Create a string object from a native format string.
+
+   * Return a reference to a new string object on success.
+   * Set an exception and return ``NULL`` on error.
+
+   *data* must not be NULL. *size* must be positive or zero.
+
+   See :c:func:`PyUnicode_AsNativeFormat` for the available native formats.
+
+   .. versionadded:: 3.14
+
+
 .. c:function:: PyObject* PyUnicode_FromKindAndData(int kind, const void *buffer, \
                                                     Py_ssize_t size)
 
