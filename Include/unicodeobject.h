@@ -248,27 +248,33 @@ PyAPI_FUNC(PyObject *) PyUnicode_InternFromString(
     const char *u              /* UTF-8 encoded string */
     );
 
-#define PyUnicode_NATIVE_ASCII 1
-#define PyUnicode_NATIVE_UCS1 2
-#define PyUnicode_NATIVE_UCS2 3
-#define PyUnicode_NATIVE_UCS4 4
-#define PyUnicode_NATIVE_UTF8 5
+#define PyUnicode_FORMAT_ASCII 0x01
+#define PyUnicode_FORMAT_UCS1 0x02
+#define PyUnicode_FORMAT_UCS2 0x04
+#define PyUnicode_FORMAT_UCS4 0x08
+#define PyUnicode_FORMAT_UTF8 0x10
 
 // Get the content of a string in its native format.
 // - Return the content, set '*size' and '*native_format' on success.
 // - Set an exception and return NULL on error.
-PyAPI_FUNC(const void*) PyUnicode_AsNativeFormat(
+PyAPI_FUNC(const void*) PyUnicode_Export(
     PyObject *unicode,
+    unsigned int supported_formats,
     Py_ssize_t *size,
-    int *native_format);
+    unsigned int *format);
+
+PyAPI_FUNC(void) PyUnicode_FreeExport(
+    PyObject *unicode,
+    const void* data,
+    unsigned int format);
 
 // Create a string object from a native format string.
 // - Return a reference to a new string object on success.
 // - Set an exception and return NULL on error.
-PyAPI_FUNC(PyObject*) PyUnicode_FromNativeFormat(
+PyAPI_FUNC(PyObject*) PyUnicode_Import(
     const void *data,
     Py_ssize_t size,
-    int native_format);
+    unsigned int format);
 
 /* --- wchar_t support for platforms which support it --------------------- */
 
