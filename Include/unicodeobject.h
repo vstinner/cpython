@@ -254,21 +254,24 @@ PyAPI_FUNC(PyObject *) PyUnicode_InternFromString(
 #define PyUnicode_FORMAT_UCS4 0x08
 #define PyUnicode_FORMAT_UTF8 0x10
 
-// Get the content of a string in its native format.
-// - Return the content, set '*size' and '*native_format' on success.
+// Get the content of a string in the requested format:
+// - Return the content, set '*size' and '*format' on success.
 // - Set an exception and return NULL on error.
+//
+// The export must be released by PyUnicode_ReleaseExport().
 PyAPI_FUNC(const void*) PyUnicode_Export(
     PyObject *unicode,
     unsigned int supported_formats,
     Py_ssize_t *size,
     unsigned int *format);
 
-PyAPI_FUNC(void) PyUnicode_FreeExport(
+// Release an export created by PyUnicode_Export().
+PyAPI_FUNC(void) PyUnicode_ReleaseExport(
     PyObject *unicode,
     const void* data,
     unsigned int format);
 
-// Create a string object from a native format string.
+// Create a string object from a string in the format 'format'.
 // - Return a reference to a new string object on success.
 // - Set an exception and return NULL on error.
 PyAPI_FUNC(PyObject*) PyUnicode_Import(

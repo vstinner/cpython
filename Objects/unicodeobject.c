@@ -2170,7 +2170,8 @@ error:
 }
 
 void
-PyUnicode_FreeExport(PyObject *unicode, const void* data, unsigned int format)
+PyUnicode_ReleaseExport(PyObject *unicode, const void* data,
+                        unsigned int format)
 {
     switch (format)
     {

@@ -1856,7 +1856,7 @@ unicode_export(PyObject *self, PyObject *args)
     }
 
     PyObject *res = Py_BuildValue("y#i", data, size, format);
-    PyUnicode_FreeExport(obj, data, format);
+    PyUnicode_ReleaseExport(obj, data, format);
     return res;
 }
 
