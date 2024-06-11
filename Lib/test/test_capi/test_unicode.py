@@ -1709,6 +1709,10 @@ class CAPITest(unittest.TestCase):
                          ('ucs4:\U0010ffff'.encode(ucs4_enc),
                           PyUnicode_FORMAT_UCS4))
 
+        # export ASCII as UCS1
+        self.assertEqual(unicode_export("abc", PyUnicode_FORMAT_UCS1),
+                         (b'abc', PyUnicode_FORMAT_UCS1))
+
         # always export to UCS4
         self.assertEqual(unicode_export("abc", PyUnicode_FORMAT_UCS4),
                          ('abc'.encode(ucs4_enc), PyUnicode_FORMAT_UCS4))

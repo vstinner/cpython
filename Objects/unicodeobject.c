@@ -2142,6 +2142,7 @@ PyUnicode_Export(PyObject *unicode, unsigned int supported_formats,
     }
 
     if (supported_formats & PyUnicode_FORMAT_UCS4) {
+        // Convert UCS1 or UCS2 to UCS4
         Py_UCS4 *ucs4 = PyUnicode_AsUCS4Copy(unicode);
         if (ucs4 == NULL) {
             goto error;
@@ -2152,6 +2153,7 @@ PyUnicode_Export(PyObject *unicode, unsigned int supported_formats,
     }
 
     if (supported_formats & PyUnicode_FORMAT_UTF8) {
+        // Encode UCS1, UCS2 or UCS4 to UTF-8
         const char *utf8 = PyUnicode_AsUTF8AndSize(unicode, size);
         if (utf8 == NULL) {
             goto error;
