@@ -261,15 +261,15 @@ PyAPI_FUNC(PyObject *) PyUnicode_InternFromString(
 // The export must be released by PyUnicode_ReleaseExport().
 PyAPI_FUNC(const void*) PyUnicode_Export(
     PyObject *unicode,
-    unsigned int supported_formats,
+    uint32_t supported_formats,
     Py_ssize_t *size,
-    unsigned int *format);
+    uint32_t *format);
 
 // Release an export created by PyUnicode_Export().
 PyAPI_FUNC(void) PyUnicode_ReleaseExport(
     PyObject *unicode,
     const void* data,
-    unsigned int format);
+    uint32_t format);
 
 // Create a string object from a string in the format 'format'.
 // - Return a reference to a new string object on success.
@@ -277,7 +277,7 @@ PyAPI_FUNC(void) PyUnicode_ReleaseExport(
 PyAPI_FUNC(PyObject*) PyUnicode_Import(
     const void *data,
     Py_ssize_t size,
-    unsigned int format);
+    uint32_t format);
 
 /* --- wchar_t support for platforms which support it --------------------- */
 

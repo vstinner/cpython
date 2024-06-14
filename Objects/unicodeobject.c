@@ -2098,8 +2098,8 @@ _PyUnicode_FromUCS4(const Py_UCS4 *u, Py_ssize_t size)
 }
 
 const void*
-PyUnicode_Export(PyObject *unicode, unsigned int supported_formats,
-                 Py_ssize_t *size, unsigned int *format)
+PyUnicode_Export(PyObject *unicode, uint32_t supported_formats,
+                 Py_ssize_t *size, uint32_t *format)
 {
     if (!PyUnicode_Check(unicode)) {
         PyErr_Format(PyExc_TypeError, "must be str, not %T", unicode);
@@ -2173,7 +2173,7 @@ error:
 
 void
 PyUnicode_ReleaseExport(PyObject *unicode, const void* data,
-                        unsigned int format)
+                        uint32_t format)
 {
     switch (format)
     {
@@ -2198,7 +2198,7 @@ PyUnicode_ReleaseExport(PyObject *unicode, const void* data,
 
 PyObject*
 PyUnicode_Import(const void *data, Py_ssize_t size,
-                 unsigned int format)
+                 uint32_t format)
 {
     if (size < 0) {
         PyErr_SetString(PyExc_ValueError, "Negative size");

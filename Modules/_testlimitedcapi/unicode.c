@@ -1849,13 +1849,13 @@ unicode_export(PyObject *self, PyObject *args)
     }
 
     Py_ssize_t size;
-    unsigned int format;
+    uint32_t format;
     const void *data = PyUnicode_Export(obj, supported_formats, &size, &format);
     if (data == NULL) {
         return NULL;
     }
 
-    PyObject *res = Py_BuildValue("y#i", data, size, format);
+    PyObject *res = Py_BuildValue("y#I", data, size, (unsigned int)format);
     PyUnicode_ReleaseExport(obj, data, format);
     return res;
 }
@@ -1868,7 +1868,7 @@ unicode_import(PyObject *self, PyObject *args)
     const void *data;
     Py_ssize_t size;
     unsigned int format;
-    if (!PyArg_ParseTuple(args, "y#i", &data, &size, &format)) {
+    if (!PyArg_ParseTuple(args, "y#I", &data, &size, &format)) {
         return NULL;
     }
     return PyUnicode_Import(data, size, format);
