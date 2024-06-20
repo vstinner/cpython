@@ -1810,6 +1810,36 @@ class CAPITest(unittest.TestCase):
         with self.assertRaises(ValueError):
             unicode_import(ucs4[:-3], PyUnicode_FORMAT_UCS4)
 
+    def test_unicode_import_export_roundtrip(self):
+        unicode_export = _testlimitedcapi.unicode_export
+        unicode_import = _testlimitedcapi.unicode_import
+        A = PyUnicode_FORMAT_ASCII
+        CS1 = PyUnicode_FORMAT_UCS1
+        CS2 = PyUnicode_FORMAT_UCS2
+        CS4 = PyUnicode_FORMAT_UCS4
+        TF8 = PyUnicode_FORMAT_UTF8
+        for string, alowed_encodings in (
+            ('', {A, CS1, CS2, CS4, TF8}),
+            ('ascii', {A, CS1, CS2, CS4, TF8}),
+            ('latin1:\xe9', {CS1, CS2, CS4, TF8}),
+            ('ucs2:\u20ac', {CS2, CS4, TF8}),
+            ('ucs4:\U0001f638', {CS4, TF8}),
+        ):
+            for encoding in A, CS1, CS2, CS4, TF8:
+                with self.subTest(string=string, encoding=encoding):
+                    if encoding not in alowed_encodings:
+                        with self.assertRaises(ValueError):
+                            unicode_export(string, encoding)
+                    else:
+                        buf, buf_enc = unicode_export(string, encoding)
+                        restored = unicode_import(buf, buf_enc)
+                        self.assertEqual(restored, string)
+
+                with self.subTest(string=string, encoding=-1):
+                    buf, buf_enc = unicode_export(string, -1)
+                    restored = unicode_import(buf, buf_enc)
+                    self.assertEqual(restored, string)
+
 
 if __name__ == '__main__':
     unittest.main()
