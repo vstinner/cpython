@@ -298,9 +298,8 @@ New Features
 
   (Contributed by Victor Stinner in :gh:`119182`.)
 
-* Add :c:func:`PyUnicode_AsNativeFormat` and
-  :c:func:`PyUnicode_FromNativeFormat` functions to import and export strings
-  in their native format.
+* Add :c:func:`PyUnicode_Import` and :c:func:`PyUnicode_Export` functions to
+  import and export strings from/to buffers in a given format.
   (Contributed by Victor Stinner in :gh:`119609`.)
 
 

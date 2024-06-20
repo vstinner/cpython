@@ -341,49 +341,71 @@ APIs:
    .. versionadded:: 3.3
 
 
-.. c:function:: const void* PyUnicode_AsNativeFormat(PyObject *unicode, Py_ssize_t *size, int *native_format)
+.. c:function:: const void* PyUnicode_Export(PyObject *unicode, uint32_t supported_formats,
+                 Py_ssize_t *nbytes, uint32_t *format)
 
-   Get the contents of a string in its native format.
+   Get the contents of a string in an “export format”.
 
-   * Return the contents, set *\*size* and *\*native_format* on success.
-   * Set an exception and return ``NULL`` on error.
-
-   The contents is valid as long as *unicode* is valid.
-
-   *unicode*, *size* and *native_format* must not be NULL.
-
-   *\*native_format* is set to one of these native formats:
+   Set *supported_formats* to formats from the following list, OR-ed together:
 
    .. c:namespace:: NULL
 
-   ========================================  =====  ============================
-   Constant Identifier                       Value  Description
-   ========================================  =====  ============================
-   .. c:macro:: PyUnicode_NATIVE_ASCII       ``1``  ASCII string (``Py_UCS1*``)
-   .. c:macro:: PyUnicode_NATIVE_UCS1        ``2``  UCS-1 string (``Py_UCS1*``)
-   .. c:macro:: PyUnicode_NATIVE_UCS2        ``3``  UCS-2 string (``Py_UCS2*``)
-   .. c:macro:: PyUnicode_NATIVE_UCS4        ``4``  UCS-4 string (``Py_UCS4*``)
-   .. c:macro:: PyUnicode_NATIVE_UTF8        ``5``  UTF-8 string (``char*``)
-   ========================================  =====  ============================
+   ========================================  ========  ============================
+   Constant Identifier                       Value     Description
+   ========================================  ========  ============================
+   .. c:macro:: PyUnicode_FORMAT_ASCII       ``0x01``  ASCII string (``Py_UCS1*``)
+   .. c:macro:: PyUnicode_FORMAT_UCS1        ``0x02``  UCS-1 string (``Py_UCS1*``)
+   .. c:macro:: PyUnicode_FORMAT_UCS2        ``0x04``  UCS-2 string (``Py_UCS2*``)
+   .. c:macro:: PyUnicode_FORMAT_UCS4        ``0x08``  UCS-4 string (``Py_UCS4*``)
+   .. c:macro:: PyUnicode_FORMAT_UTF8        ``0x10``  UTF-8 string (``char*``)
+   ========================================  ========  ============================
 
-   .. impl-detail::
-      In CPython, the :c:macro:`PyUnicode_NATIVE_UTF8` format is not used by
-      :c:func:`PyUnicode_AsNativeFormat`, but it's accepted by
-      :c:func:`PyUnicode_FromNativeFormat`.
+   Note that future versions of Python may introduce additional formats.
+
+   On success:
+
+   * Return a buffer containing the string data. Note that the buffer is not
+     necessarily zero-terminated.
+   * Set *\*format* to the buffer's format -- this will be one of the flags
+     set in *supported_formats*.
+   * Set *\*nbytes* to the size of the buffer, in bytes.
+
+   On error, set an exception, set *\*format* and *\*nbytes* to zero, and
+   return ``NULL``.
+
+   The returned buffer must be later released using
+   :c:func:`PyUnicode_ReleaseExport`.
+
+   The returned buffer must not be modified.
+
+   If possible, the export is a zero-copy operation -- for example,
+   the string's underlying storage is returned.
+
+   *unicode*, *nbytes* and *native_format* must not be NULL.
 
    .. versionadded:: 3.14
 
 
-.. c:function:: PyObject* PyUnicode_FromNativeFormat(const void *data, Py_ssize_t size, int native_format)
+.. c:function:: void PyUnicode_ReleaseExport(PyObject *unicode, const void* data, uint32_t format)
 
-   Create a string object from a native format string.
+   Release a string's export buffer. The buffer is invalid after this call.
+
+   Each argument must match the corresponding argument or result of
+   a single earlier call to :c:func:`PyUnicode_Export`.
+
+   .. versionadded:: 3.14
+
+
+.. c:function:: PyObject* PyUnicode_Import(const void *data, Py_ssize_t nbytes, uint32_t format)
+
+   Create a string object from a buffer in an “export format”.
 
    * Return a reference to a new string object on success.
    * Set an exception and return ``NULL`` on error.
 
-   *data* must not be NULL. *size* must be positive or zero.
+   *data* must not be NULL. *nbytes* must be positive or zero.
 
-   See :c:func:`PyUnicode_AsNativeFormat` for the available native formats.
+   See :c:func:`PyUnicode_Export` for the available native formats.
 
    .. versionadded:: 3.14
 
