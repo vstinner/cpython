@@ -2147,6 +2147,14 @@ PyUnicode_Export(PyObject *unicode, uint32_t supported_formats,
         if (ucs4 == NULL) {
             goto error;
         }
+
+        // The buffer is not necessarily zero-terminated.
+        // In debug mode, explicitly set a non-zero byte.
+        // For production, keep the safe zero.
+        assert(ucs4[len] == 0);
+#ifdef Py_DEBUG
+        ucs4[len] = 0xAAAAAAAA;
+#endif
         *format = PyUnicode_FORMAT_UCS4;
         *size = len * 4;
         return ucs4;
