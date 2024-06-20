@@ -1855,6 +1855,21 @@ unicode_export(PyObject *self, PyObject *args)
         return NULL;
     }
 
+#ifdef Py_DEBUG
+#define CHECK_END_BYTE(X) assert((X) == 0 || (X) == 0xAA)
+#else
+#define CHECK_END_BYTE(X) assert((X) == 0)
+#endif
+    CHECK_END_BYTE(((unsigned char*)data)[size]);
+    if (format == PyUnicode_FORMAT_UCS2) {
+        CHECK_END_BYTE(((unsigned char*)data)[size + 1]);
+    }
+    if (format == PyUnicode_FORMAT_UCS4) {
+        CHECK_END_BYTE(((unsigned char*)data)[size + 1]);
+        CHECK_END_BYTE(((unsigned char*)data)[size + 2]);
+        CHECK_END_BYTE(((unsigned char*)data)[size + 3]);
+    }
+
     PyObject *res = Py_BuildValue("y#I", data, size, (unsigned int)format);
     PyUnicode_ReleaseExport(obj, data, format);
     return res;
