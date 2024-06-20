@@ -2160,6 +2160,30 @@ PyUnicode_Export(PyObject *unicode, uint32_t supported_formats,
         return ucs4;
     }
 
+    if (supported_formats & PyUnicode_FORMAT_UCS2
+        && kind == PyUnicode_1BYTE_KIND)
+    {
+        // Convert UCS1 to UCS2
+        Py_UCS2 *ucs2 = PyMem_Malloc(sizeof(Py_UCS2) * (len + 1));
+        if (!ucs2) {
+            PyErr_NoMemory();
+            goto error;
+        }
+        _PyUnicode_CONVERT_BYTES(Py_UCS1, Py_UCS2,
+                                 PyUnicode_1BYTE_DATA(unicode),
+                                 PyUnicode_1BYTE_DATA(unicode) + len,
+                                 ucs2);
+#ifdef Py_DEBUG
+        // See AAAAAAAA in PyUnicode_FORMAT_UCS4
+        ucs2[len] = 0xAAAA;
+#else
+        ucs2[len] = 0;
+#endif
+        *format = PyUnicode_FORMAT_UCS2;
+        *size = len * 2;
+        return ucs2;
+    }
+
     if (supported_formats & PyUnicode_FORMAT_UTF8) {
         // Encode UCS1, UCS2 or UCS4 to UTF-8
         const char *utf8 = PyUnicode_AsUTF8AndSize(unicode, size);
@@ -2190,6 +2214,9 @@ PyUnicode_ReleaseExport(PyObject *unicode, const void* data,
     case PyUnicode_FORMAT_UCS1:
         break;
     case PyUnicode_FORMAT_UCS2:
+        if (PyUnicode_KIND(unicode) != PyUnicode_2BYTE_KIND) {
+            PyMem_Free((void*)data);
+        }
         break;
     case PyUnicode_FORMAT_UCS4:
         if (PyUnicode_KIND(unicode) != PyUnicode_4BYTE_KIND) {
