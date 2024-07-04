@@ -127,7 +127,7 @@ pylong_import(PyObject *module, PyObject *args)
     }
     Py_ssize_t ndigits = PyList_GET_SIZE(list);
 
-    PyLongDigitsArray long_import;
+    PyLong_DigitArray long_import;
     if (PyLong_Import(negative, ndigits, &long_import) == -1) {
         return NULL;
     }
@@ -162,7 +162,7 @@ error:
 static PyObject *
 pylong_export(PyObject *module, PyObject *obj)
 {
-    PyLongDigitsArray long_export;
+    PyLong_DigitArray long_export;
     if (PyLong_Export(obj, &long_export) < 0) {
         return NULL;
     }

@@ -552,7 +552,7 @@ Import/Export API
    A single unsigned digit.
 
    It is usually used in an *array of digits*, such as the
-   :c:member:`PyLongDigitsArray.digits` array.
+   :c:member:`PyLong_DigitArray.digits` array.
 
    Its size depend on the :c:macro:`!PYLONG_BITS_IN_DIGIT` macro:
    see the ``configure`` :option:`--enable-big-digits` option.
@@ -580,15 +580,15 @@ Import/Export API
 
       Word endian:
 
-      * +1 for most significant byte first (big endian)
-      * -1 for least significant first (little endian)
+      - ``1`` for most significant byte first (big endian)
+      - ``-1`` for least significant first (little endian)
 
    .. c:member:: int8_t array_endian;
 
       Array endian:
 
-      * +1 for most significant byte first (big endian)
-      * -1 for least significant first (little endian)
+      - ``1`` for most significant byte first (big endian)
+      - ``-1`` for least significant first (little endian)
 
 
 .. c:function:: PyObject* PyLong_Import(int negative, size_t ndigits, PyLongDigitsArray *long_import)
@@ -609,7 +609,7 @@ Import/Export API
    if this object should be kept after releasing the *long_import*.
 
 
-.. c:struct:: PyLongDigitsArray
+.. c:struct:: PyLong_DigitsArray
 
    A Python :class:`int` object exported as an array of digits.
 
@@ -639,8 +639,8 @@ Import/Export API
    * Set *\*long_export* and return 0 on success.
    * Set an exception and return -1 on error.
 
-   This function always succeeds if *obj* is a :c:type:`PyLongObject`
-   or its subtype.
+   This function always succeeds if *obj* is a Python :class:`int` object or a
+   subclass.
 
    :c:func:`PyLong_ReleaseExport` must be called once done with using
    *long_export*.

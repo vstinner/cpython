@@ -151,37 +151,37 @@ typedef struct PyLongLayout {
     uint8_t digit_size;
 
     // Word endian:
-    // +1 for most significant byte first (big endian)
-    // -1 for least significant first (little endian)
+    // - 1 for most significant byte first (big endian)
+    // - -1 for least significant first (little endian)
     int8_t word_endian;
 
     // Array endian:
-    // +1 for most significant byte first (big endian)
-    // -1 for least significant first (little endian)
+    // - 1 for most significant byte first (big endian)
+    // - -1 for least significant first (little endian)
     int8_t array_endian;
 } PyLongLayout;
 
 PyAPI_DATA(const PyLongLayout) PyLong_LAYOUT;
 
-typedef struct PyLongDigitsArray {
+typedef struct PyLong_DigitArray {
     PyLongObject *obj;
     int negative;
     size_t ndigits;
     Py_digit *digits;
-} PyLongDigitsArray;
+} PyLong_DigitArray;
 
 PyAPI_FUNC(int) PyLong_Export(
     PyObject *obj,
-    PyLongDigitsArray *long_export);
+    PyLong_DigitArray *long_export);
 PyAPI_FUNC(void) PyLong_ReleaseExport(
-    PyLongDigitsArray *long_export);
+    PyLong_DigitArray *long_export);
 
 PyAPI_FUNC(int) PyLong_Import(
     int negative,
     size_t ndigits,
-    PyLongDigitsArray *long_import);
+    PyLong_DigitArray *long_import);
 PyAPI_FUNC(void) PyLong_ReleaseImport(
-    PyLongDigitsArray *long_import);
+    PyLong_DigitArray *long_import);
 
 #ifdef __cplusplus
 }
