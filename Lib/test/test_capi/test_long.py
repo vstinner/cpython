@@ -745,7 +745,7 @@ class LongTests(unittest.TestCase):
         # CRASHES getsign(NULL)
 
     def test_long_layout(self):
-        # Test PyLong_LAYOUT
+        # Test PyUnstable_Long_LAYOUT
         int_info = sys.int_info
         layout = _testcapi.get_pylong_layout()
         expected = {
@@ -757,7 +757,7 @@ class LongTests(unittest.TestCase):
         self.assertEqual(layout, expected)
 
     def test_long_export(self):
-        # Test PyLong_Export()
+        # Test PyUnstable_Long_Export()
         layout = _testcapi.get_pylong_layout()
         shift = 2 ** layout['bits_per_digit']
 
@@ -776,7 +776,7 @@ class LongTests(unittest.TestCase):
             pylong_export("abc")
 
     def test_long_import(self):
-        # Test PyLong_Import()
+        # Test PyUnstable_Long_Import()
         layout = _testcapi.get_pylong_layout()
         shift = 2 ** layout['bits_per_digit']
 

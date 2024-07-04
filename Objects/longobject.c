@@ -6686,7 +6686,7 @@ PyUnstable_Long_CompactValue(const PyLongObject* op) {
     return _PyLong_CompactValue((PyLongObject*)op);
 }
 
-const PyLongLayout PyLong_LAYOUT = {
+const PyUnstable_LongLayout PyUnstable_Long_LAYOUT = {
     .bits_per_digit = PyLong_SHIFT,
     .word_endian = PY_LITTLE_ENDIAN ? -1 : 1,
     .array_endian = -1,  // least significant first
@@ -6695,7 +6695,7 @@ const PyLongLayout PyLong_LAYOUT = {
 
 
 int
-PyLong_Import(int negative, size_t ndigits, PyLong_DigitArray *long_import)
+PyUnstable_Long_Import(int negative, size_t ndigits, PyUnstable_Long_DigitArray *long_import)
 {
     PyLongObject *obj;
     if (!(obj = _PyLong_New(ndigits))) {
@@ -6713,7 +6713,7 @@ PyLong_Import(int negative, size_t ndigits, PyLong_DigitArray *long_import)
 
 
 void
-PyLong_ReleaseImport(PyLong_DigitArray *long_import)
+PyUnstable_Long_ReleaseImport(PyUnstable_Long_DigitArray *long_import)
 {
     Py_CLEAR(long_import->obj);
     long_import->negative = 0;
@@ -6724,7 +6724,7 @@ PyLong_ReleaseImport(PyLong_DigitArray *long_import)
 
 
 int
-PyLong_Export(PyObject *obj, PyLong_DigitArray *long_export)
+PyUnstable_Long_Export(PyObject *obj, PyUnstable_Long_DigitArray *long_export)
 {
     if (!PyLong_Check(obj)) {
         PyErr_Format(PyExc_TypeError, "expect int, got %T", obj);
@@ -6744,7 +6744,7 @@ PyLong_Export(PyObject *obj, PyLong_DigitArray *long_export)
 
 
 void
-PyLong_ReleaseExport(PyLong_DigitArray *long_export)
+PyUnstable_Long_ReleaseExport(PyUnstable_Long_DigitArray *long_export)
 {
     Py_CLEAR(long_export->obj);
     long_export->negative = 0;

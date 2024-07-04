@@ -127,8 +127,8 @@ pylong_import(PyObject *module, PyObject *args)
     }
     Py_ssize_t ndigits = PyList_GET_SIZE(list);
 
-    PyLong_DigitArray long_import;
-    if (PyLong_Import(negative, ndigits, &long_import) == -1) {
+    PyUnstable_Long_DigitArray long_import;
+    if (PyUnstable_Long_Import(negative, ndigits, &long_import) == -1) {
         return NULL;
     }
 
@@ -150,11 +150,11 @@ pylong_import(PyObject *module, PyObject *args)
 
     PyObject *res = (PyObject *)long_import.obj;
     Py_INCREF(res);
-    PyLong_ReleaseImport(&long_import);
+    PyUnstable_Long_ReleaseImport(&long_import);
     return res;
 
 error:
-    PyLong_ReleaseImport(&long_import);
+    PyUnstable_Long_ReleaseImport(&long_import);
     return NULL;
 }
 
@@ -162,8 +162,8 @@ error:
 static PyObject *
 pylong_export(PyObject *module, PyObject *obj)
 {
-    PyLong_DigitArray long_export;
-    if (PyLong_Export(obj, &long_export) < 0) {
+    PyUnstable_Long_DigitArray long_export;
+    if (PyUnstable_Long_Export(obj, &long_export) < 0) {
         return NULL;
     }
 
@@ -184,11 +184,11 @@ pylong_export(PyObject *module, PyObject *obj)
     }
 
     PyObject *res = Py_BuildValue("(iN)", long_export.negative, digits);
-    PyLong_ReleaseExport(&long_export);
+    PyUnstable_Long_ReleaseExport(&long_export);
     return res;
 
 error:
-    PyLong_ReleaseExport(&long_export);
+    PyUnstable_Long_ReleaseExport(&long_export);
     return NULL;
 }
 
@@ -196,7 +196,7 @@ error:
 static PyObject *
 get_pylong_layout(PyObject *module, PyObject *Py_UNUSED(args))
 {
-    PyLongLayout layout = PyLong_LAYOUT;
+    PyUnstable_LongLayout layout = PyUnstable_Long_LAYOUT;
 
     PyObject *dict = PyDict_New();
     if (dict == NULL) {

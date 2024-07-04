@@ -143,7 +143,7 @@ _PyLong_CompactValue(PyLongObject *op)
 
 /* --- Import/Export API -------------------------------------------------- */
 
-typedef struct PyLongLayout {
+typedef struct PyUnstable_LongLayout {
     // Bits per digit
     uint8_t bits_per_digit;
 
@@ -159,29 +159,29 @@ typedef struct PyLongLayout {
     // - 1 for most significant byte first (big endian)
     // - -1 for least significant first (little endian)
     int8_t array_endian;
-} PyLongLayout;
+} PyUnstable_LongLayout;
 
-PyAPI_DATA(const PyLongLayout) PyLong_LAYOUT;
+PyAPI_DATA(const PyUnstable_LongLayout) PyUnstable_Long_LAYOUT;
 
-typedef struct PyLong_DigitArray {
+typedef struct PyUnstable_Long_DigitArray {
     PyLongObject *obj;
     int negative;
     size_t ndigits;
     Py_digit *digits;
-} PyLong_DigitArray;
+} PyUnstable_Long_DigitArray;
 
-PyAPI_FUNC(int) PyLong_Export(
+PyAPI_FUNC(int) PyUnstable_Long_Export(
     PyObject *obj,
-    PyLong_DigitArray *long_export);
-PyAPI_FUNC(void) PyLong_ReleaseExport(
-    PyLong_DigitArray *long_export);
+    PyUnstable_Long_DigitArray *long_export);
+PyAPI_FUNC(void) PyUnstable_Long_ReleaseExport(
+    PyUnstable_Long_DigitArray *long_export);
 
-PyAPI_FUNC(int) PyLong_Import(
+PyAPI_FUNC(int) PyUnstable_Long_Import(
     int negative,
     size_t ndigits,
-    PyLong_DigitArray *long_import);
-PyAPI_FUNC(void) PyLong_ReleaseImport(
-    PyLong_DigitArray *long_import);
+    PyUnstable_Long_DigitArray *long_import);
+PyAPI_FUNC(void) PyUnstable_Long_ReleaseImport(
+    PyUnstable_Long_DigitArray *long_import);
 
 #ifdef __cplusplus
 }
