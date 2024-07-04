@@ -639,6 +639,9 @@ Import/Export API
    * Set *\*long_export* and return 0 on success.
    * Set an exception and return -1 on error.
 
+   This function always succeeds if *obj* is a :c:type:`PyLongObject`
+   or its subtype.
+
    :c:func:`PyLong_ReleaseExport` must be called once done with using
    *long_export*.
 
