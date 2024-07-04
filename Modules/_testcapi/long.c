@@ -127,9 +127,8 @@ pylong_import(PyObject *module, PyObject *args)
     }
     Py_ssize_t ndigits = PyList_GET_SIZE(list);
 
-    Py_digit *digits = PyMem_Malloc(ndigits * sizeof(Py_digit));
-    if (digits == NULL) {
-        PyErr_NoMemory();
+    PyLongDigitsArray long_import;
+    if (PyLong_Import(negative, ndigits, &long_import) == -1) {
         return NULL;
     }
 
@@ -146,16 +145,16 @@ pylong_import(PyObject *module, PyObject *args)
             PyErr_SetString(PyExc_ValueError, "digit doesn't fit into Py_digit");
             goto error;
         }
-        digits[i] = digit;
+        long_import.digits[i] = digit;
     }
 
-    PyObject *res = PyUnstable_Long_Import(negative, ndigits, digits);
-    PyMem_Free(digits);
-
+    PyObject *res = (PyObject *)long_import.obj;
+    Py_INCREF(res);
+    PyLong_ReleaseImport(&long_import);
     return res;
 
 error:
-    PyMem_Free(digits);
+    PyLong_ReleaseImport(&long_import);
     return NULL;
 }
 
@@ -163,8 +162,8 @@ error:
 static PyObject *
 pylong_export(PyObject *module, PyObject *obj)
 {
-    PyUnstable_LongExport long_export;
-    if (PyUnstable_Long_Export(obj, &long_export) < 0) {
+    PyLongDigitsArray long_export;
+    if (PyLong_Export(obj, &long_export) < 0) {
         return NULL;
     }
 
@@ -185,11 +184,11 @@ pylong_export(PyObject *module, PyObject *obj)
     }
 
     PyObject *res = Py_BuildValue("(iN)", long_export.negative, digits);
-    PyUnstable_Long_ReleaseExport(&long_export);
+    PyLong_ReleaseExport(&long_export);
     return res;
 
 error:
-    PyUnstable_Long_ReleaseExport(&long_export);
+    PyLong_ReleaseExport(&long_export);
     return NULL;
 }
 
@@ -197,7 +196,7 @@ error:
 static PyObject *
 get_pylong_layout(PyObject *module, PyObject *Py_UNUSED(args))
 {
-    PyUnstable_LongLayout layout = PyUnstable_Long_LAYOUT;
+    PyLongLayout layout = PyLong_LAYOUT;
 
     PyObject *dict = PyDict_New();
     if (dict == NULL) {

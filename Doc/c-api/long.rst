@@ -552,17 +552,17 @@ Import/Export API
    A single unsigned digit.
 
    It is usually used in an *array of digits*, such as the
-   :c:member:`PyUnstable_LongExport.digits` array.
+   :c:member:`PyLongDigitsArray.digits` array.
 
    Its size depend on the :c:macro:`!PYLONG_BITS_IN_DIGIT` macro:
    see the ``configure`` :option:`--enable-big-digits` option.
 
-   See :c:member:`PyUnstable_Long_LAYOUT.bits_per_digit` for the number of bits per
-   digit and :c:member:`PyUnstable_Long_LAYOUT.digit_size` for the size of a digit (in
+   See :c:member:`PyLong_LAYOUT.bits_per_digit` for the number of bits per
+   digit and :c:member:`PyLong_LAYOUT.digit_size` for the size of a digit (in
    bytes).
 
 
-.. c:struct:: PyUnstable_Long_LAYOUT
+.. c:struct:: PyLong_LAYOUT
 
    Internal layout of a Python :class:`int` object.
 
@@ -580,38 +580,40 @@ Import/Export API
 
       Word endian:
 
-      - 1 for most significant byte first (big endian)
-      - 0 for least significant first (little endian)
+      * +1 for most significant byte first (big endian)
+      * -1 for least significant first (little endian)
 
    .. c:member:: int8_t array_endian;
 
       Array endian:
 
-      - 1 for most significant byte first (big endian)
-      - 0 for least significant first (little endian)
+      * +1 for most significant byte first (big endian)
+      * -1 for least significant first (little endian)
 
 
-.. c:function:: PyObject* PyUnstable_Long_Import(int negative, size_t ndigits, Py_digit *digits)
+.. c:function:: PyObject* PyLong_Import(int negative, size_t ndigits, PyLongDigitsArray *long_import)
 
-   Create a Python :class:`int` object from an array of digits.
+   Prepart :c:struct:`PyLongDigitsArray` to hold a Python :class:`int` object
 
-   * Return a Python :class:`int` object on success.
-   * Set an exception and return ``NULL`` on error.
+   *negative* is ``1`` if the number should be negative, or ``0`` otherwise.
 
-   *negative* is ``1`` if the number is negative, or ``0`` otherwise.
+   *ndigits* is the number of digits in the integer.
 
-   *ndigits* is the number of digits in the *digits* array.
+   See :c:struct:`PyLong_LAYOUT` for the internal layout of an integer.
 
-   *digits* is an array of unsigned digits.
+   * Set *\*long_import and return 0 on success.
+   * Set an exception and return -1 on error.
 
-   See :c:struct:`PyUnstable_Long_LAYOUT` for the internal layout of an integer.
+   :c:func:`PyLong_ReleaseImport` must be called once done with using
+   *long_import*.  A strong reference should be taken on *long_import->obj*,
+   if this object should be kept after releasing the *long_import*.
 
 
-.. c:struct:: PyUnstable_LongExport
+.. c:struct:: PyLongDigitsArray
 
    A Python :class:`int` object exported as an array of digits.
 
-   See :c:struct:`PyUnstable_Long_LAYOUT` for the internal layout of an integer.
+   See :c:struct:`PyLong_LAYOUT` for the internal layout of an integer.
 
    .. c:member:: PyLongObject *obj
 
@@ -630,17 +632,17 @@ Import/Export API
       Array of unsigned digits.
 
 
-.. c:function:: int PyUnstable_Long_Export(PyObject *obj, PyUnstable_LongExport *export)
+.. c:function:: int PyLong_Export(PyObject *obj, PyLongDigitsArray *long_export)
 
    Export a Python :class:`int` object as an array of digits.
 
-   * Set *\*export* and return 0 on success.
+   * Set *\*long_export* and return 0 on success.
    * Set an exception and return -1 on error.
 
-   :c:func:`PyUnstable_Long_ReleaseExport` must be called once done with using
-   *export*.
+   :c:func:`PyLong_ReleaseExport` must be called once done with using
+   *long_export*.
 
 
-.. c:function:: void PyUnstable_Long_ReleaseExport(PyUnstable_LongExport *export)
+.. c:function:: void PyLong_ReleaseExport(PyLongDigitsArray *long_export)
 
-   Release an export created by :c:func:`PyUnstable_Long_Export`.
+   Release an export created by :c:func:`Py_Long_Export`.

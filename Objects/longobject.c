@@ -6686,23 +6686,49 @@ PyUnstable_Long_CompactValue(const PyLongObject* op) {
     return _PyLong_CompactValue((PyLongObject*)op);
 }
 
-const PyUnstable_LongLayout PyUnstable_Long_LAYOUT = {
+const PyLongLayout PyLong_LAYOUT = {
     .bits_per_digit = PyLong_SHIFT,
-    .word_endian = PY_LITTLE_ENDIAN,
-    .array_endian = 0,  // least significant first
+#if PY_BIG_ENDIAN
+    .word_endian = 1,
+#else
+    .word_endian = -1,
+#endif
+    .array_endian = -1,  // least significant first
     .digit_size = sizeof(digit),
 };
 
 
-PyObject*
-PyUnstable_Long_Import(int negative, size_t ndigits, Py_digit *digits)
+int
+PyLong_Import(int negative, size_t ndigits, PyLongDigitsArray *long_import)
 {
-    return (PyObject*)_PyLong_FromDigits(negative, ndigits, digits);
+    PyLongObject *obj;
+    if (!(obj = _PyLong_New(ndigits))) {
+        return -1;
+    }
+    if (negative) {
+        _PyLong_FlipSign(obj);
+    }
+    long_import->obj = obj;
+    long_import->ndigits = ndigits;
+    long_import->negative = negative;
+    long_import->digits = obj->long_value.ob_digit;
+    return 0;
+}
+
+
+void
+PyLong_ReleaseImport(PyLongDigitsArray *long_import)
+{
+    Py_CLEAR(long_import->obj);
+    long_import->negative = 0;
+    long_import->ndigits = 0;
+    long_import->digits = NULL;
+
 }
 
 
 int
-PyUnstable_Long_Export(PyObject *obj, PyUnstable_LongExport *long_export)
+PyLong_Export(PyObject *obj, PyLongDigitsArray *long_export)
 {
     if (!PyLong_Check(obj)) {
         PyErr_Format(PyExc_TypeError, "expect int, got %T", obj);
@@ -6722,7 +6748,7 @@ PyUnstable_Long_Export(PyObject *obj, PyUnstable_LongExport *long_export)
 
 
 void
-PyUnstable_Long_ReleaseExport(PyUnstable_LongExport *long_export)
+PyLong_ReleaseExport(PyLongDigitsArray *long_export)
 {
     Py_CLEAR(long_export->obj);
     long_export->negative = 0;
