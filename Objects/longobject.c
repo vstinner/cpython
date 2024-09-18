@@ -6798,14 +6798,10 @@ PyLong_Export(PyObject *obj, PyLongExport *export_long)
         return -1;
     }
 
-    int64_t value;
-    int flags = Py_ASNATIVEBYTES_NATIVE_ENDIAN;
-    Py_ssize_t bytes = PyLong_AsNativeBytes(obj, &value, sizeof(value), flags);
-    if (bytes < 0) {
-        return -1;
-    }
+    int overflow;
+    long value = PyLong_AsLongAndOverflow(obj, &overflow);
 
-    if ((size_t)bytes <= sizeof(value)) {
+    if (!overflow) {
         export_long->value = value;
         export_long->negative = 0;
         export_long->ndigits = 0;
