@@ -3604,6 +3604,13 @@ dec_as_long(PyObject *dec, PyObject *context, int round)
     }
 
     status = 0;
+
+    int64_t val = mpd_qget_i64(x, &status);
+    if (!status) {
+        mpd_del(x);
+        return PyLong_FromInt64(val);
+    }
+
     n = (mpd_sizeinbase(x, 2) +
          layout->bits_per_digit - 1) / layout->bits_per_digit;
     PyLongWriter *writer = PyLongWriter_Create(mpd_isnegative(x), n,
@@ -3615,6 +3622,8 @@ dec_as_long(PyObject *dec, PyObject *context, int round)
         mpd_del(x);
         return NULL;
     }
+
+    status = 0;
 #if PYLONG_BITS_IN_DIGIT == 30
     n = mpd_qexport_u32(&ob_digit, n, PyLong_BASE, x, &status);
 #elif PYLONG_BITS_IN_DIGIT == 15
