@@ -148,29 +148,37 @@ typedef struct PyLongLayout {
     // Digit size in bytes
     uint8_t digit_size;
 
-    // Word endian:
-    // * 1 for most significant word first (big endian)
+    // Digits order:
+    // * 1 for most significant digit first (big endian)
     // * -1 for least significant first (little endian)
     int8_t digits_order;
 
-    // Array endian:
+    // Digit endianness:
     // * 1 for most significant byte first (big endian)
     // * -1 for least significant first (little endian)
-    int8_t endian;
+    int8_t endianness;
 } PyLongLayout;
 
 PyAPI_FUNC(const PyLongLayout*) PyLong_GetNativeLayout(void);
 
+typedef enum {
+    PyLongExport_Error = -1,
+    PyLongExport_DigitArray = 0,
+} PyLongExport_Kind;
+
 typedef struct PyLongExport {
-    int64_t value;
-    uint8_t negative;
-    Py_ssize_t ndigits;
-    const void *digits;
     // Member used internally, must not be used for other purpose.
     Py_uintptr_t _reserved;
+    union {
+        struct {
+            Py_ssize_t ndigits;
+            const void *digits;
+            uint8_t negative;
+        } digit_array;
+    };
 } PyLongExport;
 
-PyAPI_FUNC(int) PyLong_Export(
+PyAPI_FUNC(PyLongExport_Kind) PyLong_Export(
     PyObject *obj,
     PyLongExport *export_long);
 PyAPI_FUNC(void) PyLong_FreeExport(

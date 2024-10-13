@@ -619,10 +619,12 @@ Export API
 
 .. c:struct:: PyLongLayout
 
-   Layout of an array of digits, used by Python :class:`int` object.
+   Layout of an array of "digits" ("limbs" in the GMP terminology), used to
+   represent absolute value for arbitrary precision integers.
 
    Use :c:func:`PyLong_GetNativeLayout` to get the native layout of Python
-   :class:`int` objects.
+   :class:`int` objects, used internally for integers with "big enough"
+   absolute value.
 
    See also :data:`sys.int_info` which exposes similar information to Python.
 
@@ -641,7 +643,7 @@ Export API
       - ``1`` for most significant digit first
       - ``-1`` for least significant digit first
 
-   .. c:member:: int8_t endian
+   .. c:member:: int8_t endianness
 
       Digit endianness:
 
@@ -655,56 +657,60 @@ Export API
 
    See the :c:struct:`PyLongLayout` structure.
 
+   The function must not be called before Python initialization nor after
+   Python finalization. The returned layout is valid until Python is
+   finalized. The layout is the same for all Python sub-interpreters and
+   so it can be cached.
+
+
+.. c:type:: PyLongExport_Kind
+
+    The enum value used to represent different results of
+    :c:func:`PyLong_Export`.
+
 
 .. c:struct:: PyLongExport
 
    Export of a Python :class:`int` object.
 
-   There are two cases:
+   .. c:struct:: digit_array
 
-   * If :c:member:`digits` is ``NULL``, only use the :c:member:`value` member.
-     Calling :c:func:`PyLong_FreeExport` is optional in this case.
-   * If :c:member:`digits` is not ``NULL``, use :c:member:`negative`,
-     :c:member:`ndigits` and :c:member:`digits` members.
-     Calling :c:func:`PyLong_FreeExport` is mandatory in this case.
+      Export an integer as an array of digits; corresponds to
+      ``PyLongExport_DigitArray`` value of the enum
+      :c:type:`PyLongExport_Kind`.
 
-   .. c:member:: int64_t value
+      .. c:member:: Py_ssize_t ndigits
 
-      The native integer value of the exported :class:`int` object.
-      Only valid if :c:member:`digits` is ``NULL``.
+         Number of digits in :c:member:`digits` array.
 
-   .. c:member:: uint8_t negative
+      .. c:member:: const void *digits
 
-      1 if the number is negative, 0 otherwise.
-      Only valid if :c:member:`digits` is not ``NULL``.
+         Read-only array of unsigned digits.
 
-   .. c:member:: Py_ssize_t ndigits
+      .. c:member:: uint8_t negative
 
-      Number of digits in :c:member:`digits` array.
-      Only valid if :c:member:`digits` is not ``NULL``.
-
-   .. c:member:: const void *digits
-
-      Read-only array of unsigned digits. Can be ``NULL``.
+         1 if the number is negative, 0 otherwise.
 
 
-.. c:function:: int PyLong_Export(PyObject *obj, PyLongExport *export_long)
+.. c:function:: PyLongExport_Kind PyLong_Export(PyObject *obj, PyLongExport *export)
 
    Export a Python :class:`int` object.
 
-   On success, set *\*export_long* and return 0.
-   On error, set an exception and return -1.
+   On success, set *\*export* and return an appropriate export type
+   for the given value, see the :c:struct:`PyLongExport` struct.
+   :c:func:`PyLong_FreeExport` must be called when the export is no
+   longer needed.  Currently the only available type is
+   ``PyLongExport_DigitArray``.
+
+   On error, set an exception and return ``PyLongExport_Error``.
 
    This function always succeeds if *obj* is a Python :class:`int` object or a
    subclass.
 
-   If *export_long.digits* is not ``NULL``, :c:func:`PyLong_FreeExport` must be
-   called when the export is no longer needed.
 
+.. c:function:: void PyLong_FreeExport(PyLongExport *export)
 
-.. c:function:: void PyLong_FreeExport(PyLongExport *export_long)
-
-   Release the export *export_long* created by :c:func:`PyLong_Export`.
+   Release the *export* created by :c:func:`PyLong_Export`.
 
 
 PyLongWriter API

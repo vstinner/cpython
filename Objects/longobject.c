@@ -6779,7 +6779,7 @@ int PyLong_AsUInt64(PyObject *obj, uint64_t *value)
 static const PyLongLayout PyLong_LAYOUT = {
     .bits_per_digit = PyLong_SHIFT,
     .digits_order = -1,  // least significant first
-    .endian = PY_LITTLE_ENDIAN ? -1 : 1,
+    .endianness = PY_LITTLE_ENDIAN ? -1 : 1,
     .digit_size = sizeof(digit),
 };
 
@@ -6790,45 +6790,23 @@ const PyLongLayout* PyLong_GetNativeLayout(void)
 }
 
 
-int
+PyLongExport_Kind
 PyLong_Export(PyObject *obj, PyLongExport *export_long)
 {
     if (!PyLong_Check(obj)) {
         PyErr_Format(PyExc_TypeError, "expect int, got %T", obj);
-        return -1;
+        return PyLongExport_Error;
     }
 
-    // Fast-path: try to convert to a int64_t
-    int overflow;
-#if SIZEOF_LONG == 8
-    long value = PyLong_AsLongAndOverflow(obj, &overflow);
-#else
-    // Windows has 32-bit long, so use 64-bit long long instead
-    long long value = PyLong_AsLongLongAndOverflow(obj, &overflow);
-#endif
-    Py_BUILD_ASSERT(sizeof(value) == sizeof(int64_t));
-    // the function cannot fail since obj is a PyLongObject
-    assert(!(value == -1 && PyErr_Occurred()));
-
-    if (!overflow) {
-        export_long->value = value;
-        export_long->negative = 0;
-        export_long->ndigits = 0;
-        export_long->digits = 0;
-        export_long->_reserved = 0;
+    PyLongObject *self = (PyLongObject*)obj;
+    export_long->digit_array.negative = _PyLong_IsNegative(self);
+    export_long->digit_array.ndigits = _PyLong_DigitCount(self);
+    if (export_long->digit_array.ndigits == 0) {
+        export_long->digit_array.ndigits = 1;
     }
-    else {
-        PyLongObject *self = (PyLongObject*)obj;
-        export_long->value = 0;
-        export_long->negative = _PyLong_IsNegative(self);
-        export_long->ndigits = _PyLong_DigitCount(self);
-        if (export_long->ndigits == 0) {
-            export_long->ndigits = 1;
-        }
-        export_long->digits = self->long_value.ob_digit;
-        export_long->_reserved = (Py_uintptr_t)Py_NewRef(obj);
-    }
-    return 0;
+    export_long->digit_array.digits = self->long_value.ob_digit;
+    export_long->_reserved = (Py_uintptr_t)Py_NewRef(obj);
+    return PyLongExport_DigitArray;
 }
 
 

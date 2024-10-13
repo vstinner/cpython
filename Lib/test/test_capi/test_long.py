@@ -678,7 +678,7 @@ class LongTests(unittest.TestCase):
             'bits_per_digit': int_info.bits_per_digit,
             'digit_size': int_info.sizeof_digit,
             'digits_order': -1,
-            'endian': -1 if sys.byteorder == 'little' else 1,
+            'endianness': -1 if sys.byteorder == 'little' else 1,
         }
         self.assertEqual(layout, expected)
 
@@ -689,12 +689,9 @@ class LongTests(unittest.TestCase):
 
         pylong_export = _testcapi.pylong_export
 
-        # value fits into int64_t
-        self.assertEqual(pylong_export(0), 0)
-        self.assertEqual(pylong_export(123), 123)
-        self.assertEqual(pylong_export(-123), -123)
-
-        # use an array, doesn't fit into int64_t
+        self.assertEqual(pylong_export(0), (0, [0]))
+        self.assertEqual(pylong_export(123), (0, [123]))
+        self.assertEqual(pylong_export(-123), (1, [123]))
         self.assertEqual(pylong_export(base**10 * 2 + 1),
                          (0, [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]))
         self.assertEqual(pylong_export(-(base**10 * 2 + 1)),

@@ -155,11 +155,11 @@ layout_to_dict(const PyLongLayout *layout)
         goto error;
     }
 
-    value = PyLong_FromLong(layout->endian);
+    value = PyLong_FromLong(layout->endianness);
     if (value == NULL) {
         goto error;
     }
-    res = PyDict_SetItemString(dict, "endian", value);
+    res = PyDict_SetItemString(dict, "endianness", value);
     Py_DECREF(value);
     if (res < 0) {
         goto error;
@@ -177,20 +177,15 @@ static PyObject *
 pylong_export(PyObject *module, PyObject *obj)
 {
     PyLongExport export_long;
-    if (PyLong_Export(obj, &export_long) < 0) {
+    if (PyLong_Export(obj, &export_long) == PyLongExport_Error) {
         return NULL;
     }
 
-    if (export_long.digits == NULL) {
-        return PyLong_FromInt64(export_long.value);
-        // PyLong_FreeExport() is not needed in this case
-    }
-
     assert(PyLong_GetNativeLayout()->digit_size == sizeof(digit));
-    const digit *export_long_digits = export_long.digits;
+    const digit *export_long_digits = export_long.digit_array.digits;
 
     PyObject *digits = PyList_New(0);
-    for (Py_ssize_t i=0; i < export_long.ndigits; i++) {
+    for (Py_ssize_t i=0; i < export_long.digit_array.ndigits; i++) {
         PyObject *item = PyLong_FromUnsignedLong(export_long_digits[i]);
         if (item == NULL) {
             goto error;
@@ -203,7 +198,8 @@ pylong_export(PyObject *module, PyObject *obj)
         Py_DECREF(item);
     }
 
-    PyObject *res = Py_BuildValue("(iN)", export_long.negative, digits);
+    PyObject *res = Py_BuildValue("(iN)", export_long.digit_array.negative,
+                                  digits);
 
     PyLong_FreeExport(&export_long);
     assert(export_long._reserved == 0);
