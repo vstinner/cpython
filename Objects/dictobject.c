@@ -136,8 +136,9 @@ As a consequence of this, split keys have a maximum size of 16.
 #include <stdbool.h>
 
 // Forward declarations
-static PyObject *
-frozendict_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
+static PyObject* frozendict_new(PyTypeObject *type, PyObject *args,
+                                PyObject *kwds);
+static PyObject* _PyFrozenDict_New(void);
 
 
 /*[clinic input]
@@ -2445,7 +2446,7 @@ _PyDict_GetItemRef_KnownHash(PyDictObject *op, PyObject *key, Py_hash_t hash, Py
 int
 PyDict_GetItemRef(PyObject *op, PyObject *key, PyObject **result)
 {
-    if (!PyDict_Check(op)) {
+    if (!_PyAnyDict_Check(op)) {
         PyErr_BadInternalCall();
         *result = NULL;
         return -1;
@@ -2501,7 +2502,7 @@ PyDict_GetItemWithError(PyObject *op, PyObject *key)
     PyDictObject*mp = (PyDictObject *)op;
     PyObject *value;
 
-    if (!PyDict_Check(op)) {
+    if (!_PyAnyDict_Check(op)) {
         PyErr_BadInternalCall();
         return NULL;
     }
@@ -3305,7 +3306,7 @@ _PyDict_FromKeys(PyObject *cls, PyObject *iterable, PyObject *value)
         return NULL;
     }
 
-    if (PyDict_CheckExact(d)) {
+    if (_PyAnyDict_CheckExact(d)) {
         Py_BEGIN_CRITICAL_SECTION(d);
         while ((key = PyIter_Next(it)) != NULL) {
             status = setitem_lock_held((PyDictObject *)d, key, value);
@@ -4126,13 +4127,19 @@ copy_lock_held(PyObject *o)
     PyObject *copy;
     PyDictObject *mp;
     PyInterpreterState *interp = _PyInterpreterState_GET();
+    int frozendict = PyFrozenDict_Check(o);
 
     ASSERT_DICT_LOCKED(o);
 
     mp = (PyDictObject *)o;
     if (mp->ma_used == 0) {
         /* The dict is empty; just return a new dict. */
-        return PyDict_New();
+        if (frozendict) {
+            return _PyFrozenDict_New();
+        }
+        else {
+            return PyDict_New();
+        }
     }
 
     if (_PyDict_HasSplitTable(mp)) {
@@ -4141,7 +4148,13 @@ copy_lock_held(PyObject *o)
         if (newvalues == NULL) {
             return PyErr_NoMemory();
         }
-        split_copy = PyObject_GC_New(PyDictObject, &PyDict_Type);
+        if (frozendict) {
+            split_copy = (PyDictObject *)PyObject_GC_New(PyFrozenDictObject,
+                                                         &PyFrozenDict_Type);
+        }
+        else {
+            split_copy = PyObject_GC_New(PyDictObject, &PyDict_Type);
+        }
         if (split_copy == NULL) {
             free_values(newvalues, false);
             return NULL;
@@ -4154,13 +4167,18 @@ copy_lock_held(PyObject *o)
         split_copy->ma_used = mp->ma_used;
         split_copy->_ma_watcher_tag = 0;
         dictkeys_incref(mp->ma_keys);
+        if (frozendict) {
+            PyFrozenDictObject *frozen = (PyFrozenDictObject *)split_copy;
+            frozen->ma_hash = -1;
+        }
         _PyObject_GC_TRACK(split_copy);
         return (PyObject *)split_copy;
     }
 
     if (Py_TYPE(mp)->tp_iter == dict_iter &&
             mp->ma_values == NULL &&
-            (mp->ma_used >= (mp->ma_keys->dk_nentries * 2) / 3))
+            (mp->ma_used >= (mp->ma_keys->dk_nentries * 2) / 3) &&
+            !frozendict)
     {
         /* Use fast-copy if:
 
@@ -4192,7 +4210,12 @@ copy_lock_held(PyObject *o)
         return (PyObject *)new;
     }
 
-    copy = PyDict_New();
+    if (frozendict) {
+        copy = _PyFrozenDict_New();
+    }
+    else {
+        copy = PyDict_New();
+    }
     if (copy == NULL)
         return NULL;
     if (dict_merge(interp, copy, o, 1) == 0)
@@ -4204,7 +4227,7 @@ copy_lock_held(PyObject *o)
 PyObject *
 PyDict_Copy(PyObject *o)
 {
-    if (o == NULL || !PyDict_Check(o)) {
+    if (o == NULL || !_PyAnyDict_Check(o)) {
         PyErr_BadInternalCall();
         return NULL;
     }
@@ -4755,7 +4778,7 @@ dict___sizeof___impl(PyDictObject *self)
 static PyObject *
 dict_or(PyObject *self, PyObject *other)
 {
-    if (!PyDict_Check(self) || !PyDict_Check(other)) {
+    if (!_PyAnyDict_Check(self) || !_PyAnyDict_Check(other)) {
         Py_RETURN_NOTIMPLEMENTED;
     }
     PyObject *new = PyDict_Copy(self);
@@ -4932,8 +4955,9 @@ dict_vectorcall(PyObject *type, PyObject * const*args,
     }
 
     PyObject *self;
-    // FIXME: support frozendict subtypes
-    if (_PyType_CAST(type) == &PyFrozenDict_Type) {
+    if (Py_Is((PyTypeObject*)type, &PyFrozenDict_Type)
+        || PyType_IsSubtype((PyTypeObject*)type, &PyFrozenDict_Type))
+    {
         self = frozendict_new(_PyType_CAST(type), NULL, NULL);
     }
     else {
@@ -5220,7 +5244,7 @@ dictiter_iternextkey_lock_held(PyDictObject *d, PyObject *self)
     Py_ssize_t i;
     PyDictKeysObject *k;
 
-    assert (PyDict_Check(d));
+    assert (_PyAnyDict_Check(d));
     ASSERT_DICT_LOCKED(d);
 
     if (di->di_used != d->ma_used) {
@@ -7886,6 +7910,14 @@ frozendict_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     PyFrozenDictObject *self = _PyFrozenDictObject_CAST(d);
     self->ma_hash = -1;
     return d;
+}
+
+
+static PyObject*
+_PyFrozenDict_New(void)
+{
+    PyObject *args = Py_GetConstant(Py_CONSTANT_EMPTY_TUPLE);
+    return frozendict_new(&PyFrozenDict_Type, args, NULL);
 }
 
 
