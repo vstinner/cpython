@@ -6925,6 +6925,11 @@ exit:
 int
 _PyDict_SetItem_LockHeld(PyDictObject *dict, PyObject *name, PyObject *value)
 {
+    if (!PyDict_Check(dict)) {
+        PyErr_BadInternalCall();
+        return -1;
+    }
+
     if (value == NULL) {
         Py_hash_t hash = _PyObject_HashFast(name);
         if (hash == -1) {

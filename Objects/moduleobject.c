@@ -1266,9 +1266,27 @@ module_dir(PyObject *self, PyObject *args)
     return result;
 }
 
+
+static PyObject *
+module_frozendict(PyObject *self, PyObject *Py_UNUSED(args))
+{
+    PyModuleObject *mod = _PyModule_CAST(self);
+
+    PyObject *frozendict;
+    frozendict = PyObject_CallOneArg((PyObject*)&PyFrozenDict_Type, mod->md_dict);
+    if (frozendict == NULL) {
+        return NULL;
+    }
+
+    Py_SETREF(mod->md_dict, frozendict);
+
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef module_methods[] = {
     {"__dir__", module_dir, METH_NOARGS,
      PyDoc_STR("__dir__() -> list\nspecialized dir() implementation")},
+    {"frozendict", module_frozendict, METH_NOARGS, NULL},
     {0}
 };
 

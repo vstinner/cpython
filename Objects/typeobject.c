@@ -3988,7 +3988,7 @@ subtype_dict(PyObject *obj, void *context)
 int
 _PyObject_SetDict(PyObject *obj, PyObject *value)
 {
-    if (value != NULL && !PyDict_Check(value)) {
+    if (value != NULL && !_PyAnyDict_Check(value)) {
         PyErr_Format(PyExc_TypeError,
                      "__dict__ must be set to a dictionary, "
                      "not a '%.200s'", Py_TYPE(value)->tp_name);
@@ -4891,6 +4891,37 @@ error:
 }
 
 
+static int
+type_new_frozendict(PyTypeObject *type)
+{
+    PyObject *__frozendict__;
+    if (PyDict_GetItemStringRef(type->tp_dict, "__frozendict__",
+                                &__frozendict__) < 0) {
+        return -1;
+    }
+    if (__frozendict__ == NULL) {
+        return 0;
+    }
+    int is_true = PyObject_IsTrue(__frozendict__);
+    Py_DECREF(__frozendict__);
+    if (is_true < 0) {
+        return -1;
+    }
+    if (!is_true) {
+        return 0;
+    }
+
+    PyObject *frozendict;
+    frozendict = PyObject_CallOneArg((PyObject*)&PyFrozenDict_Type, type->tp_dict);
+    if (frozendict == NULL) {
+        return -1;
+    }
+
+    Py_SETREF(type->tp_dict, frozendict);
+    return 0;
+}
+
+
 static PyObject*
 type_new_impl(type_new_ctx *ctx)
 {
@@ -4927,6 +4958,10 @@ type_new_impl(type_new_ctx *ctx)
     }
 
     if (type_new_init_subclass(type, ctx->kwds) < 0) {
+        goto error;
+    }
+
+    if (type_new_frozendict(type) < 0) {
         goto error;
     }
 
@@ -5977,7 +6012,7 @@ find_name_in_mro(PyTypeObject *type, PyObject *name, int *error)
     for (Py_ssize_t i = 0; i < n; i++) {
         PyObject *base = PyTuple_GET_ITEM(mro, i);
         PyObject *dict = lookup_tp_dict(_PyType_CAST(base));
-        assert(dict && PyDict_Check(dict));
+        assert(dict && _PyAnyDict_Check(dict));
         if (_PyDict_GetItemRef_KnownHash((PyDictObject *)dict, name, hash, &res) < 0) {
             *error = -1;
             goto done;

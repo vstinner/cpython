@@ -761,6 +761,8 @@ class _LoaderBasics:
             raise ImportError(f'cannot load module {module.__name__!r} when '
                               'get_code() returns None')
         _bootstrap._call_with_frames_removed(exec, code, module.__dict__)
+        if module.__dict__.get('__frozendict__', False):
+            module.frozendict()
 
     def load_module(self, fullname):
         """This method is deprecated."""
