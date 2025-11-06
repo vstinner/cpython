@@ -5490,7 +5490,7 @@ dictiter_iternextitem_lock_held(PyDictObject *d, PyObject *self,
     PyObject *key, *value;
     Py_ssize_t i;
 
-    assert (PyDict_Check(d));
+    assert (_PyAnyDict_Check(d));
     ASSERT_DICT_LOCKED(d);
 
     if (di->di_used != d->ma_used) {
