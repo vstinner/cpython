@@ -7830,6 +7830,10 @@ _PyObject_InlineValuesConsistencyCheck(PyObject *obj)
 
 // --- frozendict implementation ---------------------------------------------
 
+static PyNumberMethods frozendict_as_number = {
+    .nb_or = dict_or,
+};
+
 static PyMappingMethods frozendict_as_mapping = {
     dict_length, /*mp_length*/
     dict_subscript, /*mp_subscript*/
@@ -7937,7 +7941,7 @@ PyTypeObject PyFrozenDict_Type = {
     0,                                          /* tp_setattr */
     0,                                          /* tp_as_async */
     frozendict_repr,                            /* tp_repr */
-    &dict_as_number,                            /* tp_as_number */
+    &frozendict_as_number,                      /* tp_as_number */
     &dict_as_sequence,                          /* tp_as_sequence */
     &frozendict_as_mapping,                     /* tp_as_mapping */
     frozendict_hash,                            /* tp_hash */
