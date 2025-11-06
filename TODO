@@ -1,6 +1,5 @@
 TODO
 ====
 
-frozendict == frozendict
-    frozendict(x=1, y=2) == frozendict(y=2, x=1)
-    but hash() are not equal
+pickle
+    https://github.com/Marco-Sulla/cpython/commit/fde4e6d236b19636063f8afedea8c50278205334

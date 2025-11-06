@@ -7878,34 +7878,29 @@ static Py_hash_t
 frozendict_hash(PyObject *op)
 {
     PyFrozenDictObject *self = _PyFrozenDictObject_CAST(op);
-    Py_uhash_t acc = self->ma_hash;
-    if (acc != (Py_uhash_t)-1) {
-        return acc;
-    }
-    acc = _PyTuple_HASH_XXPRIME_5;
-
-    PyObject *key = NULL, *value = NULL;
-    Py_ssize_t pos = 0;
-    Py_hash_t key_hash;
-    while (_PyDict_Next(op, &pos, &key, &value, &key_hash)) {
-        acc += (Py_uhash_t)key_hash * _PyTuple_HASH_XXPRIME_2;
-        acc = _PyTuple_HASH_XXROTATE(acc);
-        acc *= _PyTuple_HASH_XXPRIME_1;
-
-        Py_INCREF(value);
-        Py_uhash_t value_hash = PyObject_Hash(value);
-        Py_DECREF(value);
-        if (value_hash == (Py_uhash_t)-1) {
-            return -1;
-        }
-
-        acc += value_hash * _PyTuple_HASH_XXPRIME_2;
-        acc = _PyTuple_HASH_XXROTATE(acc);
-        acc *= _PyTuple_HASH_XXPRIME_1;
+    Py_hash_t hash = self->ma_hash;
+    if (hash != -1) {
+        return hash;
     }
 
-    self->ma_hash = (Py_hash_t)acc;
-    return (Py_hash_t)acc;
+    PyObject *items = _PyDictView_New(op, &PyDictItems_Type);
+    if (items == NULL) {
+        return -1;
+    }
+    PyObject *frozenset = PyFrozenSet_New(items);
+    Py_DECREF(items);
+    if (frozenset == NULL) {
+        return -1;
+    }
+
+    hash = PyObject_Hash(frozenset);
+    Py_DECREF(frozenset);
+    if (hash == -1) {
+        return -1;
+    }
+
+    self->ma_hash = hash;
+    return hash;
 }
 
 
