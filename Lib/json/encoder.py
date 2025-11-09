@@ -30,6 +30,9 @@ ESCAPE_DCT = {
 for i in range(0x20):
     ESCAPE_DCT.setdefault(chr(i), '\\u{0:04x}'.format(i))
     #ESCAPE_DCT.setdefault(chr(i), '\\u%04x' % (i,))
+
+# freeze the dict to prevent accidental modifications
+ESCAPE_DCT = frozendict(ESCAPE_DCT)
 del i
 
 INFINITY = float('inf')
