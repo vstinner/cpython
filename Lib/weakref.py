@@ -27,7 +27,6 @@ import itertools
 
 ProxyTypes = (ProxyType, CallableProxyType)
 
-__frozendict__ = True
 __all__ = ["ref", "proxy", "getweakrefcount", "getweakrefs",
            "WeakKeyDictionary", "ReferenceType", "ProxyType",
            "CallableProxyType", "ProxyTypes", "WeakValueDictionary",

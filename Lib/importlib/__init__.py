@@ -123,7 +123,12 @@ def reload(module):
         else:
             pkgpath = None
         target = module
-        spec = module.__spec__ = _bootstrap._find_spec(name, pkgpath, target)
+        spec = _bootstrap._find_spec(name, pkgpath, target)
+        try:
+            module.__spec__ = spec
+        except TypeError:
+            # read-only module
+            pass
         if spec is None:
             raise ModuleNotFoundError(f"spec not found for the module {name!r}", name=name)
         _bootstrap._exec(spec, module)

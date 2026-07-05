@@ -5650,7 +5650,12 @@ _imp__module_set_frozendict(PyObject *module, PyObject *modobj)
     PyModuleObject *md = (PyModuleObject*)modobj;
 
     PyObject *dict = md->md_dict;
-    assert(dict != NULL && PyDict_Check(dict));
+    assert(dict != NULL && PyAnyDict_Check(dict));
+
+    if (PyFrozenDict_Check(dict)) {
+        // it's already a frozendict
+        Py_RETURN_NONE;
+    }
 
     PyObject *frozendict = PyFrozenDict_New(dict);
     if (frozendict == NULL) {

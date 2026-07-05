@@ -763,6 +763,9 @@ def _spec_from_module(module, loader=None, origin=None):
 
 
 def _init_module_attrs(spec, module, *, override=False):
+    if hasattr(module, '__dict__') and isinstance(module.__dict__, frozendict):
+        return module
+
     # The passed-in module may be not support attribute assignment,
     # in which case we simply don't set the attributes.
     # __name__

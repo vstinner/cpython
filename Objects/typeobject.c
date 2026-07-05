@@ -2118,10 +2118,15 @@ type_get_annotate(PyObject *tp, void *Py_UNUSED(closure))
     }
     else {
         annotate = Py_None;
-        int result = PyDict_SetItem(dict, &_Py_ID(__annotate_func__), annotate);
-        if (result < 0) {
-            Py_DECREF(dict);
-            return NULL;
+        // FIXME: should we set "__annotate_func__" attribute even if type
+        // dict is a frozendict? For example, create a copy and then overrides
+        // the type dict?
+        if (!PyFrozenDict_Check(dict)) {
+            int result = PyDict_SetItem(dict, &_Py_ID(__annotate_func__), annotate);
+            if (result < 0) {
+                Py_DECREF(dict);
+                return NULL;
+            }
         }
     }
     Py_DECREF(dict);
@@ -2224,13 +2229,18 @@ type_get_annotations(PyObject *tp, void *Py_UNUSED(closure))
             annotations = PyDict_New();
         }
         Py_DECREF(annotate);
-        if (annotations) {
-            int result = PyDict_SetItem(
-                    dict, &_Py_ID(__annotations_cache__), annotations);
-            if (result) {
-                Py_CLEAR(annotations);
-            } else {
-                PyType_Modified(type);
+        // FIXME: should we set "__annotations_cache__" attribute even if type
+        // dict is a frozendict? For example, create a copy and then overrides
+        // the type dict?
+        if (!PyFrozenDict_Check(dict)) {
+            if (annotations) {
+                int result = PyDict_SetItem(
+                        dict, &_Py_ID(__annotations_cache__), annotations);
+                if (result) {
+                    Py_CLEAR(annotations);
+                } else {
+                    PyType_Modified(type);
+                }
             }
         }
     }

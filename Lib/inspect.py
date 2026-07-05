@@ -2200,7 +2200,12 @@ def _signature_fromstr(cls, obj, s, skip_bound_arg=True):
 
     def wrap_value(s):
         try:
-            value = eval(s, module_dict)
+            if isinstance(module_dict, frozendict):
+                # cannot set __builtins__ key in a frozendict
+                eval_dict = dict(module_dict)
+            else:
+                eval_dict = module_dict
+            value = eval(s, eval_dict)
         except NameError:
             try:
                 value = eval(s, sys_module_dict)
