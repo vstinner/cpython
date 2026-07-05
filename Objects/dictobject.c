@@ -5223,10 +5223,8 @@ frozendict_or(PyObject *self, PyObject *other)
         }
     }
 
-    assert(PyFrozenDict_Check(self));
-    if (GET_USED((PyDictObject *)self) == 0
-        && PyAnyDict_Check(other)
-        && GET_USED((PyDictObject *)other) == 0)
+    if (PyFrozenDict_Check(self) && GET_USED((PyDictObject *)self) == 0
+        && PyAnyDict_Check(other) && GET_USED((PyDictObject *)other) == 0)
     {
         // empty frozendict | empty dict => empty frozendict singleton
         return frozendict_get_empty();
