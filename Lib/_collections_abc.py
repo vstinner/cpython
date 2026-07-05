@@ -118,6 +118,7 @@ def _check_methods(C, *methods):
 
 class Hashable(metaclass=ABCMeta):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -133,6 +134,7 @@ class Hashable(metaclass=ABCMeta):
 
 class Awaitable(metaclass=ABCMeta):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -150,6 +152,7 @@ class Awaitable(metaclass=ABCMeta):
 
 class Coroutine(Awaitable):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -194,6 +197,7 @@ Coroutine.register(coroutine)
 
 class AsyncIterable(metaclass=ABCMeta):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -211,6 +215,7 @@ class AsyncIterable(metaclass=ABCMeta):
 
 class AsyncIterator(AsyncIterable):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -230,6 +235,7 @@ class AsyncIterator(AsyncIterable):
 
 class AsyncGenerator(AsyncIterator):
 
+    __frozendict__ = True
     __slots__ = ()
 
     async def __anext__(self):
@@ -281,6 +287,7 @@ AsyncGenerator.register(async_generator)
 
 class Iterable(metaclass=ABCMeta):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -299,6 +306,7 @@ class Iterable(metaclass=ABCMeta):
 
 class Iterator(Iterable):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -333,6 +341,7 @@ Iterator.register(zip_iterator)
 
 class Reversible(Iterable):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -349,6 +358,7 @@ class Reversible(Iterable):
 
 class Generator(Iterator):
 
+    __frozendict__ = True
     __slots__ = ()
 
     def __next__(self):
@@ -400,6 +410,7 @@ Generator.register(generator)
 
 class Sized(metaclass=ABCMeta):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -415,6 +426,7 @@ class Sized(metaclass=ABCMeta):
 
 class Container(metaclass=ABCMeta):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -432,6 +444,7 @@ class Container(metaclass=ABCMeta):
 
 class Collection(Sized, Iterable, Container):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @classmethod
@@ -443,6 +456,7 @@ class Collection(Sized, Iterable, Container):
 
 class Buffer(metaclass=ABCMeta):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -466,6 +480,7 @@ class _CallableGenericAlias(GenericAlias):
     ``(int, str, float)``.
     """
 
+    __frozendict__ = True
     __slots__ = ()
 
     def __new__(cls, origin, args):
@@ -526,6 +541,7 @@ def _is_param_expr(obj):
 
 class Callable(metaclass=ABCMeta):
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -555,6 +571,7 @@ class Set(Collection):
     then the other operations will automatically follow suit.
     """
 
+    __frozendict__ = True
     __slots__ = ()
 
     def __le__(self, other):
@@ -697,6 +714,7 @@ class MutableSet(Set):
     then the other operations will automatically follow suit.
     """
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -778,6 +796,7 @@ class Mapping(Collection):
     methods except for __getitem__, __iter__, and __len__.
     """
 
+    __frozendict__ = True
     __slots__ = ()
 
     # Tell ABCMeta.__new__ that this class should have TPFLAGS_MAPPING set.
@@ -913,6 +932,7 @@ class MutableMapping(Mapping):
     __iter__, and __len__.
     """
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod
@@ -1002,6 +1022,7 @@ class Sequence(Reversible, Collection):
     __getitem__, and __len__.
     """
 
+    __frozendict__ = True
     __slots__ = ()
 
     # Tell ABCMeta.__new__ that this class should have TPFLAGS_SEQUENCE set.
@@ -1094,6 +1115,7 @@ class ByteString(Sequence, metaclass=_DeprecateByteStringMeta):
     code supports (e.g., ``bytes | bytearray | memoryview``).
     """
 
+    __frozendict__ = True
     __slots__ = ()
 
 ByteString.register(bytes)
@@ -1107,6 +1129,7 @@ class MutableSequence(Sequence):
     __getitem__, __setitem__, __delitem__, __len__, and insert().
     """
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abstractmethod

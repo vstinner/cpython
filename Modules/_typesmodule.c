@@ -50,6 +50,9 @@ _types_exec(PyObject *m)
     EXPORT_STATIC_TYPE("UnionType", _PyUnion_Type);
     EXPORT_STATIC_TYPE("WrapperDescriptorType", PyWrapperDescr_Type);
 #undef EXPORT_STATIC_TYPE
+    if (PyModule_Add(m, "__frozendict__", PyLong_FromLong(1)) < 0) {
+        return -1;
+    }
     return 0;
 }
 

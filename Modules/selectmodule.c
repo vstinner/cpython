@@ -2906,6 +2906,9 @@ _select_exec(PyObject *m)
 
 #undef ADD_INT_CONST
 
+    if (PyModule_Add(m, "__frozendict__", PyLong_FromLong(1)) < 0) {
+        return -1;
+    }
     return 0;
 }
 

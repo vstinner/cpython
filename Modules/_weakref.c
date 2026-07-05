@@ -158,6 +158,9 @@ weakref_exec(PyObject *module)
         return -1;
     }
 
+    if (PyModule_Add(module, "__frozendict__", PyLong_FromLong(1)) < 0) {
+        return -1;
+    }
     return 0;
 }
 

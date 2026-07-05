@@ -7,6 +7,7 @@
 
 import re
 
+__frozendict__ = True
 __all__ = ['TextWrapper', 'wrap', 'fill', 'dedent', 'indent', 'shorten']
 
 # Hardcode the recognized whitespace characters to the US-ASCII

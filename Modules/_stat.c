@@ -684,6 +684,9 @@ stat_exec(PyObject *module)
     }
 #endif
 
+    if (PyModule_Add(module, "__frozendict__", PyLong_FromLong(1)) < 0) {
+        return -1;
+    }
     return 0;
 }
 

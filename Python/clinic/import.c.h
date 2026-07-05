@@ -658,6 +658,14 @@ exit:
     return return_value;
 }
 
+PyDoc_STRVAR(_imp__module_set_frozendict__doc__,
+"_module_set_frozendict($module, modobj, /)\n"
+"--\n"
+"\n");
+
+#define _IMP__MODULE_SET_FROZENDICT_METHODDEF    \
+    {"_module_set_frozendict", (PyCFunction)_imp__module_set_frozendict, METH_O, _imp__module_set_frozendict__doc__},
+
 #ifndef _IMP_CREATE_DYNAMIC_METHODDEF
     #define _IMP_CREATE_DYNAMIC_METHODDEF
 #endif /* !defined(_IMP_CREATE_DYNAMIC_METHODDEF) */
@@ -665,4 +673,4 @@ exit:
 #ifndef _IMP_EXEC_DYNAMIC_METHODDEF
     #define _IMP_EXEC_DYNAMIC_METHODDEF
 #endif /* !defined(_IMP_EXEC_DYNAMIC_METHODDEF) */
-/*[clinic end generated code: output=0974db098d601372 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=23074f274a6273fd input=a9049054013a1b77]*/

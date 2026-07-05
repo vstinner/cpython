@@ -714,6 +714,7 @@ def get_exec_path(env=None):
 from _collections_abc import MutableMapping, Mapping
 
 class _Environ(MutableMapping):
+    __frozendict__ = True
     def __init__(self, data, encodekey, decodekey, encodevalue, decodevalue):
         self.encodekey = encodekey
         self.decodekey = decodekey
@@ -1150,6 +1151,7 @@ class PathLike(abc.ABC):
 
     """Abstract base class for implementing the file system path protocol."""
 
+    __frozendict__ = True
     __slots__ = ()
 
     @abc.abstractmethod

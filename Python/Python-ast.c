@@ -18511,6 +18511,9 @@ astmodule_exec(PyObject *m)
         {
         return -1;
     }
+    if (PyModule_Add(m, "__frozendict__", PyLong_FromLong(1)) < 0) {
+        return -1;
+    }
     return 0;
 }
 

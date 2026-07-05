@@ -1037,9 +1037,39 @@ PyModule_GetState(PyObject* m)
 void
 _PyModule_Clear(PyObject *m)
 {
-    PyObject *d = ((PyModuleObject *)m)->md_dict;
-    if (d != NULL)
+    PyModuleObject *md = _PyModule_CAST(m);
+    PyObject *d = md->md_dict;
+    if (d == NULL) {
+        return;
+    }
+
+    if (PyFrozenDict_Check(d)) {
+        // If the module dict is frozen, create a mutable copy,
+        // clear all attributes in the copy, and then replace
+        // the module dict with a new frozendict.
+        //
+        // The difference is that all attributes are cleared at once.
+        PyObject *copy = _PyDict_CopyAsDict(d);
+        if (copy == NULL) {
+            goto error;
+        }
+
+        _PyModule_ClearDict(copy);
+
+        PyObject *new_frozen = PyFrozenDict_New(copy);
+        Py_DECREF(copy);
+        if (new_frozen == NULL) {
+            goto error;
+        }
+        Py_SETREF(md->md_dict, new_frozen);
+    }
+    else {
         _PyModule_ClearDict(d);
+    }
+    return;
+
+error:
+    PyErr_FormatUnraisable("Exception ignored while clearing module dict");
 }
 
 void
@@ -1587,7 +1617,7 @@ module_dir(PyObject *self, PyObject *args)
     }
 
     if (dict != NULL) {
-        if (PyDict_Check(dict)) {
+        if (PyAnyDict_Check(dict)) {
             PyObject *dirfunc = PyDict_GetItemWithError(dict, &_Py_ID(__dir__));
             if (dirfunc) {
                 result = _PyObject_CallNoArgs(dirfunc);

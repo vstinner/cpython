@@ -1665,6 +1665,9 @@ signal_module_exec(PyObject *m)
         }
     }
 
+    if (PyModule_Add(m, "__frozendict__", PyLong_FromLong(1)) < 0) {
+        return -1;
+    }
     assert(!PyErr_Occurred());
     return 0;
 }

@@ -1935,6 +1935,9 @@ static struct PyMethodDef astmodule_methods[] = {
         self.emit('}', 1)
         for dfn in mod.dfns:
             self.visit(dfn)
+        self.emit('if (PyModule_Add(m, "__frozendict__", PyLong_FromLong(1)) < 0) {', 1)
+        self.emit('return -1;', 2)
+        self.emit('}', 1)
         self.emit("return 0;", 1)
         self.emit("}", 0)
         self.emit("", 0)

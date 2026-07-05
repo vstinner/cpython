@@ -5,6 +5,7 @@
 from _weakref import ref
 from types import GenericAlias
 
+__frozendict__ = True
 __all__ = ['WeakSet']
 
 

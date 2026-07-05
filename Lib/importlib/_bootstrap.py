@@ -971,6 +971,8 @@ class BuiltinImporter:
     def exec_module(module):
         """Exec a built-in module"""
         _call_with_frames_removed(_imp.exec_builtin, module)
+        if getattr(module, '__frozendict__', False):
+            _imp._module_set_frozendict(module)
 
     @classmethod
     @_requires_builtin
