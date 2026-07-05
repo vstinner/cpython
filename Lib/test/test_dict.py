@@ -1890,7 +1890,7 @@ class FrozenDictTests(unittest.TestCase):
         self.assertIs(frozendict(singleton), singleton)
         self.assertIs(frozendict({}), singleton)
         self.assertIs(frozendict([]), singleton)
-        self.assertIs(frozendict([x for x in ()]), singleton)
+        self.assertIs(frozendict((x for x in ())), singleton)
 
         # test merge
         for dict_type in (dict, frozendict, FrozenDict):
