@@ -1898,8 +1898,16 @@ class FrozenDictTests(unittest.TestCase):
             self.assertIs(singleton | empty, singleton)
             self.assertIs(FrozenDict() | empty, singleton)
 
+        # test .copy()
+        self.assertIs(singleton.copy(), singleton)
+
         # test .fromkeys()
         self.assertIs(frozendict.fromkeys([]), singleton)
+
+        # test pickle (protocol 0 and 1 don't support frozendict)
+        for proto in range(2, pickle.HIGHEST_PROTOCOL + 1):
+            fd = pickle.loads(pickle.dumps(singleton, proto))
+            self.assertIs(fd, singleton)
 
     def test_update(self):
         # test "a |= b" operator
