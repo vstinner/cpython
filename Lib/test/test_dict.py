@@ -1882,6 +1882,8 @@ class FrozenDictTests(unittest.TestCase):
     @support.cpython_only
     def test_empty_singleton(self):
         singleton = frozendict()
+        self.assertFalse(gc.is_tracked(singleton))
+        self.assertTrue(sys._is_immortal(singleton))
 
         # test constructor
         self.assertIs(frozendict(), singleton)
