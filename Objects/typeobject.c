@@ -6719,8 +6719,8 @@ type_update_dict(PyTypeObject *type, PyDictObject *dict, PyObject *name,
 
     if (_PyDict_SetItem_LockHeld(dict, name, value) < 0) {
         PyErr_Format(PyExc_AttributeError,
-                     "type object '%.50s' has no attribute '%U'",
-                     ((PyTypeObject*)type)->tp_name, name);
+                     "type attribute '%N.%U' cannot be modified",
+                     type, name);
         _PyObject_SetAttributeErrorContext((PyObject *)type, name);
         return -1;
     }
