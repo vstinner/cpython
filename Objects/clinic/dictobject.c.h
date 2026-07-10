@@ -347,6 +347,59 @@ dict_values(PyObject *self, PyObject *Py_UNUSED(ignored))
     return dict_values_impl((PyDictObject *)self);
 }
 
+PyDoc_STRVAR(frozendict_reduce__doc__,
+"__reduce__($self, /)\n"
+"--\n"
+"\n"
+"Return state information for pickling.");
+
+#define FROZENDICT_REDUCE_METHODDEF    \
+    {"__reduce__", (PyCFunction)frozendict_reduce, METH_NOARGS, frozendict_reduce__doc__},
+
+static PyObject *
+frozendict_reduce_impl(PyFrozenDictObject *self);
+
+static PyObject *
+frozendict_reduce(PyObject *self, PyObject *Py_UNUSED(ignored))
+{
+    return frozendict_reduce_impl((PyFrozenDictObject *)self);
+}
+
+PyDoc_STRVAR(frozendict_reduce_ex__doc__,
+"__reduce_ex__($self, proto=0, /)\n"
+"--\n"
+"\n"
+"Return state information for pickling.");
+
+#define FROZENDICT_REDUCE_EX_METHODDEF    \
+    {"__reduce_ex__", _PyCFunction_CAST(frozendict_reduce_ex), METH_FASTCALL, frozendict_reduce_ex__doc__},
+
+static PyObject *
+frozendict_reduce_ex_impl(PyFrozenDictObject *self, int proto);
+
+static PyObject *
+frozendict_reduce_ex(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
+{
+    PyObject *return_value = NULL;
+    int proto = 0;
+
+    if (!_PyArg_CheckPositional("__reduce_ex__", nargs, 0, 1)) {
+        goto exit;
+    }
+    if (nargs < 1) {
+        goto skip_optional;
+    }
+    proto = PyLong_AsInt(args[0]);
+    if (proto == -1 && PyErr_Occurred()) {
+        goto exit;
+    }
+skip_optional:
+    return_value = frozendict_reduce_ex_impl((PyFrozenDictObject *)self, proto);
+
+exit:
+    return return_value;
+}
+
 PyDoc_STRVAR(frozendict_copy__doc__,
 "copy($self, /)\n"
 "--\n"
@@ -364,4 +417,4 @@ frozendict_copy(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
     return frozendict_copy_impl((PyFrozenDictObject *)self);
 }
-/*[clinic end generated code: output=0ec70c8b2c9b2505 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=b7c5cdf8454afb2c input=a9049054013a1b77]*/
