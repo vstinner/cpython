@@ -3591,6 +3591,20 @@ list___sizeof___impl(PyListObject *self)
     return PyLong_FromSize_t(res);
 }
 
+
+/*[clinic input]
+@critical_section
+list.take_tuple
+[clinic start generated code]*/
+
+static PyObject *
+list_take_tuple_impl(PyListObject *self)
+/*[clinic end generated code: output=dfccc8dae7dad95a input=acfd3bad7cbe65af]*/
+{
+    return _PyList_AsTupleAndClear(self);
+}
+
+
 static PyObject *list_iter(PyObject *seq);
 static PyObject *list_subscript(PyObject*, PyObject*);
 
@@ -3610,6 +3624,7 @@ static PyMethodDef list_methods[] = {
     LIST_COUNT_METHODDEF
     LIST_REVERSE_METHODDEF
     LIST_SORT_METHODDEF
+    LIST_TAKE_TUPLE_METHODDEF
     {"__class_getitem__", Py_GenericAlias, METH_O|METH_CLASS,
      PyDoc_STR("lists are generic over the type of their contents")},
     {NULL,              NULL}           /* sentinel */

@@ -215,7 +215,8 @@ You can get the information from the list type:
      'pop',
      'remove',
      'reverse',
-     'sort']
+     'sort',
+     'take_tuple']
 
 The new introspection API gives more information than the old one:  in
 addition to the regular methods, it also shows the methods that are

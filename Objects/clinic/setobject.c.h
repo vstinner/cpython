@@ -552,4 +552,27 @@ set___sizeof__(PyObject *so, PyObject *Py_UNUSED(ignored))
 
     return return_value;
 }
-/*[clinic end generated code: output=5800c0bf136a5a0a input=a9049054013a1b77]*/
+
+PyDoc_STRVAR(set_take_frozenset__doc__,
+"take_frozenset($self, /)\n"
+"--\n"
+"\n");
+
+#define SET_TAKE_FROZENSET_METHODDEF    \
+    {"take_frozenset", (PyCFunction)set_take_frozenset, METH_NOARGS, set_take_frozenset__doc__},
+
+static PyObject *
+set_take_frozenset_impl(PySetObject *so);
+
+static PyObject *
+set_take_frozenset(PyObject *so, PyObject *Py_UNUSED(ignored))
+{
+    PyObject *return_value = NULL;
+
+    Py_BEGIN_CRITICAL_SECTION(so);
+    return_value = set_take_frozenset_impl((PySetObject *)so);
+    Py_END_CRITICAL_SECTION();
+
+    return return_value;
+}
+/*[clinic end generated code: output=719033724b0cebb1 input=a9049054013a1b77]*/

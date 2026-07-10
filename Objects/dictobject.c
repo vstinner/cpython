@@ -5188,6 +5188,26 @@ dict___sizeof___impl(PyDictObject *self)
     return PyLong_FromSsize_t(_PyDict_SizeOf(self));
 }
 
+/*[clinic input]
+@critical_section
+dict.take_frozendict
+[clinic start generated code]*/
+
+static PyObject *
+dict_take_frozendict_impl(PyDictObject *self)
+/*[clinic end generated code: output=c3668567feb6353a input=5e3c5103eae65c81]*/
+{
+    // FIXME: Temporary implementation just to write a PoC.
+    // FIXME: Make it efficient :-D
+    // Wait for github.com/python/cpython/pull/153413
+    PyObject *frozen = PyFrozenDict_New((PyObject*)self);
+    if (frozen == NULL) {
+        return NULL;
+    }
+    PyDict_Clear((PyObject *)self);
+    return frozen;
+}
+
 PyObject *
 _PyDict_Or(PyObject *self, PyObject *other)
 {
@@ -5267,6 +5287,7 @@ static PyMethodDef mapp_methods[] = {
     DICT_CLEAR_METHODDEF
     DICT_COPY_METHODDEF
     DICT___REVERSED___METHODDEF
+    DICT_TAKE_FROZENDICT_METHODDEF
     {"__class_getitem__", Py_GenericAlias, METH_O|METH_CLASS,
      PyDoc_STR("dicts are generic over two types, signifying (respectively) the types of their keys and values")},
     {NULL,              NULL}   /* sentinel */

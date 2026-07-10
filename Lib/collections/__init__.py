@@ -1274,6 +1274,11 @@ class UserDict(_collections_abc.MutableMapping):
             d[key] = value
         return d
 
+    def take_frozendict(self):
+        result = frozendict(self)
+        self.clear()
+        return result
+
 
 ################################################################################
 ### UserList
@@ -1406,6 +1411,11 @@ class UserList(_collections_abc.MutableSequence):
             self.data.extend(other.data)
         else:
             self.data.extend(other)
+
+    def take_tuple(self):
+        result = tuple(self)
+        self.clear()
+        return result
 
 
 ################################################################################

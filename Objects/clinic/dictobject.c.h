@@ -252,6 +252,29 @@ dict___sizeof__(PyObject *self, PyObject *Py_UNUSED(ignored))
     return dict___sizeof___impl((PyDictObject *)self);
 }
 
+PyDoc_STRVAR(dict_take_frozendict__doc__,
+"take_frozendict($self, /)\n"
+"--\n"
+"\n");
+
+#define DICT_TAKE_FROZENDICT_METHODDEF    \
+    {"take_frozendict", (PyCFunction)dict_take_frozendict, METH_NOARGS, dict_take_frozendict__doc__},
+
+static PyObject *
+dict_take_frozendict_impl(PyDictObject *self);
+
+static PyObject *
+dict_take_frozendict(PyObject *self, PyObject *Py_UNUSED(ignored))
+{
+    PyObject *return_value = NULL;
+
+    Py_BEGIN_CRITICAL_SECTION(self);
+    return_value = dict_take_frozendict_impl((PyDictObject *)self);
+    Py_END_CRITICAL_SECTION();
+
+    return return_value;
+}
+
 PyDoc_STRVAR(dict___reversed____doc__,
 "__reversed__($self, /)\n"
 "--\n"
@@ -341,4 +364,4 @@ frozendict_copy(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
     return frozendict_copy_impl((PyFrozenDictObject *)self);
 }
-/*[clinic end generated code: output=f4c88a3464928ae3 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=0ec70c8b2c9b2505 input=a9049054013a1b77]*/
