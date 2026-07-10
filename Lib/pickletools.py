@@ -2229,11 +2229,11 @@ _opcode_categories = frozendict(
     op_meta=frozenset({"BINPERSID", "FRAME", "MARK", "PERSID", "PROTO"}),
     op_stack=frozenset({"DUP", "POP", "POP_MARK", "STOP"}),
 )
-_opcode_color_attr = frozendict({
+_opcode_color_attr = {
     name: attr
     for attr, names in _opcode_categories.items()
     for name in names
-})
+}.take_frozendict()
 assert _opcode_color_attr.keys() <= name2i.keys(), (
     f"unknown opcodes: {_opcode_color_attr.keys() - name2i.keys()}"
 )

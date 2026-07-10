@@ -875,7 +875,7 @@ def _build_closure(annotate, owner, is_class, stringifier_dict, *, allow_evaluat
             stringifier_dict.stringifiers.append(fwdref)
             new_cell = types.CellType(fwdref)
         new_closure.append(new_cell)
-    return tuple(new_closure), cell_dict
+    return new_closure.take_tuple(), cell_dict
 
 
 def _stringify_single(anno):

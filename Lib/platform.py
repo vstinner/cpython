@@ -127,7 +127,7 @@ except ImportError:
 # Based on the description of the PHP's version_compare():
 # http://php.net/manual/en/function.version-compare.php
 
-_ver_stages = frozendict({
+_ver_stages = {
     # any string not found in this dict, will get 0 assigned
     'dev': 10,
     'alpha': 20, 'a': 20,
@@ -136,7 +136,7 @@ _ver_stages = frozendict({
     'RC': 50, 'rc': 50,
     # number, will get 100 assigned
     'pl': 200, 'p': 200,
-})
+}.take_frozendict()
 
 
 def _comparable_version(version):
@@ -181,7 +181,7 @@ def libc_ver(executable=None, lib='', version='', chunksize=16384):
             # parse 'glibc 2.28' as ('glibc', '2.28')
             parts = ver.split(maxsplit=1)
             if len(parts) == 2:
-                return tuple(parts)
+                return parts.take_tuple()
         except (AttributeError, ValueError, OSError):
             # os.confstr() or CS_GNU_LIBC_VERSION value not available
             pass
@@ -705,11 +705,11 @@ def _syscmd_file(target, default=''):
 
 # Default values for architecture; non-empty strings override the
 # defaults given as parameters
-_default_architecture = frozendict({
+_default_architecture = {
     'win32': ('', 'WindowsPE'),
     'win16': ('', 'Windows'),
     'dos': ('', 'MSDOS'),
-})
+}.take_frozendict()
 
 def architecture(executable=sys.executable, bits='', linkage=''):
 
@@ -1208,7 +1208,7 @@ def python_version_tuple():
         will always include the patchlevel (it defaults to 0).
 
     """
-    return tuple(_sys_version()[1].split('.'))
+    return _sys_version()[1].split('.').take_tuple()
 
 def python_branch():
 

@@ -2101,7 +2101,7 @@ def ParseFlags(resp):
     if not mo:
         return ()
 
-    return tuple(mo.group('flags').split())
+    return mo.group('flags').split().take_tuple()
 
 
 def Time2Internaldate(date_time):

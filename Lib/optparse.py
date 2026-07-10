@@ -407,12 +407,12 @@ def _parse_num(val, type):
 def _parse_int(val):
     return _parse_num(val, int)
 
-_builtin_cvt = frozendict({
+_builtin_cvt = {
     "int": (_parse_int, _("integer")),
     "long": (_parse_int, _("integer")),
     "float": (float, _("floating-point")),
     "complex": (complex, _("complex")),
-})
+}.take_frozendict()
 
 def check_builtin(option, opt, value):
     (cvt, what) = _builtin_cvt[option.type]
@@ -760,7 +760,7 @@ class Option:
             if self.nargs == 1:
                 return self.check_value(opt, value)
             else:
-                return tuple([self.check_value(opt, v) for v in value])
+                return [self.check_value(opt, v) for v in value].take_tuple()
 
     def process(self, opt, value, values, parser):
 

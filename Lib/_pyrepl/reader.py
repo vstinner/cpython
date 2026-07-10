@@ -527,7 +527,7 @@ class Reader:
             pos -= line_len + 1
             current_offset += line_len + (1 if has_newline else 0)
 
-        return tuple(source_lines)
+        return source_lines.take_tuple()
 
     def _build_content_lines(
         self,
@@ -559,7 +559,7 @@ class Reader:
                     ),
                 )
             )
-        return tuple(content_lines)
+        return content_lines.take_tuple()
 
     def _layout_content(
         self,
@@ -596,7 +596,7 @@ class Reader:
                 render_lines.append(
                     RenderLine.from_rendered_text(message_line[offset : offset + width])
                 )
-        return tuple(render_lines)
+        return render_lines.take_tuple()
 
     def get_screen_overlays(self) -> tuple[ScreenOverlay, ...]:
         return ()

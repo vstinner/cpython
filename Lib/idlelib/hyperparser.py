@@ -157,7 +157,7 @@ class HyperParser:
 
     # the set of built-in identifiers which are also keywords,
     # i.e. keyword.iskeyword() returns True for them
-    _ID_KEYWORDS = frozenset({"True", "False", "None"})
+    _ID_KEYWORDS = {"True", "False", "None"}.take_frozenset()
 
     @classmethod
     def _eat_identifier(cls, str, limit, pos):

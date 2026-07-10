@@ -56,18 +56,16 @@ BARE_KEY_CHARS: Final = frozenset(
 KEY_INITIAL_CHARS: Final = BARE_KEY_CHARS | frozenset("\"'")
 HEXDIGIT_CHARS: Final = frozenset("abcdef" "ABCDEF" "0123456789")
 
-BASIC_STR_ESCAPE_REPLACEMENTS: Final = frozendict(
-    {
-        "\\b": "\u0008",  # backspace
-        "\\t": "\u0009",  # tab
-        "\\n": "\u000a",  # linefeed
-        "\\f": "\u000c",  # form feed
-        "\\r": "\u000d",  # carriage return
-        "\\e": "\u001b",  # escape
-        '\\"': "\u0022",  # quote
-        "\\\\": "\u005c",  # backslash
-    }
-)
+BASIC_STR_ESCAPE_REPLACEMENTS: Final = {
+    "\\b": "\u0008",  # backspace
+    "\\t": "\u0009",  # tab
+    "\\n": "\u000a",  # linefeed
+    "\\f": "\u000c",  # form feed
+    "\\r": "\u000d",  # carriage return
+    "\\e": "\u001b",  # escape
+    '\\"': "\u0022",  # quote
+    "\\\\": "\u005c",  # backslash
+}.take_frozendict()
 
 
 class DEPRECATED_DEFAULT:

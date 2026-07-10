@@ -1109,11 +1109,11 @@ class NonCallableMock(Base):
 
 
 # Denylist for forbidden attribute names in safe mode
-_ATTRIB_DENY_LIST = frozenset({
+_ATTRIB_DENY_LIST = {
     name.removeprefix("assert_")
     for name in dir(NonCallableMock)
     if name.startswith("assert_")
-})
+}.take_frozenset()
 
 
 class _AnyComparer(list):

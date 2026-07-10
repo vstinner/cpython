@@ -38,7 +38,7 @@ class BaseTest:
         elif isinstance(obj, list):
             return [self.fixtype(x) for x in obj]
         elif isinstance(obj, tuple):
-            return tuple([self.fixtype(x) for x in obj])
+            return [self.fixtype(x) for x in obj].take_tuple()
         elif isinstance(obj, dict):
             return dict([
                (self.fixtype(key), self.fixtype(value))

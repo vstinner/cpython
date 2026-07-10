@@ -112,7 +112,7 @@ def resolve_bases(bases):
             shift += len(new_base) - 1
     if not updated:
         return bases
-    return tuple(new_bases)
+    return new_bases.take_tuple()
 
 def prepare_class(name, bases=(), kwds=None):
     """Call the __prepare__ method of the appropriate metaclass.

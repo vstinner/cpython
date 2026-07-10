@@ -953,7 +953,7 @@ def concurrent_tee(iterable, n=2):
     result = [iterator]
     for _ in range(n - 1):
         result.append(_concurrent_tee(iterator))
-    return tuple(result)
+    return result.take_tuple()
 
 
 class _concurrent_tee:

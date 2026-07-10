@@ -232,7 +232,7 @@ class _JoinablePath(ABC):
             parents.append(self.with_segments(parent))
             path = parent
             parent = split(path)[0]
-        return tuple(parents)
+        return parents.take_tuple()
 
     def relative_to(self, other, *, walk_up=False):
         """Return the relative path to another path identified by the passed

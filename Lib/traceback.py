@@ -1753,7 +1753,7 @@ _CASE_COST = 1
 # If is_raw is True, the suggestion is rendered as-is.
 #
 # See https://github.com/python/cpython/issues/146406.
-_CROSS_LANGUAGE_HINTS = frozendict({
+_CROSS_LANGUAGE_HINTS = {
     # list -- JavaScript/Ruby equivalents
     "push": ((list, "append", False),),
     "concat": ((list, "extend", False),),
@@ -1795,11 +1795,11 @@ _CROSS_LANGUAGE_HINTS = frozendict({
     "__xor__": ((float, "Did you mean to use an 'int' object? Bitwise operators are not supported by 'float'.", True),),
     "__lshift__": ((float, "Did you mean to use an 'int' object? Bitwise operators are not supported by 'float'.", True),),
     "__rshift__": ((float, "Did you mean to use an 'int' object? Bitwise operators are not supported by 'float'.", True),),
-})
+}.take_frozendict()
 
 
 # Cross-language keyword suggestions.
-_CROSS_LANGUAGE_KEYWORD_HINTS = frozendict({
+_CROSS_LANGUAGE_KEYWORD_HINTS = {
     # C/C++ equivalents
     'switch': 'match',
     'delete': 'del',
@@ -1807,7 +1807,7 @@ _CROSS_LANGUAGE_KEYWORD_HINTS = frozendict({
     'function': 'def',
     'func': 'def',
     'void': 'def',
-})
+}.take_frozendict()
 
 def _substitution_cost(ch_a, ch_b):
     if ch_a == ch_b:
