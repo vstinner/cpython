@@ -51,13 +51,13 @@ class Font:
         for k, v in kw.items():
             options.append("-"+k)
             options.append(str(v))
-        return tuple(options)
+        return options.take_tuple()
 
     def _get(self, args):
         options = []
         for k in args:
             options.append("-"+k)
-        return tuple(options)
+        return options.take_tuple()
 
     def _mkdict(self, args):
         options = {}

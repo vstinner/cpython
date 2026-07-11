@@ -598,7 +598,7 @@ def randslice_from_shape(ndim, shape):
         slicelen = randrange(1, l+1) if l > 0 else 0
         lslices[n] = randslice_from_slicelen(slicelen, l)
         rslices[n] = randslice_from_slicelen(slicelen, l)
-    return tuple(lslices), tuple(rslices)
+    return lslices.take_tuple(), tuple(rslices)
 
 def rand_aligned_slices(maxdim=5, maxshape=16):
     """Create (lshape, rshape, tuple(lslices), tuple(rslices)) such that

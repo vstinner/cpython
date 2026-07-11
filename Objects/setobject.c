@@ -2821,6 +2821,28 @@ static PySequenceMethods set_as_sequence = {
     set_contains,                       /* sq_contains */
 };
 
+/*[clinic input]
+@critical_section
+set.take_frozenset
+    so: setobject
+
+[clinic start generated code]*/
+
+static PyObject *
+set_take_frozenset_impl(PySetObject *so)
+/*[clinic end generated code: output=cec81aa8d6b3e861 input=b646b605119495d9]*/
+{
+    // FIXME: Temporary implementation just to write a PoC.
+    // FIXME: Make it efficient :-D
+    PyObject *frozen = PyFrozenSet_New((PyObject*)so);
+    if (frozen == NULL) {
+        return NULL;
+    }
+    set_clear_internal((PyObject*)so);
+    return frozen;
+}
+
+
 /* set object ********************************************************/
 
 static PyMethodDef set_methods[] = {
@@ -2844,6 +2866,7 @@ static PyMethodDef set_methods[] = {
     SET_SYMMETRIC_DIFFERENCE_UPDATE_METHODDEF
     SET_UNION_METHODDEF
     SET_UPDATE_METHODDEF
+    SET_TAKE_FROZENSET_METHODDEF
     {"__class_getitem__", Py_GenericAlias, METH_O|METH_CLASS,
      PyDoc_STR("sets are generic over the type of their elements")},
     {NULL,              NULL}   /* sentinel */

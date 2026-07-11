@@ -451,6 +451,29 @@ list___sizeof__(PyObject *self, PyObject *Py_UNUSED(ignored))
     return list___sizeof___impl((PyListObject *)self);
 }
 
+PyDoc_STRVAR(list_take_tuple__doc__,
+"take_tuple($self, /)\n"
+"--\n"
+"\n");
+
+#define LIST_TAKE_TUPLE_METHODDEF    \
+    {"take_tuple", (PyCFunction)list_take_tuple, METH_NOARGS, list_take_tuple__doc__},
+
+static PyObject *
+list_take_tuple_impl(PyListObject *self);
+
+static PyObject *
+list_take_tuple(PyObject *self, PyObject *Py_UNUSED(ignored))
+{
+    PyObject *return_value = NULL;
+
+    Py_BEGIN_CRITICAL_SECTION(self);
+    return_value = list_take_tuple_impl((PyListObject *)self);
+    Py_END_CRITICAL_SECTION();
+
+    return return_value;
+}
+
 PyDoc_STRVAR(list___reversed____doc__,
 "__reversed__($self, /)\n"
 "--\n"
@@ -468,4 +491,4 @@ list___reversed__(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
     return list___reversed___impl((PyListObject *)self);
 }
-/*[clinic end generated code: output=06c21b0bffbe8d84 input=a9049054013a1b77]*/
+/*[clinic end generated code: output=2222ca0759fbee17 input=a9049054013a1b77]*/

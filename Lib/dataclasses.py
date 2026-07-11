@@ -1538,7 +1538,7 @@ def _asdict_inner(obj, dict_factory):
             for k, v in obj.items()
         }
     elif obj_type is tuple:
-        return tuple([_asdict_inner(v, dict_factory) for v in obj])
+        return [_asdict_inner(v, dict_factory) for v in obj].take_tuple()
     elif issubclass(obj_type, tuple):
         if hasattr(obj, '_fields'):
             # obj is a namedtuple.  Recurse into it, but the returned

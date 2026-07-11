@@ -874,8 +874,8 @@ _FAILURE = b'#FAILURE#'
 # of the opening challenge or length of the returned digest as a signal as
 # to which protocol the other end supports.
 
-_ALLOWED_DIGESTS = frozenset(
-        {b'md5', b'sha256', b'sha384', b'sha3_256', b'sha3_384'})
+_ALLOWED_DIGESTS = (
+    {b'md5', b'sha256', b'sha384', b'sha3_256', b'sha3_384'}.take_frozenset())
 _MAX_DIGEST_LEN = max(len(_) for _ in _ALLOWED_DIGESTS)
 
 # Old hmac-md5 only server versions from Python <=3.11 sent a message of this

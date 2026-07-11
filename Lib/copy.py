@@ -215,7 +215,7 @@ def _deepcopy_frozendict(x, memo, deepcopy=deepcopy):
         return memo[id(x)]
     except KeyError:
         pass
-    return frozendict(y)
+    return y.take_frozendict()
 d[frozendict] = _deepcopy_frozendict
 
 def _deepcopy_method(x, memo): # Copy instance methods

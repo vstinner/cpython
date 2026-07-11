@@ -453,7 +453,7 @@ class InvalidFileException (ValueError):
     def __init__(self, message="Invalid file"):
         ValueError.__init__(self, message)
 
-_BINARY_FORMAT = frozendict({1: 'B', 2: 'H', 4: 'L', 8: 'Q'})
+_BINARY_FORMAT = {1: 'B', 2: 'H', 4: 'L', 8: 'Q'}.take_frozendict()
 
 _undefined = object()
 
@@ -869,7 +869,7 @@ def _is_fmt_binary(header):
 # Generic bits
 #
 
-_FORMATS=frozendict({
+_FORMATS={
     FMT_XML: frozendict(
         detect=_is_fmt_xml,
         parser=_PlistParser,
@@ -880,7 +880,7 @@ _FORMATS=frozendict({
         parser=_BinaryPlistParser,
         writer=_BinaryPlistWriter,
     )
-})
+}.take_frozendict()
 
 
 def load(fp, *, fmt=None, dict_type=dict, aware_datetime=False):

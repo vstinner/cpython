@@ -145,3 +145,8 @@ class WeakSet:
         return repr(self.data)
 
     __class_getitem__ = classmethod(GenericAlias)
+
+    def take_frozenset(self):
+        frozen = frozenset(self)
+        self.clear()
+        return frozen

@@ -27,7 +27,7 @@ class GetPassWarning(UserWarning): pass
 
 
 # Default POSIX control character mappings
-_POSIX_CTRL_CHARS = frozendict({
+_POSIX_CTRL_CHARS = {
     'BS': '\x08',      # Backspace
     'ERASE': '\x7f',   # DEL
     'KILL': '\x15',    # Ctrl+U - kill line
@@ -38,7 +38,7 @@ _POSIX_CTRL_CHARS = frozendict({
     'SOH': '\x01',     # Ctrl+A - start of heading (beginning of line)
     'ENQ': '\x05',     # Ctrl+E - enquiry (end of line)
     'VT': '\x0b',      # Ctrl+K - vertical tab (kill forward)
-})
+}.take_frozendict()
 
 
 def _get_terminal_ctrl_chars(fd):

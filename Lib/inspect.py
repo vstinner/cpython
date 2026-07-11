@@ -2873,7 +2873,7 @@ class BoundArguments:
                     # plain argument
                     args.append(arg)
 
-        return tuple(args)
+        return args.take_tuple()
 
     @property
     def kwargs(self):

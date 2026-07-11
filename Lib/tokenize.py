@@ -509,7 +509,7 @@ def generate_tokens(readline):
 
 def _get_token_colors(syntax, tokenize):
     """Map token type numbers to theme colors."""
-    return frozendict({
+    return {
         COMMENT: syntax.comment,
         DEDENT: tokenize.whitespace,
         ENCODING: tokenize.whitespace,
@@ -529,7 +529,7 @@ def _get_token_colors(syntax, tokenize):
         TSTRING_START: syntax.string,
         TSTRING_MIDDLE: syntax.string,
         TSTRING_END: syntax.string,
-    })
+    }.take_frozendict()
 
 
 def _format_tokens(tokens, *, color=False, exact=False):

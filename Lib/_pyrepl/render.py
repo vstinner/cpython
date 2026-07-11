@@ -100,7 +100,7 @@ def _cells_from_rendered_text(text: str) -> tuple[RenderCell, ...]:
     if pending_controls:
         cells.append(RenderCell("", 0, controls=tuple(pending_controls)))
 
-    return tuple(cells)
+    return cells.take_tuple()
 
 
 @dataclass(frozen=True, slots=True)
@@ -219,7 +219,7 @@ class RenderedScreen:
                     lines.extend([EMPTY_RENDER_LINE] * (target_len - len(lines)))
                 for index, line in enumerate(overlay.lines):
                     lines[adjusted_y + index] = line
-        return tuple(lines)
+        return lines.take_tuple()
 
     @classmethod
     def empty(cls) -> Self:

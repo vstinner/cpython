@@ -256,7 +256,7 @@ class MySet(set):
     sample = {"a", "b"}
 
 class MyFrozenSet(frozenset):
-    sample = frozenset({"a", "b"})
+    sample = {"a", "b"}.take_frozenset()
 
 myclasses = [MyInt, MyLong, MyFloat,
              MyComplex,

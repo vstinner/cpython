@@ -385,7 +385,7 @@ def _flatten_literal_params(parameters):
             params.extend(p.__args__)
         else:
             params.append(p)
-    return tuple(params)
+    return params.take_tuple()
 
 
 _cleanups = []
@@ -1301,7 +1301,7 @@ class _BaseGenericAlias(_Final, _root=True):
                 break
         else:
             res.append(Generic)
-        return tuple(res)
+        return res.take_tuple()
 
     def __getattr__(self, attr):
         if attr in {'__name__', '__qualname__'}:

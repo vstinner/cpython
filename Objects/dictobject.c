@@ -5188,6 +5188,32 @@ dict___sizeof___impl(PyDictObject *self)
     return PyLong_FromSsize_t(_PyDict_SizeOf(self));
 }
 
+PyObject*
+PyDict_AsFrozenDictAndClear(PyObject *self)
+{
+    // FIXME: Temporary implementation just to write a PoC.
+    // FIXME: Make it efficient :-D
+    // Wait for github.com/python/cpython/pull/153413
+    PyObject *frozen = PyFrozenDict_New((PyObject*)self);
+    if (frozen == NULL) {
+        return NULL;
+    }
+    PyDict_Clear((PyObject *)self);
+    return frozen;
+}
+
+/*[clinic input]
+@critical_section
+dict.take_frozendict
+[clinic start generated code]*/
+
+static PyObject *
+dict_take_frozendict_impl(PyDictObject *self)
+/*[clinic end generated code: output=c3668567feb6353a input=5e3c5103eae65c81]*/
+{
+    return PyDict_AsFrozenDictAndClear((PyObject*)self);
+}
+
 PyObject *
 _PyDict_Or(PyObject *self, PyObject *other)
 {
@@ -5267,6 +5293,7 @@ static PyMethodDef mapp_methods[] = {
     DICT_CLEAR_METHODDEF
     DICT_COPY_METHODDEF
     DICT___REVERSED___METHODDEF
+    DICT_TAKE_FROZENDICT_METHODDEF
     {"__class_getitem__", Py_GenericAlias, METH_O|METH_CLASS,
      PyDoc_STR("dicts are generic over two types, signifying (respectively) the types of their keys and values")},
     {NULL,              NULL}   /* sentinel */
@@ -8346,12 +8373,83 @@ _PyObject_InlineValuesConsistencyCheck(PyObject *obj)
 static PyObject *
 frozendict_getnewargs(PyObject *op, PyObject *Py_UNUSED(dummy))
 {
-    // Call dict(op): convert 'op' frozendict to a dict
-    PyObject *arg = PyObject_CallOneArg((PyObject*)&PyDict_Type, op);
+    // Convert 'op' frozendict to a dict
+    PyObject *arg = _PyDict_CopyAsDict(op);
     if (arg == NULL) {
         return NULL;
     }
     return Py_BuildValue("(N)", arg);
+}
+
+
+static PyObject*
+frozendict_reduce_func(PyFrozenDictObject *self, int proto)
+{
+    if (proto < 2) {
+        PyErr_Format(PyExc_TypeError,
+                     "pickling frozendict requires protocol 2 or higher, "
+                     "got %i", proto);
+        return NULL;
+    }
+
+    PyObject *state = _PyObject_GetState((PyObject *)self);
+    if (state == NULL) {
+        return NULL;
+    }
+
+    PyDictObject *mp = _PyAnyDict_CAST(self);
+    PyObject *func;
+    if (PyFrozenDict_CheckExact(self) && mp->ma_used != 0) {
+        func = PyObject_GetAttrString((PyObject*)&PyDict_Type, "take_frozendict");
+        if (func == NULL) {
+            Py_DECREF(state);
+            return NULL;
+        }
+    }
+    else {
+        func = Py_NewRef(Py_TYPE(self));
+    }
+
+    if (!Py_SIZE(self)) {
+        return Py_BuildValue("(N()N)", func, state);
+    }
+    PyObject *copy = _PyDict_CopyAsDict((PyObject *)self);
+    if (copy == NULL) {
+        Py_DECREF(state);
+        Py_DECREF(func);
+        return NULL;
+    }
+    return Py_BuildValue("(N(N)N)", func, copy, state);
+}
+
+
+/*[clinic input]
+frozendict.__reduce__ as frozendict_reduce
+
+Return state information for pickling.
+[clinic start generated code]*/
+
+static PyObject *
+frozendict_reduce_impl(PyFrozenDictObject *self)
+/*[clinic end generated code: output=187f2986432f5c7b input=a7e9dbcdb9e86c5b]*/
+{
+    return frozendict_reduce_func(self, 2);
+}
+
+/*[clinic input]
+frozendict.__reduce_ex__ as frozendict_reduce_ex
+
+    proto: int = 0
+    /
+
+Return state information for pickling.
+[clinic start generated code]*/
+
+static PyObject *
+frozendict_reduce_ex_impl(PyFrozenDictObject *self, int proto)
+/*[clinic end generated code: output=dfc6f4644ed5e24a input=2c5e7c3d6009b62f]*/
+{
+    return frozendict_reduce_func(self, proto);
 }
 
 
@@ -8378,6 +8476,8 @@ static PyMethodDef frozendict_methods[] = {
     {"__class_getitem__", Py_GenericAlias, METH_O|METH_CLASS,
      PyDoc_STR("frozendicts are generic over two types, signifying (respectively) the types of the frozendict's keys and values")},
     {"__getnewargs__", frozendict_getnewargs, METH_NOARGS},
+    FROZENDICT_REDUCE_METHODDEF
+    FROZENDICT_REDUCE_EX_METHODDEF
     {NULL,              NULL}   /* sentinel */
 };
 

@@ -161,12 +161,12 @@ _PATTERN_SYNTAX_RANGES = [
 
 # Normalised property names that introduce a General_Category value.  A bare
 # \p{Lu} is shorthand for \p{gc=Lu} (UTS #18 1.2.4, "Property Syntax").
-_GC_KEYS = frozenset({"gc", "generalcategory"})
+_GC_KEYS = {"gc", "generalcategory"}.take_frozenset()
 
 # Normalised value names for the truth value of a binary property; Yes/No and
 # True/False are the binary value aliases of PropertyValueAliases.txt.
-_TRUE_VALUES = frozenset({"yes", "y", "true", "t"})
-_FALSE_VALUES = frozenset({"no", "n", "false", "f"})
+_TRUE_VALUES = {"yes", "y", "true", "t"}.take_frozenset()
+_FALSE_VALUES = {"no", "n", "false", "f"}.take_frozenset()
 
 
 def _analytic_ranges():
