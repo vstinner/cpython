@@ -5188,14 +5188,8 @@ dict___sizeof___impl(PyDictObject *self)
     return PyLong_FromSsize_t(_PyDict_SizeOf(self));
 }
 
-/*[clinic input]
-@critical_section
-dict.take_frozendict
-[clinic start generated code]*/
-
-static PyObject *
-dict_take_frozendict_impl(PyDictObject *self)
-/*[clinic end generated code: output=c3668567feb6353a input=5e3c5103eae65c81]*/
+PyObject*
+PyDict_AsFrozenDictAndClear(PyObject *self)
 {
     // FIXME: Temporary implementation just to write a PoC.
     // FIXME: Make it efficient :-D
@@ -5206,6 +5200,18 @@ dict_take_frozendict_impl(PyDictObject *self)
     }
     PyDict_Clear((PyObject *)self);
     return frozen;
+}
+
+/*[clinic input]
+@critical_section
+dict.take_frozendict
+[clinic start generated code]*/
+
+static PyObject *
+dict_take_frozendict_impl(PyDictObject *self)
+/*[clinic end generated code: output=c3668567feb6353a input=5e3c5103eae65c81]*/
+{
+    return PyDict_AsFrozenDictAndClear((PyObject*)self);
 }
 
 PyObject *
