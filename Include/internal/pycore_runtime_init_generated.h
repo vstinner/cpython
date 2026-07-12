@@ -1410,6 +1410,7 @@ extern "C" {
     INIT_ID(__floor__), \
     INIT_ID(__floordiv__), \
     INIT_ID(__format__), \
+    INIT_ID(__frozendict__), \
     INIT_ID(__fspath__), \
     INIT_ID(__ge__), \
     INIT_ID(__get__), \

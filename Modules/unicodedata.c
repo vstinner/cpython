@@ -2368,6 +2368,7 @@ unicodedata_exec(PyObject *module)
     if (PyModule_Add(module, "_ucnhash_CAPI", unicodedata_create_capi()) < 0) {
         return -1;
     }
+
     return 0;
 }
 

@@ -2167,6 +2167,9 @@ marshal_module_exec(PyObject *mod)
     if (PyModule_AddIntConstant(mod, "version", Py_MARSHAL_VERSION) < 0) {
         return -1;
     }
+    if (PyModule_Add(mod, "__frozendict__", PyLong_FromLong(1)) < 0) {
+        return -1;
+    }
     return 0;
 }
 

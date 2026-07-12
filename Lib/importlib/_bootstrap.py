@@ -763,6 +763,9 @@ def _spec_from_module(module, loader=None, origin=None):
 
 
 def _init_module_attrs(spec, module, *, override=False):
+    if hasattr(module, '__dict__') and isinstance(module.__dict__, frozendict):
+        return module
+
     # The passed-in module may be not support attribute assignment,
     # in which case we simply don't set the attributes.
     # __name__
@@ -971,6 +974,8 @@ class BuiltinImporter:
     def exec_module(module):
         """Exec a built-in module"""
         _call_with_frames_removed(_imp.exec_builtin, module)
+        if getattr(module, '__frozendict__', False):
+            _imp._module_set_frozendict(module)
 
     @classmethod
     @_requires_builtin

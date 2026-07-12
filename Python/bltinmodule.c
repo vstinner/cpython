@@ -97,6 +97,46 @@ error:
     return NULL;
 }
 
+
+static int
+class_use_frozendict(PyObject *cls)
+{
+    if (!PyType_Check(cls)) {
+        return 0;
+    }
+
+    PyTypeObject *type = _PyType_CAST(cls);
+    PyObject *dict = type->tp_dict;
+    assert(dict != NULL && PyDict_Check(dict));
+
+    PyObject *obj;
+    int res = PyDict_GetItemRef(dict, &_Py_ID(__frozendict__), &obj);
+    if (res < 0) {
+        return -1;
+    }
+    if (res == 0) {
+        return 0;
+    }
+
+    int use_frozendict = PyObject_IsTrue(obj);
+    Py_CLEAR(obj);
+    if (use_frozendict < 0) {
+        return -1;
+    }
+    if (!use_frozendict) {
+        return 0;
+    }
+
+    PyObject *frozendict = PyFrozenDict_New(dict);
+    if (frozendict == NULL) {
+        return -1;
+    }
+
+    Py_SETREF(type->tp_dict, frozendict);
+    return 0;
+}
+
+
 /* AC: cannot convert yet, waiting for *args support */
 static PyObject *
 builtin___build_class__(PyObject *self, PyObject *const *args, Py_ssize_t nargs,
@@ -204,36 +244,48 @@ builtin___build_class__(PyObject *self, PyObject *const *args, Py_ssize_t nargs,
     PyThreadState *tstate = _PyThreadState_GET();
     EVAL_CALL_STAT_INC(EVAL_CALL_BUILD_CLASS);
     cell = _PyEval_Vector(tstate, (PyFunctionObject *)func, ns, NULL, 0, NULL);
-    if (cell != NULL) {
-        if (bases != orig_bases) {
-            if (PyMapping_SetItemString(ns, "__orig_bases__", orig_bases) < 0) {
-                goto error;
-            }
-        }
-        PyObject *margs[3] = {name, bases, ns};
-        cls = PyObject_VectorcallDict(meta, margs, 3, mkw);
-        if (cls != NULL && PyType_Check(cls) && PyCell_Check(cell)) {
-            PyObject *cell_cls = PyCell_GetRef((PyCellObject *)cell);
-            if (cell_cls != cls) {
-                if (cell_cls == NULL) {
-                    const char *msg =
-                        "__class__ not set defining %.200R as %.200R. "
-                        "Was __classcell__ propagated to type.__new__?";
-                    PyErr_Format(PyExc_RuntimeError, msg, name, cls);
-                } else {
-                    const char *msg =
-                        "__class__ set to %.200R defining %.200R as %.200R";
-                    PyErr_Format(PyExc_TypeError, msg, cell_cls, name, cls);
-                }
-                Py_XDECREF(cell_cls);
-                Py_SETREF(cls, NULL);
-                goto error;
-            }
-            else {
-                Py_DECREF(cell_cls);
-            }
+    if (cell == NULL) {
+        goto error;
+    }
+
+    if (bases != orig_bases) {
+        if (PyMapping_SetItemString(ns, "__orig_bases__", orig_bases) < 0) {
+            goto error;
         }
     }
+    PyObject *margs[3] = {name, bases, ns};
+    cls = PyObject_VectorcallDict(meta, margs, 3, mkw);
+    if (cls == NULL) {
+        goto error;
+    }
+
+    if (PyType_Check(cls) && PyCell_Check(cell)) {
+        PyObject *cell_cls = PyCell_GetRef((PyCellObject *)cell);
+        if (cell_cls != cls) {
+            if (cell_cls == NULL) {
+                const char *msg =
+                    "__class__ not set defining %.200R as %.200R. "
+                    "Was __classcell__ propagated to type.__new__?";
+                PyErr_Format(PyExc_RuntimeError, msg, name, cls);
+            } else {
+                const char *msg =
+                    "__class__ set to %.200R defining %.200R as %.200R";
+                PyErr_Format(PyExc_TypeError, msg, cell_cls, name, cls);
+            }
+            Py_XDECREF(cell_cls);
+            Py_SETREF(cls, NULL);
+            goto error;
+        }
+        else {
+            Py_DECREF(cell_cls);
+        }
+    }
+
+    if (class_use_frozendict(cls) < 0) {
+        Py_CLEAR(cls);
+        goto error;
+    }
+
 error:
     Py_XDECREF(cell);
     Py_XDECREF(ns);

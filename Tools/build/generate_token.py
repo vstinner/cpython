@@ -261,6 +261,7 @@ token_py_template = f'''\
 # {AUTO_GENERATED_BY_SCRIPT}
 '''
 token_py_template += '''
+__frozendict__ = True
 __all__ = ['tok_name', 'ISTERMINAL', 'ISNONTERMINAL', 'ISEOF',
            'EXACT_TOKEN_TYPES']
 
@@ -274,9 +275,9 @@ tok_name = {value: name
             if isinstance(value, int) and not name.startswith('_')}
 __all__.extend(tok_name.values())
 
-EXACT_TOKEN_TYPES = {
+EXACT_TOKEN_TYPES = frozendict({
 %s
-}
+})
 
 def ISTERMINAL(x: int) -> bool:
     return x < NT_OFFSET

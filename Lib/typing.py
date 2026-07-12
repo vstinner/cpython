@@ -2345,7 +2345,8 @@ def runtime_checkable(cls):
                 "is a method member"
             ) from e
         else:
-            if not is_callable:
+            # FIXME: should we disallow "__frozendict__" attribute?
+            if not is_callable and attr != "__frozendict__":
                 cls.__non_callable_proto_members__.add(attr)
     return cls
 

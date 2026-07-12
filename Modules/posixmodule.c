@@ -18917,7 +18917,14 @@ posixmodule_exec(PyObject *m)
     assert(state->ticks_per_second >= 1);
 #endif
 
-    return PyModule_Add(m, "_have_functions", list);
+    if (PyModule_Add(m, "_have_functions", list) < 0) {
+        return -1;
+    }
+
+    if (PyModule_Add(m, "__frozendict__", PyLong_FromLong(1)) < 0) {
+        return -1;
+    }
+    return 0;
 }
 
 

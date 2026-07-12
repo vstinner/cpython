@@ -135,6 +135,7 @@ struct _Py_global_strings {
         STRUCT_FOR_ID(__floor__)
         STRUCT_FOR_ID(__floordiv__)
         STRUCT_FOR_ID(__format__)
+        STRUCT_FOR_ID(__frozendict__)
         STRUCT_FOR_ID(__fspath__)
         STRUCT_FOR_ID(__ge__)
         STRUCT_FOR_ID(__get__)

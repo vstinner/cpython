@@ -1622,6 +1622,9 @@ warnings_module_exec(PyObject *module)
     if (PyModule_AddObjectRef(module, "_warnings_context", st->context) < 0) {
         return -1;
     }
+    if (PyModule_Add(module, "__frozendict__", PyLong_FromLong(1)) < 0) {
+        return -1;
+    }
     return 0;
 }
 

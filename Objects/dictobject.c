@@ -2499,7 +2499,7 @@ Py_ssize_t
 _PyDict_LookupIndexAndValue(PyDictObject *mp, PyObject *key, PyObject **value)
 {
     // TODO: Thread safety
-    assert(PyDict_CheckExact((PyObject*)mp));
+    assert(PyAnyDict_CheckExact((PyObject*)mp));
     assert(PyUnicode_CheckExact(key));
 
     Py_hash_t hash = _PyObject_HashDictKey(key);

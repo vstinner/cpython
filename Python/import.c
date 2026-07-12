@@ -5633,6 +5633,39 @@ _imp__set_lazy_attributes_impl(PyObject *module, PyObject *modobj,
     Py_RETURN_NONE;
 }
 
+/*[clinic input]
+_imp._module_set_frozendict
+    modobj: object
+    /
+[clinic start generated code]*/
+
+static PyObject *
+_imp__module_set_frozendict(PyObject *module, PyObject *modobj)
+/*[clinic end generated code: output=2b931e209aafcd88 input=4261b4d25473f080]*/
+{
+    if (!PyModule_Check(modobj)) {
+        PyErr_Format(PyExc_TypeError, "expected module, got %T", modobj);
+        return NULL;
+    }
+    PyModuleObject *md = (PyModuleObject*)modobj;
+
+    PyObject *dict = md->md_dict;
+    assert(dict != NULL && PyAnyDict_Check(dict));
+
+    if (PyFrozenDict_Check(dict)) {
+        // it's already a frozendict
+        Py_RETURN_NONE;
+    }
+
+    PyObject *frozendict = PyFrozenDict_New(dict);
+    if (frozendict == NULL) {
+        return NULL;
+    }
+
+    Py_SETREF(md->md_dict, frozendict);
+    Py_RETURN_NONE;
+}
+
 PyDoc_STRVAR(doc_imp,
 "(Extremely) low-level import machinery bits as used by importlib.");
 
@@ -5657,6 +5690,7 @@ static PyMethodDef imp_methods[] = {
     _IMP__FIX_CO_FILENAME_METHODDEF
     _IMP_SOURCE_HASH_METHODDEF
     _IMP__SET_LAZY_ATTRIBUTES_METHODDEF
+    _IMP__MODULE_SET_FROZENDICT_METHODDEF
     {NULL, NULL}  /* sentinel */
 };
 

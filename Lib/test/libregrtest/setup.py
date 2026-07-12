@@ -77,7 +77,11 @@ def setup_process() -> None:
             for index, path in enumerate(module.__path__):
                 module.__path__[index] = os.path.abspath(path)
         if getattr(module, '__file__', None):
-            module.__file__ = os.path.abspath(module.__file__)  # type: ignore[type-var]
+            try:
+                module.__file__ = os.path.abspath(module.__file__)  # type: ignore[type-var]
+            except TypeError:
+                # ignore error if module dict is a frozendict
+                pass
 
     if hasattr(sys, 'addaudithook'):
         # Add an auditing hook for all tests to ensure PySys_Audit is tested

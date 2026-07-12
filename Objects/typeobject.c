@@ -2043,6 +2043,9 @@ type_dict(PyObject *tp, void *Py_UNUSED(closure))
     if (dict == NULL) {
         Py_RETURN_NONE;
     }
+    if (PyFrozenDict_Check(dict)) {
+        return Py_NewRef(dict);
+    }
     return PyDictProxy_New(dict);
 }
 
@@ -2115,10 +2118,15 @@ type_get_annotate(PyObject *tp, void *Py_UNUSED(closure))
     }
     else {
         annotate = Py_None;
-        int result = PyDict_SetItem(dict, &_Py_ID(__annotate_func__), annotate);
-        if (result < 0) {
-            Py_DECREF(dict);
-            return NULL;
+        // FIXME: should we set "__annotate_func__" attribute even if type
+        // dict is a frozendict? For example, create a copy and then overrides
+        // the type dict?
+        if (!PyFrozenDict_Check(dict)) {
+            int result = PyDict_SetItem(dict, &_Py_ID(__annotate_func__), annotate);
+            if (result < 0) {
+                Py_DECREF(dict);
+                return NULL;
+            }
         }
     }
     Py_DECREF(dict);
@@ -2146,7 +2154,7 @@ type_set_annotate(PyObject *tp, PyObject *value, void *Py_UNUSED(closure))
     }
 
     PyObject *dict = PyType_GetDict(type);
-    assert(PyDict_Check(dict));
+    assert(PyAnyDict_Check(dict));
     int result = PyDict_SetItem(dict, &_Py_ID(__annotate_func__), value);
     if (result < 0) {
         Py_DECREF(dict);
@@ -2221,13 +2229,18 @@ type_get_annotations(PyObject *tp, void *Py_UNUSED(closure))
             annotations = PyDict_New();
         }
         Py_DECREF(annotate);
-        if (annotations) {
-            int result = PyDict_SetItem(
-                    dict, &_Py_ID(__annotations_cache__), annotations);
-            if (result) {
-                Py_CLEAR(annotations);
-            } else {
-                PyType_Modified(type);
+        // FIXME: should we set "__annotations_cache__" attribute even if type
+        // dict is a frozendict? For example, create a copy and then overrides
+        // the type dict?
+        if (!PyFrozenDict_Check(dict)) {
+            if (annotations) {
+                int result = PyDict_SetItem(
+                        dict, &_Py_ID(__annotations_cache__), annotations);
+                if (result) {
+                    Py_CLEAR(annotations);
+                } else {
+                    PyType_Modified(type);
+                }
             }
         }
     }
@@ -4011,9 +4024,9 @@ subtype_dict(PyObject *obj, void *context)
 int
 _PyObject_SetDict(PyObject *obj, PyObject *value)
 {
-    if (value != NULL && !PyDict_Check(value)) {
+    if (value != NULL && !PyAnyDict_Check(value)) {
         PyErr_Format(PyExc_TypeError,
-                     "__dict__ must be set to a dictionary, "
+                     "__dict__ must be set to a dict or a frozendict, "
                      "not a '%.200s'", Py_TYPE(value)->tp_name);
         return -1;
     }
@@ -6169,7 +6182,7 @@ find_name_in_mro(PyTypeObject *type, PyObject *name, _PyStackRef *out)
     for (Py_ssize_t i = 0; i < n; i++) {
         PyObject *base = PyTuple_GET_ITEM(mro, i);
         PyObject *dict = lookup_tp_dict(_PyType_CAST(base));
-        assert(dict && PyDict_Check(dict));
+        assert(dict && PyAnyDict_Check(dict));
         Py_ssize_t ix = _Py_dict_lookup_threadsafe_stackref(
             (PyDictObject *)dict, name, hash, out);
         if (ix == DKIX_ERROR) {
@@ -6706,8 +6719,8 @@ type_update_dict(PyTypeObject *type, PyDictObject *dict, PyObject *name,
 
     if (_PyDict_SetItem_LockHeld(dict, name, value) < 0) {
         PyErr_Format(PyExc_AttributeError,
-                     "type object '%.50s' has no attribute '%U'",
-                     ((PyTypeObject*)type)->tp_name, name);
+                     "type attribute '%N.%U' cannot be modified",
+                     type, name);
         _PyObject_SetAttributeErrorContext((PyObject *)type, name);
         return -1;
     }
@@ -8497,13 +8510,13 @@ object___dir___impl(PyObject *self)
     if (dict == NULL) {
         dict = PyDict_New();
     }
-    else if (!PyDict_Check(dict)) {
+    else if (!PyAnyDict_Check(dict)) {
         Py_DECREF(dict);
         dict = PyDict_New();
     }
     else {
-        /* Copy __dict__ to avoid mutating it. */
-        PyObject *temp = PyDict_Copy(dict);
+        /* Copy __dict__ (dict or frozendict) to avoid mutating it. */
+        PyObject *temp = _PyDict_CopyAsDict(dict);
         Py_SETREF(dict, temp);
     }
 
@@ -12375,7 +12388,7 @@ recurse_down_subclasses(PyTypeObject *type, PyObject *attr_name,
 
         /* Avoid recursing down into unaffected classes */
         PyObject *dict = lookup_tp_dict(subclass);
-        if (dict != NULL && PyDict_Check(dict)) {
+        if (dict != NULL && PyAnyDict_Check(dict)) {
             int r = PyDict_Contains(dict, attr_name);
             if (r < 0) {
                 Py_DECREF(subclass);
@@ -12610,7 +12623,7 @@ _PySuper_LookupDescr(PyTypeObject *su_type, PyTypeObject *su_obj_type, PyObject 
     do {
         PyObject *obj = PyTuple_GET_ITEM(mro, i);
         PyObject *dict = lookup_tp_dict(_PyType_CAST(obj));
-        assert(dict != NULL && PyDict_Check(dict));
+        assert(dict != NULL && PyAnyDict_Check(dict));
 
         if (PyDict_GetItemRef(dict, name, &res) != 0) {
             // found or error

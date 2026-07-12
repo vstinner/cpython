@@ -744,7 +744,10 @@ class _LoaderBasics:
         if code is None:
             raise ImportError(f'cannot load module {module.__name__!r} when '
                               'get_code() returns None')
-        _bootstrap._call_with_frames_removed(exec, code, module.__dict__)
+        mod_dict = module.__dict__
+        _bootstrap._call_with_frames_removed(exec, code, mod_dict)
+        if mod_dict.get('__frozendict__', False):
+            _imp._module_set_frozendict(module)
 
 
 class SourceLoader(_LoaderBasics):
@@ -1031,6 +1034,8 @@ class ExtensionFileLoader(FileLoader, _LoaderBasics):
     def exec_module(self, module):
         """Initialize an extension module"""
         _bootstrap._call_with_frames_removed(_imp.exec_dynamic, module)
+        if getattr(module, '__frozendict__', False):
+            _imp._module_set_frozendict(module)
         _bootstrap._verbose_message('extension module {!r} executed from {!r}',
                          self.name, self.path)
 
