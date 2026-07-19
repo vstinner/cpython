@@ -27,7 +27,7 @@ class Win32KillTests(unittest.TestCase):
         # subprocess to the parent that the interpreter is ready. When it
         # becomes ready, send *sig* via os.kill to the subprocess and check
         # that the return code is equal to *sig*.
-        import ctypes
+        import ctypes.util
         from ctypes import wintypes
         import msvcrt
 
@@ -35,14 +35,17 @@ class Win32KillTests(unittest.TestCase):
         # process has exited, use PeekNamedPipe to see what's inside stdout
         # without waiting. This is done so we can tell that the interpreter
         # is started and running at a point where it could handle a signal.
-        PeekNamedPipe = ctypes.windll.kernel32.PeekNamedPipe
-        PeekNamedPipe.restype = wintypes.BOOL
-        PeekNamedPipe.argtypes = (wintypes.HANDLE, # Pipe handle
-                                  ctypes.POINTER(ctypes.c_char), # stdout buf
-                                  wintypes.DWORD, # Buffer size
-                                  ctypes.POINTER(wintypes.DWORD), # bytes read
-                                  ctypes.POINTER(wintypes.DWORD), # bytes avail
-                                  ctypes.POINTER(wintypes.DWORD)) # bytes left
+        @ctypes.util.wrap_dll_function(ctypes.windll.kernel32)
+        def PeekNamedPipe(
+            hNamedPipe: wintypes.HANDLE,
+            lpBuffer: ctypes.POINTER(ctypes.c_char),
+            nBufferSize: wintypes.DWORD,
+            lpBytesRead: ctypes.POINTER(wintypes.DWORD),
+            lpTotalBytesAvail: ctypes.POINTER(wintypes.DWORD),
+            lpBytesLeftThisMessage: ctypes.POINTER(wintypes.DWORD),
+        ) -> wintypes.BOOL:
+            pass
+
         msg = "running"
         proc = subprocess.Popen([sys.executable, "-c",
                                  "import sys;"
@@ -126,10 +129,11 @@ class Win32KillTests(unittest.TestCase):
 
         # Make a NULL value by creating a pointer with no argument.
         NULL = ctypes.POINTER(ctypes.c_int)()
-        SetConsoleCtrlHandler = ctypes.windll.kernel32.SetConsoleCtrlHandler
-        SetConsoleCtrlHandler.argtypes = (ctypes.POINTER(ctypes.c_int),
-                                          wintypes.BOOL)
-        SetConsoleCtrlHandler.restype = wintypes.BOOL
+
+        @ctypes.util.wrap_dll_function(ctypes.windll.kernel32)
+        def SetConsoleCtrlHandler(HandlerRoutine: ctypes.POINTER(ctypes.c_int),
+                                  Add: wintypes.BOOL) -> wintypes.BOOL:
+            pass
 
         # Calling this with NULL and FALSE causes the calling process to
         # handle Ctrl+C, rather than ignore it. This property is inherited
