@@ -453,25 +453,8 @@ class Win32JunctionTests(unittest.TestCase):
 class Win32NtTests(unittest.TestCase):
     def test_getfinalpathname_handles(self):
         nt = import_helper.import_module('nt')
-        ctypes = import_helper.import_module('ctypes')
-        # Ruff false positive -- it thinks we're redefining `ctypes` here
-        import ctypes.wintypes  # noqa: F811
 
-        kernel = ctypes.WinDLL('Kernel32.dll', use_last_error=True)
-        kernel.GetCurrentProcess.restype = ctypes.wintypes.HANDLE
-
-        kernel.GetProcessHandleCount.restype = ctypes.wintypes.BOOL
-        kernel.GetProcessHandleCount.argtypes = (ctypes.wintypes.HANDLE,
-                                                 ctypes.wintypes.LPDWORD)
-
-        # This is a pseudo-handle that doesn't need to be closed
-        hproc = kernel.GetCurrentProcess()
-
-        handle_count = ctypes.wintypes.DWORD()
-        ok = kernel.GetProcessHandleCount(hproc, ctypes.byref(handle_count))
-        self.assertEqual(1, ok)
-
-        before_count = handle_count.value
+        before_count = os_helper.handle_count()
 
         # The first two test the error path, __file__ tests the success path
         filenames = [
@@ -493,10 +476,7 @@ class Win32NtTests(unittest.TestCase):
                 except Exception:
                     pass
 
-        ok = kernel.GetProcessHandleCount(hproc, ctypes.byref(handle_count))
-        self.assertEqual(1, ok)
-
-        handle_delta = handle_count.value - before_count
+        handle_delta = os_helper.handle_count() - before_count
 
         self.assertEqual(0, handle_delta)
 
