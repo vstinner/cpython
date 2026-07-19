@@ -1383,6 +1383,7 @@ class ArgsTestCase(BaseTestCase):
         self.check_leak(code, 'file descriptors')
 
     @unittest.skipUnless(support.Py_DEBUG, 'need a debug build')
+    @unittest.skipUnless(support.MS_WINDOWS, 'test specific to Windows')
     def test_huntrleaks_handle_leak(self):
         # test --huntrleaks for Windows handle leak
         code = textwrap.dedent("""
