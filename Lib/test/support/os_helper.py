@@ -830,3 +830,35 @@ else:
                     DDD_REMOVE_DEFINITION | DDD_EXACT_MATCH_ON_REMOVE,
                     drive, path):
                 raise ctypes.WinError(ctypes.get_last_error())
+
+
+try:
+    if support.MS_WINDOWS:
+        import ctypes.util
+        kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
+    else:
+        raise AttributeError
+except (ImportError, AttributeError):
+    def handle_count():
+        return 0
+else:
+    @ctypes.util.wrap_dll_function(kernel32)
+    def GetCurrentProcess() -> ctypes.wintypes.HANDLE:
+        pass
+
+    @ctypes.util.wrap_dll_function(kernel32)
+    def GetProcessHandleCount(khProcess: ctypes.wintypes.HANDLE,
+                              pdwHandleCount: ctypes.wintypes.LPDWORD) -> ctypes.wintypes.BOOL:
+        pass
+
+    del kernel32
+
+    def handle_count():
+        # Pseudo-handle that doesn't need to be closed
+        hproc = GetCurrentProcess()
+
+        handle_count = ctypes.wintypes.DWORD()
+        if not GetProcessHandleCount(hproc, ctypes.byref(handle_count)):
+            raise ctypes.WinError()
+
+        return handle_count.value
