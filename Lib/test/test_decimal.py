@@ -3705,7 +3705,7 @@ class ContextAPItests:
         with self.assertRaises(AttributeError) as cm:
             setattr(ctx, "a'b", 1)
         self.assertEqual(str(cm.exception),
-                         """'decimal.Context' object has no attribute "a'b"""")
+                         ''''decimal.Context' object has no attribute "a'b"''')
 
 
 @requires_cdecimal

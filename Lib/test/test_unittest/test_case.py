@@ -799,7 +799,7 @@ class Test_TestCase(unittest.TestCase, TestEquality, TestHashing):
         with self.assertRaises(self.failureException) as cm:
             self.assertHasAttr(a, "a'b")
         self.assertEqual(str(cm.exception),
-                """'List' object has no attribute "a'b"""")
+                ''''List' object has no attribute "a'b"''')
         with self.assertRaises(self.failureException) as cm:
             self.assertHasAttr(List, 'spam')
         self.assertEqual(str(cm.exception),

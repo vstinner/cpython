@@ -1229,7 +1229,7 @@ class BuiltinTest(ComplexesAreIdenticalMixin, unittest.TestCase):
         with self.assertRaises(AttributeError) as cm:
             getattr(object(), "a'b")
         self.assertEqual(str(cm.exception),
-                         """'object' object has no attribute "a'b"""")
+                         ''''object' object has no attribute "a'b"''')
 
     def test_hasattr(self):
         self.assertTrue(hasattr(sys, 'stdout'))
