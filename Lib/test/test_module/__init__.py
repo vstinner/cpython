@@ -48,7 +48,7 @@ class ModuleTests(unittest.TestCase):
                 AttributeError, "module 'foo' has no attribute 'not_here'",
                 getattr, foo, "not_here")
         self.assertRaisesRegex(
-                AttributeError, 'module \'foo\' has no attribute "a\'b"',
+                AttributeError, """module 'foo' has no attribute "a'b"""",
                 getattr, foo, "a'b")
 
     def test_no_docstring(self):
