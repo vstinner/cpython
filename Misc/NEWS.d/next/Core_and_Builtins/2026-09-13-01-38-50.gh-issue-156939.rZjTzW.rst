@@ -1,0 +1,2 @@
+When Python is built in debug mode, :class:`bytearray` now detects buffer
+overflow. Patch by Victor Stinner.

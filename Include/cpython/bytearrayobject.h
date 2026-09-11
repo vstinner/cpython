@@ -7,7 +7,8 @@ typedef struct {
     PyObject_VAR_HEAD
     /* How many bytes allocated in ob_bytes
 
-       In the current implementation this is equivalent to Py_SIZE(ob_bytes_object).
+       In the current implementation this is equivalent to
+       PyBytes_GET_SIZE(ob_bytes_object).
        The value is always loaded and stored atomically for thread safety.
        There are API compatibilty concerns with removing so keeping for now. */
     Py_ssize_t ob_alloc;
