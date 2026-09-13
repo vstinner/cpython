@@ -3665,6 +3665,19 @@ byteswriter_write_canary_byte(PyBytesWriter *writer)
     unsigned char *data = (unsigned char*)byteswriter_data(writer);
     data[writer->size] = PyBytesWriter_CANARY_BYTE;
 }
+
+
+static void
+byteswriter_reset_trailing_byte(PyBytesWriter *writer)
+{
+    if (writer->obj != NULL) {
+        // byteswriter_write_canary_byte() can override the trailing NUL byte.
+        // So reset the trailing NUL byte to NUL.
+        Py_ssize_t allocated = byteswriter_allocated(writer);
+        char *data = byteswriter_data(writer);
+        data[allocated] = '\0';
+    }
+}
 #endif
 
 
@@ -3814,6 +3827,7 @@ PyBytesWriter_Discard(PyBytesWriter *writer)
 
 #ifdef Py_DEBUG
     byteswriter_check_canary_byte(writer);
+    byteswriter_reset_trailing_byte(writer);
 #endif
 
     Py_XDECREF(writer->obj);
@@ -3840,14 +3854,7 @@ PyBytesWriter_FinishWithSize(PyBytesWriter *writer, Py_ssize_t size)
 #ifdef Py_DEBUG
     // Check for buffer overflow
     byteswriter_check_canary_byte(writer);
-
-    if (writer->obj != NULL) {
-        // byteswriter_write_canary_byte() can override the trailing NUL byte.
-        // So reset the trailing NUL byte to NUL.
-        Py_ssize_t allocated = byteswriter_allocated(writer);
-        char *data = byteswriter_data(writer);
-        data[allocated] = '\0';
-    }
+    byteswriter_reset_trailing_byte(writer);
 #endif
 
     PyObject *result;
