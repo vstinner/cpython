@@ -1,6 +1,7 @@
 import sys
 import textwrap
 import unittest
+from test import support
 from test.support import import_helper
 from test.support.script_helper import assert_python_failure
 
@@ -174,8 +175,11 @@ class CAPITest(unittest.TestCase):
         # CRASHES resize(object(), 0)
         # CRASHES resize(NULL, 0)
 
+    @unittest.skipUnless(support.built_with_c_assertions(),
+                         'Python built without assertions')
     def test_detect_overflow(self):
         # Test detection of buffer overflow
+        size = 123
         for operation in (
             'repr(b)',
             'b.resize(5)',
@@ -184,17 +188,27 @@ class CAPITest(unittest.TestCase):
             with self.subTest(operation):
                 code = textwrap.dedent(f'''
                     from test.support import SuppressCrashReport
+                    import os
                     import _testcapi
 
+                    size = {size}
                     with SuppressCrashReport():
                         # Trigger a buffer overflow in a new bytearray
-                        b = _testcapi.bytearray_overflow(123)
-                        {operation}
-                        b = None
+                        b = _testcapi.bytearray_overflow(size)
+                        try:
+                            {operation}
+                        except:
+                            # Ignore all exceptions
+                            pass
+                        # If we reached this line, the operation didn't
+                        # detect the overflow. Exit immediatetly without
+                        # calling the bytearray destructor since it can detect
+                        # the overflow.
+                        os._exit(0)
                 ''')
                 proc = assert_python_failure('-c', code)
                 self.assertIn(b'Buffer overflow detected in bytearray', proc.err)
-                self.assertIn(b'at position 123', proc.err)
+                self.assertIn('at position {size}'.encode(), proc.err)
 
 
 if __name__ == "__main__":
