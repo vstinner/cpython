@@ -26,9 +26,9 @@ class bytearray "PyByteArrayObject *" "&PyByteArray_Type"
 // Check for buffer overflow.
 // It can be called at a function entry point.
 //
-// Usage: assert(bytearray_check_trailing_null_byte(obj)).
+// Usage: assert(bytearray_check_buffer_overflow(obj)).
 static inline int
-bytearray_check_trailing_null_byte(PyByteArrayObject *self)
+bytearray_check_buffer_overflow(PyByteArrayObject *self)
 {
     char *data = PyByteArray_AS_STRING(self);
     Py_ssize_t size = PyByteArray_GET_SIZE(self);
@@ -73,7 +73,7 @@ bytearray_check_consistency_unlocked(PyByteArrayObject *self)
     assert(self->ob_exports >= 0);
 
     // Check for buffer overflow: the buffer must always end with a null byte
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     return 1;
 }
 
@@ -186,7 +186,7 @@ _bytearray_with_buffer(PyByteArrayObject *self, _ba_bytes_op op, PyObject *sub,
     PyObject *res;
 
     _Py_CRITICAL_SECTION_ASSERT_OBJECT_LOCKED(self);
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
 
     /* Increase exports to prevent bytearray storage from changing during op. */
     self->ob_exports++;
@@ -289,7 +289,7 @@ PyByteArray_Size(PyObject *self)
 {
     assert(self != NULL);
     assert(PyByteArray_Check(self));
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
 
     return PyByteArray_GET_SIZE(self);
 }
@@ -299,7 +299,7 @@ PyByteArray_AsString(PyObject *self)
 {
     assert(self != NULL);
     assert(PyByteArray_Check(self));
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
 
     return PyByteArray_AS_STRING(self);
 }
@@ -598,7 +598,7 @@ bytearray_getitem_lock_held(PyObject *op, Py_ssize_t i)
 {
     _Py_CRITICAL_SECTION_ASSERT_OBJECT_LOCKED(op);
     PyByteArrayObject *self = _PyByteArray_CAST(op);
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
 
     if (i < 0 || i >= Py_SIZE(self)) {
         PyErr_SetString(PyExc_IndexError, "bytearray index out of range");
@@ -622,7 +622,7 @@ bytearray_subscript_lock_held(PyObject *op, PyObject *index)
 {
     _Py_CRITICAL_SECTION_ASSERT_OBJECT_LOCKED(op);
     PyByteArrayObject *self = _PyByteArray_CAST(op);
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     if (_PyIndex_Check(index)) {
         Py_ssize_t i = PyNumber_AsSsize_t(index, PyExc_IndexError);
 
@@ -879,7 +879,7 @@ bytearray_ass_subscript_lock_held(PyObject *op, PyObject *index, PyObject *value
 {
     _Py_CRITICAL_SECTION_ASSERT_OBJECT_LOCKED(op);
     PyByteArrayObject *self = _PyByteArray_CAST(op);
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     Py_ssize_t start, stop, step, slicelen;
     // Do not store a reference to the internal buffer since
     // index.__index__() or _getbytevalue() may alter 'self'.
@@ -1285,7 +1285,7 @@ static PyObject *
 bytearray_repr_lock_held(PyObject *op)
 {
     _Py_CRITICAL_SECTION_ASSERT_OBJECT_LOCKED(op);
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)op));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)op));
 
     const char *className = _PyType_Name(Py_TYPE(op));
     PyObject *bytes_repr = _Py_bytes_repr(PyByteArray_AS_STRING(op),
@@ -1550,7 +1550,7 @@ bytearray_contains(PyObject *self, PyObject *arg)
     int ret = -1;
     Py_BEGIN_CRITICAL_SECTION(self);
     PyByteArrayObject *ba = _PyByteArray_CAST(self);
-    assert(bytearray_check_trailing_null_byte(ba));
+    assert(bytearray_check_buffer_overflow(ba));
 
     /* Increase exports to prevent bytearray storage from changing during _Py_bytes_contains(). */
     ba->ob_exports++;
@@ -1630,7 +1630,7 @@ static PyObject *
 bytearray_removeprefix_impl(PyByteArrayObject *self, Py_buffer *prefix)
 /*[clinic end generated code: output=6cabc585e7f502e0 input=4323ba6d275fe7a8]*/
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     const char *self_start = PyByteArray_AS_STRING(self);
     Py_ssize_t self_len = PyByteArray_GET_SIZE(self);
     const char *prefix_start = prefix->buf;
@@ -1664,7 +1664,7 @@ static PyObject *
 bytearray_removesuffix_impl(PyByteArrayObject *self, Py_buffer *suffix)
 /*[clinic end generated code: output=2bc8cfb79de793d3 input=f71ba2e1a40c47dd]*/
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     const char *self_start = PyByteArray_AS_STRING(self);
     Py_ssize_t self_len = PyByteArray_GET_SIZE(self);
     const char *suffix_start = suffix->buf;
@@ -1695,7 +1695,7 @@ static PyObject *
 bytearray_resize_impl(PyByteArrayObject *self, Py_ssize_t size)
 /*[clinic end generated code: output=f73524922990b2d9 input=116046316a2b5cfc]*/
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     Py_ssize_t start_size = PyByteArray_GET_SIZE(self);
 
     int result = bytearray_resize_lock_held((PyObject *)self, size);
@@ -1823,7 +1823,7 @@ bytearray_translate_impl(PyByteArrayObject *self, PyObject *table,
                          PyObject *deletechars)
 /*[clinic end generated code: output=b6a8f01c2a74e446 input=e30d2ae004365ed9]*/
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     char *input, *output;
     const char *table_chars;
     Py_ssize_t i, c;
@@ -2215,7 +2215,7 @@ bytearray_insert_impl(PyByteArrayObject *self, Py_ssize_t index, int item)
 static PyObject *
 bytearray_isalnum(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_isalnum(self, NULL);
@@ -2226,7 +2226,7 @@ bytearray_isalnum(PyObject *self, PyObject *Py_UNUSED(ignored))
 static PyObject *
 bytearray_isalpha(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_isalpha(self, NULL);
@@ -2237,7 +2237,7 @@ bytearray_isalpha(PyObject *self, PyObject *Py_UNUSED(ignored))
 static PyObject *
 bytearray_isascii(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_isascii(self, NULL);
@@ -2248,7 +2248,7 @@ bytearray_isascii(PyObject *self, PyObject *Py_UNUSED(ignored))
 static PyObject *
 bytearray_isdigit(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_isdigit(self, NULL);
@@ -2259,7 +2259,7 @@ bytearray_isdigit(PyObject *self, PyObject *Py_UNUSED(ignored))
 static PyObject *
 bytearray_islower(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_islower(self, NULL);
@@ -2270,7 +2270,7 @@ bytearray_islower(PyObject *self, PyObject *Py_UNUSED(ignored))
 static PyObject *
 bytearray_isspace(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_isspace(self, NULL);
@@ -2281,7 +2281,7 @@ bytearray_isspace(PyObject *self, PyObject *Py_UNUSED(ignored))
 static PyObject *
 bytearray_istitle(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_istitle(self, NULL);
@@ -2292,7 +2292,7 @@ bytearray_istitle(PyObject *self, PyObject *Py_UNUSED(ignored))
 static PyObject *
 bytearray_isupper(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_isupper(self, NULL);
@@ -2315,7 +2315,7 @@ static PyObject *
 bytearray_append_impl(PyByteArrayObject *self, int item)
 /*[clinic end generated code: output=a154e19ed1886cb6 input=a874689bac8bd352]*/
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     Py_ssize_t n = Py_SIZE(self);
 
     if (bytearray_resize_lock_held((PyObject *)self, n + 1) < 0)
@@ -2330,7 +2330,7 @@ bytearray_append_impl(PyByteArrayObject *self, int item)
 static PyObject *
 bytearray_capitalize(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_capitalize(self, NULL);
@@ -2342,7 +2342,7 @@ bytearray_capitalize(PyObject *self, PyObject *Py_UNUSED(ignored))
 static PyObject *
 bytearray_center(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_center(self, args, nargs);
@@ -2354,7 +2354,7 @@ bytearray_center(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
 static PyObject *
 bytearray_expandtabs(PyObject *self, PyObject *const *args, Py_ssize_t nargs, PyObject *kwnames)
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_expandtabs(self, args, nargs, kwnames);
@@ -2379,7 +2379,7 @@ static PyObject *
 bytearray_extend_impl(PyByteArrayObject *self, PyObject *iterable_of_ints)
 /*[clinic end generated code: output=2f25e0ce72b98748 input=aeed44b025146632]*/
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     PyObject *it, *item, *bytearray_obj;
     Py_ssize_t buf_size = 0, len = 0;
     int value;
@@ -2500,7 +2500,7 @@ static PyObject *
 bytearray_pop_impl(PyByteArrayObject *self, Py_ssize_t index)
 /*[clinic end generated code: output=e0ccd401f8021da8 input=fc0fd8de4f97661c]*/
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     int value;
     Py_ssize_t n = Py_SIZE(self);
     char *buf;
@@ -2544,7 +2544,7 @@ static PyObject *
 bytearray_remove_impl(PyByteArrayObject *self, int value)
 /*[clinic end generated code: output=d659e37866709c13 input=797588bc77f86afb]*/
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     Py_ssize_t where, n = Py_SIZE(self);
     char *buf = PyByteArray_AS_STRING(self);
 
@@ -2571,7 +2571,7 @@ bytearray_remove_impl(PyByteArrayObject *self, int value)
 static PyObject*
 bytearray_strip_impl_helper(PyByteArrayObject* self, PyObject* bytes, int striptype)
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     Py_ssize_t mysize, byteslen;
     const char* myptr;
     const char* bytesptr;
@@ -2630,7 +2630,7 @@ bytearray_strip_impl(PyByteArrayObject *self, PyObject *bytes)
 static PyObject *
 bytearray_swapcase(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    assert(bytearray_check_trailing_null_byte((PyByteArrayObject*)self));
+    assert(bytearray_check_buffer_overflow((PyByteArrayObject*)self));
     PyObject *ret;
     Py_BEGIN_CRITICAL_SECTION(self);
     ret = stringlib_swapcase(self, NULL);
@@ -2782,7 +2782,7 @@ static PyObject *
 bytearray_join_impl(PyByteArrayObject *self, PyObject *iterable_of_bytes)
 /*[clinic end generated code: output=0ced382b5846a7ee input=0a31db349efcd7fa]*/
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     PyObject *ret;
     self->ob_exports++; // this protects `self` from being cleared/resized if `iterable_of_bytes` is a custom iterator
     ret = stringlib_bytes_join((PyObject*)self, iterable_of_bytes);
@@ -2890,7 +2890,7 @@ bytearray_hex_impl(PyByteArrayObject *self, PyObject *sep,
                    Py_ssize_t bytes_per_sep)
 /*[clinic end generated code: output=c9563921aff1262b input=9ed746203691e894]*/
 {
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     char* argbuf = PyByteArray_AS_STRING(self);
     Py_ssize_t arglen = PyByteArray_GET_SIZE(self);
     // Prevent 'self' from being freed if computing len(sep) mutates 'self'
@@ -3074,7 +3074,7 @@ bytearray_mod_lock_held(PyObject *v, PyObject *w)
         Py_RETURN_NOTIMPLEMENTED;
 
     PyByteArrayObject *self = _PyByteArray_CAST(v);
-    assert(bytearray_check_trailing_null_byte(self));
+    assert(bytearray_check_buffer_overflow(self));
     /* Increase exports to prevent bytearray storage from changing during op. */
     self->ob_exports++;
     PyObject *res = _PyBytes_FormatEx(
