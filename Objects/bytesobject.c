@@ -3675,8 +3675,9 @@ static void
 byteswriter_reset_trailing_byte(PyBytesWriter *writer)
 {
     if (writer->obj != NULL) {
-        // byteswriter_write_canary_byte() can override the trailing NUL byte.
-        // So reset the trailing NUL byte to NUL.
+        // PyBytesArray writes non-zero canary byte as the last byte.
+        // bytes/bytearray expects the last byte to be a null byte.
+        // Reset the last byte to null for bytes/bytearray.
         Py_ssize_t allocated = byteswriter_allocated(writer);
         char *data = byteswriter_data(writer);
         data[allocated] = '\0';
