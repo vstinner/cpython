@@ -3846,6 +3846,10 @@ PyBytesWriter_Discard(PyBytesWriter *writer)
 PyObject*
 PyBytesWriter_FinishWithSize(PyBytesWriter *writer, Py_ssize_t size)
 {
+#ifdef Py_DEBUG
+    byteswriter_check_canary_byte(writer);
+#endif
+
     // Check for negative size here to raise ValueError in all cases, rather
     // than having a different exception depending on the code path. For
     // example, _PyBytes_Resize() raises SystemError on negative size.
@@ -3859,17 +3863,14 @@ PyBytesWriter_FinishWithSize(PyBytesWriter *writer, Py_ssize_t size)
         goto error;
     }
 
-#ifdef Py_DEBUG
-    // Check for buffer overflow
-    byteswriter_check_canary_byte(writer);
-    byteswriter_reset_trailing_byte(writer);
-#endif
-
     PyObject *result;
     if (size == 0) {
         result = bytes_get_empty();
     }
     else if (writer->obj != NULL) {
+#ifdef Py_DEBUG
+        byteswriter_reset_trailing_byte(writer);
+#endif
         if (writer->use_bytearray) {
             if (size != PyByteArray_GET_SIZE(writer->obj)) {
                 if (PyByteArray_Resize(writer->obj, size)) {
@@ -3896,12 +3897,14 @@ PyBytesWriter_FinishWithSize(PyBytesWriter *writer, Py_ssize_t size)
             Py_SETREF(result, op);
         }
     }
-    else if (writer->use_bytearray) {
-        result = PyByteArray_FromStringAndSize(writer->small_buffer, size);
-    }
     else {
-        // The function returns single byte singleton if size equals 1
-        result = PyBytes_FromStringAndSize(writer->small_buffer, size);
+        if (writer->use_bytearray) {
+            result = PyByteArray_FromStringAndSize(writer->small_buffer, size);
+        }
+        else {
+            // The function returns single byte singleton if size equals 1
+            result = PyBytes_FromStringAndSize(writer->small_buffer, size);
+        }
     }
 
 #ifdef Py_DEBUG
