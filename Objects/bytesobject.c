@@ -3632,8 +3632,12 @@ static inline Py_ssize_t
 byteswriter_allocated(PyBytesWriter *writer)
 {
     if (writer->obj == NULL) {
+#ifndef Py_DEBUG
+        return sizeof(writer->small_buffer);
+#else
         // Reserve the last byte for the canary byte
         return sizeof(writer->small_buffer) - 1;
+#endif
     }
     else if (writer->use_bytearray) {
         return PyByteArray_GET_SIZE(writer->obj);
@@ -3708,6 +3712,9 @@ byteswriter_resize(PyBytesWriter *writer, Py_ssize_t size, int resize)
 
     if (writer->obj != NULL) {
         if (writer->use_bytearray) {
+#ifdef Py_DEBUG
+            byteswriter_reset_trailing_byte(writer);
+#endif
             if (PyByteArray_Resize(writer->obj, size)) {
 #ifdef Py_DEBUG
                 // bytearray can override the canary byte on error
