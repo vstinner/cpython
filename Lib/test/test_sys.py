@@ -1385,7 +1385,8 @@ class SysModuleTest(unittest.TestCase):
         self.assertTrue(is_immortal(0))
         self.assertTrue(is_immortal(b''))
         self.assertTrue(is_immortal(''))
-        self.assertTrue(is_immortal(b'x'))
+        # Use encode to get the bytes singleton
+        self.assertTrue(is_immortal('x'.encode()))
         self.assertTrue(is_immortal('x'))
         self.assertTrue(is_immortal(()))
 
@@ -1401,7 +1402,7 @@ class SysModuleTest(unittest.TestCase):
         self.assertFalse(is_immortal(object()))
         self.assertFalse(is_immortal(PythonType))
         self.assertFalse(is_immortal(2 ** 100))
-        # Use encode/decode to avoid building the string as a constant
+        # Use encode/decode to get a fresh object
         self.assertFalse(is_immortal(b'abc'.decode()))
         self.assertFalse(is_immortal('abc'.encode()))
 
