@@ -181,11 +181,11 @@ class CAPITest(unittest.TestCase):
         # Test detection of buffer overflow
         size = 123
         for operation in (
-            'repr(b)',
-            'b.resize(5)',
-            'del b[5:]',
-            'b[5]',
-            'b % ()',
+            'repr(ba)',
+            'ba.resize(5)',
+            'del ba[5:]',
+            'ba[5]',
+            'ba % ()',
         ):
             with self.subTest(operation=operation):
                 code = textwrap.dedent(f'''
@@ -196,7 +196,7 @@ class CAPITest(unittest.TestCase):
                     size = {size}
                     with SuppressCrashReport():
                         # Trigger a buffer overflow in a new bytearray
-                        b = _testcapi.bytearray_overflow(size)
+                        ba = _testcapi.bytearray_overflow(size)
                         try:
                             {operation}
                         except:
