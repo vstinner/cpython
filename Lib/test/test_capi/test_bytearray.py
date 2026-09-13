@@ -184,8 +184,10 @@ class CAPITest(unittest.TestCase):
             'repr(b)',
             'b.resize(5)',
             'del b[5:]',
+            'b[5]',
+            'b % ()',
         ):
-            with self.subTest(operation):
+            with self.subTest(operation=operation):
                 code = textwrap.dedent(f'''
                     from test.support import SuppressCrashReport
                     import os
@@ -208,7 +210,7 @@ class CAPITest(unittest.TestCase):
                 ''')
                 proc = assert_python_failure('-c', code)
                 self.assertIn(b'Buffer overflow detected in bytearray', proc.err)
-                self.assertIn('at position {size}'.encode(), proc.err)
+                self.assertIn(f'at position {size}'.encode(), proc.err)
 
 
 if __name__ == "__main__":

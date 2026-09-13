@@ -622,6 +622,7 @@ bytearray_subscript_lock_held(PyObject *op, PyObject *index)
 {
     _Py_CRITICAL_SECTION_ASSERT_OBJECT_LOCKED(op);
     PyByteArrayObject *self = _PyByteArray_CAST(op);
+    assert(bytearray_check_trailing_null_byte(self));
     if (_PyIndex_Check(index)) {
         Py_ssize_t i = PyNumber_AsSsize_t(index, PyExc_IndexError);
 
