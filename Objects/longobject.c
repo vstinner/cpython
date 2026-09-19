@@ -2100,7 +2100,7 @@ long_to_decimal_string_internal(PyObject *aa,
                                 char **bytes_str)
 {
     PyLongObject *scratch, *a;
-    PyObject *str = NULL;
+    _PyUnicodeArray *str = NULL;
     Py_ssize_t size, strlen, size_a, i, j;
     digit *pout, *pin, rem, tenpow;
     int negative;
@@ -2231,7 +2231,7 @@ long_to_decimal_string_internal(PyObject *aa,
         }
     }
     else {
-        str = PyUnicode_New(strlen, '9');
+        str = _PyUnicodeArray_Create(strlen, '9');
         if (str == NULL) {
             Py_DECREF(scratch);
             return -1;
@@ -2266,7 +2266,7 @@ long_to_decimal_string_internal(PyObject *aa,
         if (writer)                                                   \
             p = (TYPE*)PyUnicode_DATA(writer->buffer) + writer->pos + strlen; \
         else                                                          \
-            p = (TYPE*)PyUnicode_DATA(str) + strlen;                  \
+            p = (TYPE*)_PyUnicodeArray_DATA(str) + strlen;            \
                                                                       \
         WRITE_DIGITS(p);                                              \
                                                                       \
@@ -2274,7 +2274,7 @@ long_to_decimal_string_internal(PyObject *aa,
         if (writer)                                                   \
             assert(p == ((TYPE*)PyUnicode_DATA(writer->buffer) + writer->pos)); \
         else                                                          \
-            assert(p == (TYPE*)PyUnicode_DATA(str));                  \
+            assert(p == (TYPE*)_PyUnicodeArray_DATA(str));            \
     } while (0)
 
     /* fill the string right-to-left */
@@ -2284,7 +2284,7 @@ long_to_decimal_string_internal(PyObject *aa,
         assert(p == *bytes_str);
     }
     else {
-        int kind = writer ? writer->kind : PyUnicode_KIND(str);
+        int kind = writer ? writer->kind : _PyUnicodeArray_KIND(str);
         if (kind == PyUnicode_1BYTE_KIND) {
             Py_UCS1 *p;
             WRITE_UNICODE_DIGITS(Py_UCS1);
@@ -2311,8 +2311,7 @@ long_to_decimal_string_internal(PyObject *aa,
         (*bytes_str) += strlen;
     }
     else {
-        assert(_PyUnicode_CheckConsistency(str, 1));
-        *p_output = (PyObject *)str;
+        *p_output = _PyUnicodeArray_FinishNoSingleton(str);
     }
     return 0;
 }
@@ -2337,7 +2336,7 @@ long_format_binary(PyObject *aa, int base, int alternate,
                    PyBytesWriter *bytes_writer, char **bytes_str)
 {
     PyLongObject *a = (PyLongObject *)aa;
-    PyObject *v = NULL;
+    _PyUnicodeArray *v = NULL;
     Py_ssize_t sz;
     Py_ssize_t size_a;
     int negative;
@@ -2403,7 +2402,7 @@ long_format_binary(PyObject *aa, int base, int alternate,
             return -1;
     }
     else {
-        v = PyUnicode_New(sz, 'x');
+        v = _PyUnicodeArray_Create(sz, 'x');
         if (v == NULL)
             return -1;
     }
@@ -2451,14 +2450,14 @@ long_format_binary(PyObject *aa, int base, int alternate,
         if (writer)                                                     \
             p = (TYPE*)PyUnicode_DATA(writer->buffer) + writer->pos + sz; \
         else                                                            \
-            p = (TYPE*)PyUnicode_DATA(v) + sz;                          \
+            p = (TYPE*)_PyUnicodeArray_DATA(v) + sz;                    \
                                                                         \
         WRITE_DIGITS(p);                                                \
                                                                         \
         if (writer)                                                     \
             assert(p == ((TYPE*)PyUnicode_DATA(writer->buffer) + writer->pos)); \
         else                                                            \
-            assert(p == (TYPE*)PyUnicode_DATA(v));                      \
+            assert(p == (TYPE*)_PyUnicodeArray_DATA(v));                \
     } while (0)
 
     if (bytes_writer) {
@@ -2467,7 +2466,7 @@ long_format_binary(PyObject *aa, int base, int alternate,
         assert(p == *bytes_str);
     }
     else {
-        int kind = writer ? writer->kind : PyUnicode_KIND(v);
+        int kind = writer ? writer->kind : _PyUnicodeArray_KIND(v);
         if (kind == PyUnicode_1BYTE_KIND) {
             Py_UCS1 *p;
             WRITE_UNICODE_DIGITS(Py_UCS1);
@@ -2493,8 +2492,7 @@ long_format_binary(PyObject *aa, int base, int alternate,
         (*bytes_str) += sz;
     }
     else {
-        assert(_PyUnicode_CheckConsistency(v, 1));
-        *p_output = v;
+        *p_output = _PyUnicodeArray_Finish(v);
     }
     return 0;
 }

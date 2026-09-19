@@ -762,17 +762,16 @@ n_decimal_digits_for_codepoint(Py_UCS4 ch)
 static PyObject *
 codec_handler_unicode_replacement_character(Py_ssize_t count)
 {
-    PyObject *res = PyUnicode_New(count, Py_UNICODE_REPLACEMENT_CHARACTER);
+    _PyUnicodeArray *res = _PyUnicodeArray_Create(count, Py_UNICODE_REPLACEMENT_CHARACTER);
     if (res == NULL) {
         return NULL;
     }
-    assert(count == 0 || PyUnicode_KIND(res) == PyUnicode_2BYTE_KIND);
-    Py_UCS2 *outp = PyUnicode_2BYTE_DATA(res);
+    assert(count == 0 || _PyUnicodeArray_KIND(res) == PyUnicode_2BYTE_KIND);
+    Py_UCS2 *outp = _PyUnicodeArray_2BYTE_DATA(res);
     for (Py_ssize_t i = 0; i < count; ++i) {
         outp[i] = Py_UNICODE_REPLACEMENT_CHARACTER;
     }
-    assert(_PyUnicode_CheckConsistency(res, 1));
-    return res;
+    return _PyUnicodeArray_Finish(res);
 }
 
 
@@ -831,15 +830,14 @@ _PyCodec_ReplaceUnicodeEncodeError(PyObject *exc)
     {
         return NULL;
     }
-    PyObject *res = PyUnicode_New(slen, '?');
+    _PyUnicodeArray *res = _PyUnicodeArray_Create(slen, '?');
     if (res == NULL) {
         return NULL;
     }
-    assert(PyUnicode_KIND(res) == PyUnicode_1BYTE_KIND);
-    Py_UCS1 *outp = PyUnicode_1BYTE_DATA(res);
+    assert(_PyUnicodeArray_KIND(res) == PyUnicode_1BYTE_KIND);
+    Py_UCS1 *outp = _PyUnicodeArray_1BYTE_DATA(res);
     memset(outp, '?', sizeof(Py_UCS1) * slen);
-    assert(_PyUnicode_CheckConsistency(res, 1));
-    return Py_BuildValue("(Nn)", res, end);
+    return Py_BuildValue("(Nn)", _PyUnicodeArray_Finish(res), end);
 }
 
 
@@ -932,12 +930,12 @@ PyObject *PyCodec_XMLCharRefReplaceErrors(PyObject *exc)
     }
 
     /* allocate replacement */
-    PyObject *res = PyUnicode_New(ressize, 127);
+    _PyUnicodeArray *res = _PyUnicodeArray_Create(ressize, 127);
     if (res == NULL) {
         Py_DECREF(obj);
         return NULL;
     }
-    Py_UCS1 *outp = PyUnicode_1BYTE_DATA(res);
+    Py_UCS1 *outp = _PyUnicodeArray_1BYTE_DATA(res);
     /* generate replacement */
     for (Py_ssize_t i = start; i < end; ++i) {
         Py_UCS4 ch = PyUnicode_READ_CHAR(obj, i);
@@ -956,8 +954,7 @@ PyObject *PyCodec_XMLCharRefReplaceErrors(PyObject *exc)
         outp = digit_end;
         *outp++ = ';';
     }
-    assert(_PyUnicode_CheckConsistency(res, 1));
-    PyObject *restuple = Py_BuildValue("(Nn)", res, end);
+    PyObject *restuple = Py_BuildValue("(Nn)", _PyUnicodeArray_Finish(res), end);
     Py_DECREF(obj);
     return restuple;
 }
@@ -994,19 +991,18 @@ _PyCodec_BackslashReplaceUnicodeEncodeError(PyObject *exc)
         Py_UCS4 c = PyUnicode_READ_CHAR(obj, i);
         ressize += codec_handler_unicode_hex_width(c);
     }
-    PyObject *res = PyUnicode_New(ressize, 127);
+    _PyUnicodeArray *res = _PyUnicodeArray_Create(ressize, 127);
     if (res == NULL) {
         Py_DECREF(obj);
         return NULL;
     }
-    Py_UCS1 *outp = PyUnicode_1BYTE_DATA(res);
+    Py_UCS1 *outp = _PyUnicodeArray_1BYTE_DATA(res);
     for (Py_ssize_t i = start; i < end; ++i) {
         Py_UCS4 c = PyUnicode_READ_CHAR(obj, i);
         codec_handler_write_unicode_hex(&outp, c);
     }
-    assert(_PyUnicode_CheckConsistency(res, 1));
     Py_DECREF(obj);
-    return Py_BuildValue("(Nn)", res, end);
+    return Py_BuildValue("(Nn)", _PyUnicodeArray_Finish(res), end);
 }
 
 
@@ -1022,13 +1018,13 @@ _PyCodec_BackslashReplaceUnicodeDecodeError(PyObject *exc)
         return NULL;
     }
 
-    PyObject *res = PyUnicode_New(4 * slen, 127);
+    _PyUnicodeArray *res = _PyUnicodeArray_Create(4 * slen, 127);
     if (res == NULL) {
         Py_DECREF(obj);
         return NULL;
     }
 
-    Py_UCS1 *outp = PyUnicode_1BYTE_DATA(res);
+    Py_UCS1 *outp = _PyUnicodeArray_1BYTE_DATA(res);
     const unsigned char *p = (const unsigned char *)PyBytes_AS_STRING(obj);
     for (Py_ssize_t i = start; i < end; i++, outp += 4) {
         const unsigned char ch = p[i];
@@ -1037,9 +1033,8 @@ _PyCodec_BackslashReplaceUnicodeDecodeError(PyObject *exc)
         outp[2] = Py_hexdigits[(ch >> 4) & 0xf];
         outp[3] = Py_hexdigits[ch & 0xf];
     }
-    assert(_PyUnicode_CheckConsistency(res, 1));
     Py_DECREF(obj);
-    return Py_BuildValue("(Nn)", res, end);
+    return Py_BuildValue("(Nn)", _PyUnicodeArray_Finish(res), end);
 }
 
 
@@ -1111,13 +1106,13 @@ PyObject *PyCodec_NameReplaceErrors(PyObject *exc)
         ressize += replsize;
     }
 
-    PyObject *res = PyUnicode_New(ressize, 127);
+    _PyUnicodeArray *res = _PyUnicodeArray_Create(ressize, 127);
     if (res == NULL) {
         Py_DECREF(obj);
         return NULL;
     }
 
-    Py_UCS1 *outp = PyUnicode_1BYTE_DATA(res);
+    Py_UCS1 *outp = _PyUnicodeArray_1BYTE_DATA(res);
     for (Py_ssize_t i = start; i < imax; ++i) {
         Py_UCS4 c = PyUnicode_READ_CHAR(obj, i);
         if (ucnhash_capi->getname(c, buffer, sizeof(buffer), 1)) {
@@ -1133,9 +1128,8 @@ PyObject *PyCodec_NameReplaceErrors(PyObject *exc)
         }
     }
 
-    assert(outp == PyUnicode_1BYTE_DATA(res) + ressize);
-    assert(_PyUnicode_CheckConsistency(res, 1));
-    PyObject *restuple = Py_BuildValue("(Nn)", res, imax);
+    assert(outp == _PyUnicodeArray_1BYTE_DATA(res) + ressize);
+    PyObject *restuple = Py_BuildValue("(Nn)", _PyUnicodeArray_Finish(res), imax);
     Py_DECREF(obj);
     return restuple;
 }

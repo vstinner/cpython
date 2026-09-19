@@ -197,14 +197,13 @@ ascii_escape_unicode_and_size(const void *input, int kind, Py_ssize_t input_char
 {
     Py_ssize_t i;
     Py_ssize_t chars;
-    PyObject *rval;
     Py_UCS1 *output;
 
-    rval = PyUnicode_New(output_size, 127);
+    _PyUnicodeArray *rval = _PyUnicodeArray_Create(output_size, 127);
     if (rval == NULL) {
         return NULL;
     }
-    output = PyUnicode_1BYTE_DATA(rval);
+    output = _PyUnicodeArray_1BYTE_DATA(rval);
     chars = 0;
     output[chars++] = '"';
     for (i = 0; i < input_chars; i++) {
@@ -217,10 +216,7 @@ ascii_escape_unicode_and_size(const void *input, int kind, Py_ssize_t input_char
         }
     }
     output[chars++] = '"';
-#ifdef Py_DEBUG
-    assert(_PyUnicode_CheckConsistency(rval, 1));
-#endif
-    return rval;
+    return _PyUnicodeArray_Finish(rval);
 }
 
 static PyObject *
@@ -313,13 +309,12 @@ escape_unicode_and_size(const void *input, int kind, Py_UCS4 maxchar, Py_ssize_t
 {
     Py_ssize_t i;
     Py_ssize_t chars;
-    PyObject *rval;
 
-    rval = PyUnicode_New(output_size, maxchar);
+    _PyUnicodeArray *rval = _PyUnicodeArray_Create(output_size, maxchar);
     if (rval == NULL)
         return NULL;
 
-    kind = PyUnicode_KIND(rval);
+    kind = _PyUnicodeArray_KIND(rval);
 
 #define ENCODE_OUTPUT do { \
         chars = 0; \
@@ -351,22 +346,19 @@ escape_unicode_and_size(const void *input, int kind, Py_UCS4 maxchar, Py_ssize_t
     } while (0)
 
     if (kind == PyUnicode_1BYTE_KIND) {
-        Py_UCS1 *output = PyUnicode_1BYTE_DATA(rval);
+        Py_UCS1 *output = _PyUnicodeArray_1BYTE_DATA(rval);
         ENCODE_OUTPUT;
     } else if (kind == PyUnicode_2BYTE_KIND) {
-        Py_UCS2 *output = PyUnicode_2BYTE_DATA(rval);
+        Py_UCS2 *output = _PyUnicodeArray_2BYTE_DATA(rval);
         ENCODE_OUTPUT;
     } else {
-        Py_UCS4 *output = PyUnicode_4BYTE_DATA(rval);
         assert(kind == PyUnicode_4BYTE_KIND);
+        Py_UCS4 *output = _PyUnicodeArray_4BYTE_DATA(rval);
         ENCODE_OUTPUT;
     }
 #undef ENCODE_OUTPUT
 
-#ifdef Py_DEBUG
-    assert(_PyUnicode_CheckConsistency(rval, 1));
-#endif
-    return rval;
+    return _PyUnicodeArray_FinishNoSingleton(rval);
 }
 
 static PyObject *

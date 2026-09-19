@@ -7,6 +7,7 @@
 
 #include "_remote_debugging.h"
 #include <limits.h>
+#include "pycore_unicodeobject.h" // _PyUnicodeArray_Create()
 
 /* ============================================================================
  * MEMORY READING FUNCTIONS
@@ -115,6 +116,10 @@ read_py_str(
         ? (size_t)unwinder->debug_offsets.unicode_object.asciiobject_size
         : (size_t)unwinder->debug_offsets.unicode_object.compactunicodeobject_size;
 
+    if (len == 0) {
+        return Py_GetConstant(Py_CONSTANT_EMPTY_STR);
+    }
+
     // len * kind is bounded by max_len * 4 (kind <= 4, len <= max_len), so
     // the multiplication can't overflow for any caller-sane max_len, but the
     // explicit cap here keeps a corrupted remote `length` from later turning
@@ -128,16 +133,13 @@ read_py_str(
         return NULL;
     }
 
-    PyObject *result = PyUnicode_New(len, max_char);
+    _PyUnicodeArray *result = _PyUnicodeArray_Create(len, max_char);
     if (result == NULL) {
         set_exception_cause(unwinder, PyExc_RuntimeError, "Failed to allocate PyUnicode for remote string");
         return NULL;
     }
-    if (nbytes == 0) {
-        return result;
-    }
 
-    void *data = PyUnicode_DATA(result);
+    void *data = _PyUnicodeArray_DATA(result);
 
     // Reuse data already present in the header read; only round-trip for
     // whatever spills past it.
@@ -156,13 +158,13 @@ read_py_str(
             nbytes - inline_bytes,
             (char *)data + inline_bytes);
         if (res < 0) {
-            Py_DECREF(result);
+            _PyUnicodeArray_Discard(result);
             set_exception_cause(unwinder, PyExc_RuntimeError, "Failed to read string data from remote memory");
             return NULL;
         }
     }
 
-    return result;
+    return _PyUnicodeArray_Finish(result);
 }
 
 PyObject *

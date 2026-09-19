@@ -1445,7 +1445,6 @@ _Py_bytes_repr(const char *data, Py_ssize_t length, int smartquotes,
 {
     Py_ssize_t i;
     Py_ssize_t newsize, squotes, dquotes;
-    PyObject *v;
     unsigned char quote;
     Py_UCS1 *p;
 
@@ -1477,11 +1476,11 @@ _Py_bytes_repr(const char *data, Py_ssize_t length, int smartquotes,
         newsize += squotes;
     }
 
-    v = PyUnicode_New(newsize, 127);
+    _PyUnicodeArray *v = _PyUnicodeArray_Create(newsize, 127);
     if (v == NULL) {
         return NULL;
     }
-    p = PyUnicode_1BYTE_DATA(v);
+    p = _PyUnicodeArray_1BYTE_DATA(v);
 
     *p++ = 'b', *p++ = quote;
     for (i = 0; i < length; i++) {
@@ -1504,8 +1503,7 @@ _Py_bytes_repr(const char *data, Py_ssize_t length, int smartquotes,
             *p++ = c;
     }
     *p++ = quote;
-    assert(_PyUnicode_CheckConsistency(v, 1));
-    return v;
+    return _PyUnicodeArray_Finish(v);
 
   overflow:
     PyErr_Format(PyExc_OverflowError,

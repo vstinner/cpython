@@ -168,7 +168,7 @@ _Py_strhex_impl(const char* argbuf, Py_ssize_t arglen,
         abs_bytes_per_sep = 0;
     }
 
-    PyObject *retval = NULL;
+    _PyUnicodeArray *array = NULL;
     PyBytesWriter *bytes_writer = NULL;
     Py_UCS1 *retbuf;
     if (return_bytes) {
@@ -180,11 +180,11 @@ _Py_strhex_impl(const char* argbuf, Py_ssize_t arglen,
         retbuf = PyBytesWriter_GetData(bytes_writer);
     }
     else {
-        retval = PyUnicode_New(resultlen, 127);
-        if (!retval) {
+        array = _PyUnicodeArray_Create(resultlen, 127);
+        if (array == NULL) {
             return NULL;
         }
-        retbuf = PyUnicode_1BYTE_DATA(retval);
+        retbuf = _PyUnicodeArray_1BYTE_DATA(array);
     }
 
     /* Hexlify */
@@ -249,10 +249,7 @@ _Py_strhex_impl(const char* argbuf, Py_ssize_t arglen,
         return PyBytesWriter_Finish(bytes_writer);
     }
     else {
-#ifdef Py_DEBUG
-        assert(_PyUnicode_CheckConsistency(retval, 1));
-#endif
-        return retval;
+        return _PyUnicodeArray_Finish(array);
     }
 }
 

@@ -350,18 +350,18 @@ _PyIncrementalNewlineDecoder_decode(PyObject *myself,
     if (self->pendingcr && (final || output_len > 0)) {
         /* Prefix output with CR */
         int kind;
-        PyObject *modified;
         char *out;
 
-        modified = PyUnicode_New(output_len + 1,
-                                 PyUnicode_MAX_CHAR_VALUE(output));
+        Py_UCS4 maxchar = PyUnicode_MAX_CHAR_VALUE(output);
+        _PyUnicodeArray *modified;
+        modified = _PyUnicodeArray_Create(output_len + 1, maxchar);
         if (modified == NULL)
             goto error;
-        kind = PyUnicode_KIND(modified);
-        out = PyUnicode_DATA(modified);
+        kind = _PyUnicodeArray_KIND(modified);
+        out = _PyUnicodeArray_DATA(modified);
         PyUnicode_WRITE(kind, out, 0, '\r');
         memcpy(out + kind, PyUnicode_DATA(output), kind * output_len);
-        Py_SETREF(output, modified);
+        Py_SETREF(output, _PyUnicodeArray_Finish(modified));
         self->pendingcr = 0;
         output_len++;
     }

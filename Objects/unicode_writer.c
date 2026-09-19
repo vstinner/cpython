@@ -197,10 +197,12 @@ void PyUnicodeWriter_Discard(PyUnicodeWriter *writer)
 
 // Initialize _PyUnicodeWriter with initial buffer
 void
-_PyUnicodeWriter_InitWithBuffer(_PyUnicodeWriter *writer, PyObject *buffer)
+_PyUnicodeWriter_InitWithBuffer(_PyUnicodeWriter *writer,
+                                _PyUnicodeArray **p_array)
 {
     memset(writer, 0, sizeof(*writer));
-    writer->buffer = buffer;
+    writer->buffer = _PyObject_CAST(*p_array);
+    *p_array = NULL;
     _PyUnicodeWriter_Update(writer);
     writer->min_length = writer->size;
 }

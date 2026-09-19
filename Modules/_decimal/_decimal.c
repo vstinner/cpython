@@ -34,6 +34,7 @@
 #include "pycore_pystate.h"       // _PyThreadState_GET()
 #include "pycore_tuple.h"         // _PyTuple_FromPair
 #include "pycore_typeobject.h"
+#include "pycore_unicodeobject.h" // _PyUnicodeArray_Create()
 
 #include <mpdecimal.h>
 
@@ -3621,15 +3622,13 @@ convert_op_cmp(PyObject **vcmp, PyObject **wcmp, PyObject *v, PyObject *w,
 static PyObject *
 unicode_fromascii(const char *s, Py_ssize_t size)
 {
-    PyObject *res;
-
-    res = PyUnicode_New(size, 127);
+    _PyUnicodeArray *res = _PyUnicodeArray_Create(size, 127);
     if (res == NULL) {
         return NULL;
     }
 
-    memcpy(PyUnicode_1BYTE_DATA(res), s, size);
-    return res;
+    memcpy(_PyUnicodeArray_1BYTE_DATA(res), s, size);
+    return _PyUnicodeArray_Finish(res);
 }
 
 /* PyDecObject as a string. The default module context is only used for
