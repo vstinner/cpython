@@ -289,8 +289,8 @@ corrupt_unicode(PyObject *Py_UNUSED(module), PyObject *args)
     assert(PyUnicode_KIND(obj) == PyUnicode_1BYTE_KIND);
     assert(PyUnicode_KIND(override) == PyUnicode_1BYTE_KIND);
 
-    Py_UCS1 *dst = PyUnicode_1BYTE_DATA(obj);
-    Py_UCS1 *src = PyUnicode_1BYTE_DATA(override);
+    Py_UCS1 *dst = (Py_UCS1 *)PyUnicode_1BYTE_DATA(obj);
+    const Py_UCS1 *src = PyUnicode_1BYTE_DATA(override);
     Py_ssize_t size = PyUnicode_GET_LENGTH(override);
     memcpy(dst, src, size);
     Py_RETURN_NONE;

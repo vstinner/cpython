@@ -242,7 +242,7 @@ _PyUnicode_FormatLong(PyObject *val, int alt, int prec, int type)
         PyErr_BadInternalCall();
         return NULL;
     }
-    buf = PyUnicode_DATA(result);
+    buf = (void*)PyUnicode_DATA(result);
     llen = PyUnicode_GET_LENGTH(result);
     if (llen > INT_MAX) {
         Py_DECREF(result);

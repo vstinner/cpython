@@ -273,9 +273,9 @@ static inline void* _PyUnicode_NONCOMPACT_DATA(PyObject *op) {
     return data;
 }
 
-PyAPI_FUNC(void*) PyUnicode_DATA(PyObject *op);
+PyAPI_FUNC(const void*) PyUnicode_DATA(PyObject *op);
 
-static inline void* _PyUnicode_DATA(PyObject *op) {
+static inline const void* _PyUnicode_DATA(PyObject *op) {
     if (PyUnicode_IS_COMPACT(op)) {
         return _PyUnicode_COMPACT_DATA(op);
     }
@@ -288,9 +288,9 @@ static inline void* _PyUnicode_DATA(PyObject *op) {
    No checks are performed, use PyUnicode_KIND() before to ensure
    these will work correctly. */
 
-#define PyUnicode_1BYTE_DATA(op) _Py_STATIC_CAST(Py_UCS1*, PyUnicode_DATA(op))
-#define PyUnicode_2BYTE_DATA(op) _Py_STATIC_CAST(Py_UCS2*, PyUnicode_DATA(op))
-#define PyUnicode_4BYTE_DATA(op) _Py_STATIC_CAST(Py_UCS4*, PyUnicode_DATA(op))
+#define PyUnicode_1BYTE_DATA(op) _Py_STATIC_CAST(const Py_UCS1*, PyUnicode_DATA(op))
+#define PyUnicode_2BYTE_DATA(op) _Py_STATIC_CAST(const Py_UCS2*, PyUnicode_DATA(op))
+#define PyUnicode_4BYTE_DATA(op) _Py_STATIC_CAST(const Py_UCS4*, PyUnicode_DATA(op))
 
 /* Returns the length of the unicode string. */
 static inline Py_ssize_t PyUnicode_GET_LENGTH(PyObject *op) {

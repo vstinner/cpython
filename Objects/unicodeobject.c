@@ -1070,7 +1070,7 @@ static void
 unicode_fill_invalid(PyObject *unicode, Py_ssize_t old_length)
 {
     int kind = PyUnicode_KIND(unicode);
-    Py_UCS1 *data = PyUnicode_1BYTE_DATA(unicode);
+    Py_UCS1 *data = (void*)PyUnicode_1BYTE_DATA(unicode);
     Py_ssize_t length = _PyUnicode_LENGTH(unicode);
     if (length <= old_length)
         return;
@@ -1430,7 +1430,7 @@ _copy_characters(PyObject *to, Py_ssize_t to_start,
     from_kind = PyUnicode_KIND(from);
     from_data = PyUnicode_DATA(from);
     to_kind = PyUnicode_KIND(to);
-    to_data = PyUnicode_DATA(to);
+    to_data = (void*)PyUnicode_DATA(to);
 
 #ifdef Py_DEBUG
     if (!check_maxchar
@@ -9722,7 +9722,7 @@ unicode_fast_translate(PyObject *input, PyObject *mapping,
 
     assert(PyUnicode_IS_ASCII(writer->buffer));
     assert(PyUnicode_GET_LENGTH(writer->buffer) == len);
-    out = PyUnicode_1BYTE_DATA(writer->buffer);
+    out = (void*)PyUnicode_1BYTE_DATA(writer->buffer);
 
     for (; in < end; in++) {
         ch = *in;
@@ -10583,7 +10583,7 @@ _PyUnicode_FastFill(PyObject *unicode, Py_ssize_t start, Py_ssize_t length,
                     Py_UCS4 fill_char)
 {
     const int kind = PyUnicode_KIND(unicode);
-    void *data = PyUnicode_DATA(unicode);
+    void *data = (void*)PyUnicode_DATA(unicode);
     assert(_PyUnicode_IsModifiable(unicode));
     assert(fill_char <= PyUnicode_MAX_CHAR_VALUE(unicode));
     assert(start >= 0);
@@ -15460,7 +15460,7 @@ int PyUnicode_KIND(PyObject *op)
 }
 
 #undef PyUnicode_DATA
-void* PyUnicode_DATA(PyObject *op)
+const void* PyUnicode_DATA(PyObject *op)
 {
     if (!PyUnicode_Check(op)) {
         PyErr_Format(PyExc_TypeError, "expect str, got %T", op);

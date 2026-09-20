@@ -269,22 +269,22 @@ _PyUnicodeArray_KIND(_PyUnicodeArray *array) {
 
 static inline void*
 _PyUnicodeArray_DATA(_PyUnicodeArray *array) {
-    return PyUnicode_DATA(array);
+    return (void*)PyUnicode_DATA(array);
 }
 
 static inline Py_UCS1*
 _PyUnicodeArray_1BYTE_DATA(_PyUnicodeArray *array) {
-    return PyUnicode_1BYTE_DATA(array);
+    return (Py_UCS1*)PyUnicode_1BYTE_DATA(array);
 }
 
 static inline Py_UCS2*
 _PyUnicodeArray_2BYTE_DATA(_PyUnicodeArray *array) {
-    return PyUnicode_2BYTE_DATA(array);
+    return (Py_UCS2*)PyUnicode_2BYTE_DATA(array);
 }
 
 static inline Py_UCS4*
 _PyUnicodeArray_4BYTE_DATA(_PyUnicodeArray *array) {
-    return PyUnicode_4BYTE_DATA(array);
+    return (Py_UCS4*)PyUnicode_4BYTE_DATA(array);
 }
 
 static inline void

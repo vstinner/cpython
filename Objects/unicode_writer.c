@@ -119,7 +119,7 @@ static inline void
 _PyUnicodeWriter_Update(_PyUnicodeWriter *writer)
 {
     writer->maxchar = PyUnicode_MAX_CHAR_VALUE(writer->buffer);
-    writer->data = PyUnicode_DATA(writer->buffer);
+    writer->data = (void*)PyUnicode_DATA(writer->buffer);
 
     if (!writer->readonly) {
         writer->kind = PyUnicode_KIND(writer->buffer);
