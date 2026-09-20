@@ -210,12 +210,31 @@ extern int _PyUnicodeWriter_FormatV(
 /* --- _PyUnicodeArray API ------------------------------------------------ */
 
 static inline _PyUnicodeArray*
-_PyUnicodeArray_FromUnicode(PyObject *unicode)
+_PyUnicodeArray_FromUnicode(PyObject **p_unicode)
 {
-    assert(unicode != NULL);
-    assert(PyUnicode_Check(unicode));
-    PyObject *ref = Py_NewRef(unicode);
-    return (_PyUnicodeArray*)ref;
+    assert(p_unicode != NULL);
+    PyObject *obj = *p_unicode;
+    assert(obj != NULL);
+    assert(PyUnicode_Check(obj));
+
+    *p_unicode = NULL;
+    return (_PyUnicodeArray*)obj;
+}
+
+static inline int
+_PyUnicodeArray_CanWrite(_PyUnicodeArray *array)
+{
+    // Code adapted from _PyUnicode_IsModifiable()
+    PyObject *obj = _PyObject_CAST(array);
+    assert(obj != NULL);
+    // Do not use _PyObject_IsUniquelyReferenced(): the caller can have its own
+    // lock to prevent a writer from being used by two threads at the same
+    // time.
+    assert(Py_REFCNT(obj) == 1);
+    assert(PyUnstable_Unicode_GET_CACHED_HASH(obj) == -1);
+    assert(!PyUnicode_CHECK_INTERNED(obj));
+    assert(!_Py_IsImmortal(obj));
+    return 1;
 }
 
 static inline _PyUnicodeArray*
@@ -292,6 +311,7 @@ _PyUnicodeArray_CopyCharacters(
     _PyUnicodeArray *array, Py_ssize_t array_start,
     PyObject *from, Py_ssize_t from_start, Py_ssize_t how_many)
 {
+    assert(_PyUnicodeArray_CanWrite(array));
     _PyUnicode_FastCopyCharacters(
         _PyObject_CAST(array), array_start,
         from, from_start, how_many);

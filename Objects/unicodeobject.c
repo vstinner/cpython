@@ -768,7 +768,8 @@ static _PyUnicodeArray*
 unicodearray_result_unchanged(PyObject *unicode)
 {
     if (PyUnicode_CheckExact(unicode)) {
-        return _PyUnicodeArray_FromUnicode(unicode);
+        PyObject *ref = Py_NewRef(unicode);
+        return _PyUnicodeArray_FromUnicode(&ref);
     }
     else {
         /* Subtype -- return genuine unicode string with the same value. */
@@ -1757,7 +1758,8 @@ unicode_is_singleton(PyObject *unicode)
 }
 #endif
 
-// If this function is updated, update also _PyUnicodeWriter_CanWrite().
+// If this function is updated, update also _PyUnicodeWriter_CanWrite()
+// and _PyUnicodeArray_CanWriter().
 int
 _PyUnicode_IsModifiable(PyObject *unicode)
 {
