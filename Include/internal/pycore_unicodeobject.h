@@ -15,14 +15,17 @@ extern "C" {
 // Maximum code point of Unicode 6.0: 0x10ffff (1,114,111).
 #define _Py_MAX_UNICODE 0x10ffff
 
+typedef struct _PyUnicodeArray _PyUnicodeArray;
+
 
 // Export for '_multibytecodec' shared extension. _PyUnicodeWriter_CanWrite()
 // calls this function when assertions are enabled.
 PyAPI_FUNC(int) _PyUnicode_IsModifiable(PyObject *unicode);
 extern void _PyUnicodeWriter_InitWithBuffer(
     _PyUnicodeWriter *writer,
-    PyObject *buffer);
-extern PyObject* _PyUnicode_Result(PyObject *unicode);
+    _PyUnicodeArray **p_array);
+// Export for _PyUnicodeArray_Finish()
+PyAPI_FUNC(PyObject*) _PyUnicode_Result(PyObject *unicode);
 extern int _PyUnicode_DecodeUTF8Writer(
     _PyUnicodeWriter *writer,
     const char *s,
@@ -203,6 +206,144 @@ extern int _PyUnicodeWriter_FormatV(
     PyUnicodeWriter *writer,
     const char *format,
     va_list vargs);
+
+/* --- _PyUnicodeArray API ------------------------------------------------ */
+
+static inline _PyUnicodeArray*
+_PyUnicodeArray_FromUnicode(PyObject **p_unicode)
+{
+    assert(p_unicode != NULL);
+    PyObject *obj = *p_unicode;
+    assert(obj != NULL);
+    assert(PyUnicode_Check(obj));
+
+    *p_unicode = NULL;
+    return (_PyUnicodeArray*)obj;
+}
+
+static inline int
+_PyUnicodeArray_CanWrite(_PyUnicodeArray *array)
+{
+    // Code adapted from _PyUnicode_IsModifiable()
+    PyObject *obj = _PyObject_CAST(array);
+    assert(obj != NULL);
+    // Do not use _PyObject_IsUniquelyReferenced(): the caller can have its own
+    // lock to prevent a writer from being used by two threads at the same
+    // time.
+    assert(Py_REFCNT(obj) == 1);
+    assert(PyUnstable_Unicode_GET_CACHED_HASH(obj) == -1);
+    assert(!PyUnicode_CHECK_INTERNED(obj));
+    assert(!_Py_IsImmortal(obj));
+    return 1;
+}
+
+static inline _PyUnicodeArray*
+_PyUnicodeArray_Create(Py_ssize_t length, Py_UCS4 maxchar)
+{
+    PyObject *object = PyUnicode_New(length, maxchar);
+    return (_PyUnicodeArray*)object;
+}
+
+// Cannot fail
+static inline PyObject*
+_PyUnicodeArray_Finish(_PyUnicodeArray *array)
+{
+    PyObject *obj = _PyObject_CAST(array);
+    assert(obj != NULL);
+    return _PyUnicode_Result(obj);
+}
+
+// Similar to _PyUnicodeArray_Finish(), but don't replace the result
+// with a singleton.
+static inline PyObject*
+_PyUnicodeArray_FinishNoSingleton(_PyUnicodeArray *array)
+{
+    PyObject *obj = _PyObject_CAST(array);
+    assert(obj != NULL);
+    assert(_PyUnicode_CheckConsistency(obj, 1));
+    return obj;
+}
+
+static inline void
+_PyUnicodeArray_Discard(_PyUnicodeArray *array)
+{
+    PyObject *obj = _PyObject_CAST(array);
+    Py_XDECREF(obj);
+}
+
+static inline Py_ssize_t
+_PyUnicodeArray_GET_LENGTH(_PyUnicodeArray *array) {
+    return PyUnicode_GET_LENGTH(array);
+}
+
+static inline unsigned int
+_PyUnicodeArray_IS_ASCII(_PyUnicodeArray *array) {
+    return PyUnicode_IS_ASCII(array);
+}
+
+static inline int
+_PyUnicodeArray_KIND(_PyUnicodeArray *array) {
+    return PyUnicode_KIND(array);
+}
+
+static inline void*
+_PyUnicodeArray_DATA(_PyUnicodeArray *array) {
+    return (void*)PyUnicode_DATA(array);
+}
+
+static inline Py_UCS1*
+_PyUnicodeArray_1BYTE_DATA(_PyUnicodeArray *array) {
+    return (Py_UCS1*)PyUnicode_1BYTE_DATA(array);
+}
+
+static inline Py_UCS2*
+_PyUnicodeArray_2BYTE_DATA(_PyUnicodeArray *array) {
+    return (Py_UCS2*)PyUnicode_2BYTE_DATA(array);
+}
+
+static inline Py_UCS4*
+_PyUnicodeArray_4BYTE_DATA(_PyUnicodeArray *array) {
+    return (Py_UCS4*)PyUnicode_4BYTE_DATA(array);
+}
+
+static inline void
+_PyUnicodeArray_WriteChar(_PyUnicodeArray *array,
+                          Py_ssize_t index, Py_UCS4 character)
+{
+    int kind = _PyUnicodeArray_KIND(array);
+    void *data = _PyUnicodeArray_DATA(array);
+    PyUnicode_WRITE(kind, data, index, character);
+}
+
+static inline void
+_PyUnicodeArray_CopyCharacters(
+    _PyUnicodeArray *array, Py_ssize_t array_start,
+    PyObject *from, Py_ssize_t from_start, Py_ssize_t how_many)
+{
+    assert(_PyUnicodeArray_CanWrite(array));
+    _PyUnicode_FastCopyCharacters(
+        _PyObject_CAST(array), array_start,
+        from, from_start, how_many);
+}
+
+static inline int
+_PyUnicodeArray_Resize(_PyUnicodeArray *array, Py_ssize_t length)
+{
+    // FIXME: call PyUnicode_Resize()
+    assert(0 <= length && length <= PyUnicode_GET_LENGTH(array));
+    _PyASCIIObject_CAST(array)->length = length;
+    return 0;
+}
+
+static inline int
+_PyUnicodeArray_Move(_PyUnicodeArray **array, _PyUnicodeArray **array2)
+{
+    _PyUnicodeArray_Discard(*array);
+    *array = *array2;
+    *array2 = _Py_NULL;
+    return 0;
+}
+
 
 /* --- iconv Codec -------------------------------------------------------- */
 

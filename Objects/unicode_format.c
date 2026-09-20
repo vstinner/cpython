@@ -233,19 +233,21 @@ _PyUnicode_FormatLong(PyObject *val, int alt, int prec, int type)
     if (!result)
         return NULL;
 
-    assert(_PyUnicode_IsModifiable(result));
-    assert(PyUnicode_IS_ASCII(result));
-
     /* To modify the string in-place, there can only be one reference. */
     if (!_PyObject_IsUniquelyReferenced(result)) {
         Py_DECREF(result);
         PyErr_BadInternalCall();
         return NULL;
     }
-    buf = PyUnicode_DATA(result);
-    llen = PyUnicode_GET_LENGTH(result);
+
+    _PyUnicodeArray *array = _PyUnicodeArray_FromUnicode(&result);
+    assert(_PyUnicodeArray_CanWrite(array));
+    assert(_PyUnicodeArray_IS_ASCII(array));
+
+    buf = _PyUnicodeArray_DATA(array);
+    llen = _PyUnicodeArray_GET_LENGTH(array);
     if (llen > INT_MAX) {
-        Py_DECREF(result);
+        _PyUnicodeArray_Discard(array);
         PyErr_SetString(PyExc_ValueError,
                         "string too large in _PyUnicode_FormatLong");
         return NULL;
@@ -277,7 +279,7 @@ _PyUnicode_FormatLong(PyObject *val, int alt, int prec, int type)
                                 numnondigits + prec);
         char *b1;
         if (!r1) {
-            Py_DECREF(result);
+            _PyUnicodeArray_Discard(array);
             return NULL;
         }
         b1 = PyBytes_AS_STRING(r1);
@@ -288,9 +290,13 @@ _PyUnicode_FormatLong(PyObject *val, int alt, int prec, int type)
         for (i = 0; i < numdigits; i++)
             *b1++ = *buf++;
         *b1 = '\0';
-        Py_SETREF(result, r1);
-        buf = PyBytes_AS_STRING(result);
+        assert(result == NULL);
+        buf = PyBytes_AS_STRING(r1);
         len = numnondigits + prec;
+
+        result = r1;
+        _PyUnicodeArray_Discard(array);
+        array = NULL;
     }
 
     /* Fix up case for hex conversions. */
@@ -301,15 +307,21 @@ _PyUnicode_FormatLong(PyObject *val, int alt, int prec, int type)
             if (buf[i] >= 'a' && buf[i] <= 'x')
                 buf[i] -= 'a'-'A';
     }
-    if (!PyUnicode_Check(result)
-        || buf != PyUnicode_DATA(result)) {
+    if (result != NULL || buf != _PyUnicodeArray_DATA(array)) {
         PyObject *unicode;
         unicode = _PyUnicode_FromASCII(buf, len);
-        Py_SETREF(result, unicode);
+        Py_XSETREF(result, unicode);
+        _PyUnicodeArray_Discard(array);
+        array = NULL;
     }
-    else if (len != PyUnicode_GET_LENGTH(result)) {
-        if (PyUnicode_Resize(&result, len) < 0)
-            Py_CLEAR(result);
+    else {
+        if (len != _PyUnicodeArray_GET_LENGTH(array)) {
+            if (_PyUnicodeArray_Resize(array, len) < 0) {
+                _PyUnicodeArray_Discard(array);
+                return NULL;
+            }
+        }
+        result = _PyUnicodeArray_Finish(array);
     }
     return result;
 }

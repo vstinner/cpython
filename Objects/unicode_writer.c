@@ -119,7 +119,7 @@ static inline void
 _PyUnicodeWriter_Update(_PyUnicodeWriter *writer)
 {
     writer->maxchar = PyUnicode_MAX_CHAR_VALUE(writer->buffer);
-    writer->data = PyUnicode_DATA(writer->buffer);
+    writer->data = (void*)PyUnicode_DATA(writer->buffer);
 
     if (!writer->readonly) {
         writer->kind = PyUnicode_KIND(writer->buffer);
@@ -197,10 +197,12 @@ void PyUnicodeWriter_Discard(PyUnicodeWriter *writer)
 
 // Initialize _PyUnicodeWriter with initial buffer
 void
-_PyUnicodeWriter_InitWithBuffer(_PyUnicodeWriter *writer, PyObject *buffer)
+_PyUnicodeWriter_InitWithBuffer(_PyUnicodeWriter *writer,
+                                _PyUnicodeArray **p_array)
 {
     memset(writer, 0, sizeof(*writer));
-    writer->buffer = buffer;
+    writer->buffer = _PyObject_CAST(*p_array);
+    *p_array = NULL;
     _PyUnicodeWriter_Update(writer);
     writer->min_length = writer->size;
 }

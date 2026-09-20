@@ -1942,7 +1942,7 @@ _Py_NextGraphemeBreak(_PyGraphemeBreak *iter)
     }
 
     int kind = PyUnicode_KIND(iter->str);
-    void *pstr = PyUnicode_DATA(iter->str);
+    const void *pstr = PyUnicode_DATA(iter->str);
     while (iter->pos < iter->end) {
         Py_UCS4 chr = PyUnicode_READ(kind, pstr, iter->pos);
         const _PyUnicode_DatabaseRecord *record = _getrecord_ex(chr);
