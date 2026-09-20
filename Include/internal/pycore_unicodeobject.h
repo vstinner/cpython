@@ -307,6 +307,15 @@ _PyUnicodeArray_4BYTE_DATA(_PyUnicodeArray *array) {
 }
 
 static inline void
+_PyUnicodeArray_WriteChar(_PyUnicodeArray *array,
+                          Py_ssize_t index, Py_UCS4 character)
+{
+    int kind = _PyUnicodeArray_KIND(array);
+    void *data = _PyUnicodeArray_DATA(array);
+    PyUnicode_WRITE(kind, data, index, character);
+}
+
+static inline void
 _PyUnicodeArray_CopyCharacters(
     _PyUnicodeArray *array, Py_ssize_t array_start,
     PyObject *from, Py_ssize_t from_start, Py_ssize_t how_many)
