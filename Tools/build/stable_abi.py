@@ -49,17 +49,6 @@ MACOS = (sys.platform == "darwin")
 UNIXY = MACOS or (sys.platform == "linux")  # XXX should this be "not Windows"?
 
 
-# "Macros" implemented as static inline functions, documented as macros
-# by Misc/stable_abi.toml, and not listed by gcc_get_limited_api_macros()
-STATIC_INLINE_FUNCTIONS = {
-    'Py_INCREF',
-    'Py_SET_REFCNT',
-    'Py_SET_TYPE',
-    'Py_XDECREF',
-    'Py_XINCREF',
-}
-
-
 # The stable ABI manifest (Misc/stable_abi.toml) exists only to fill the
 # following dataclasses.
 # Feel free to change its syntax (and the `parse_manifest` function)
@@ -127,7 +116,6 @@ def itemclass(kind):
     return decorator
 
 @itemclass('function')
-@itemclass('macro')
 @itemclass('data')
 @itemclass('const')
 @itemclass('typedef')
@@ -154,6 +142,11 @@ class FeatureMacro(ABIItem):
 class Struct(ABIItem):
     struct_abi_kind: str
     members: list = None
+
+@itemclass('macro')
+@dataclasses.dataclass
+class Macro(ABIItem):
+    is_static_inline_function: bool = False
 
 
 def parse_manifest(file):
@@ -414,12 +407,14 @@ def do_unixy_check(manifest, args):
     # Get all macros first: we'll need feature macros like HAVE_FORK and
     # MS_WINDOWS for everything else
     present_macros = gcc_get_limited_api_macros(['Include/Python.h'])
-    present_macros |= STATIC_INLINE_FUNCTIONS
     feature_macros = {m.name for m in manifest.select({'feature_macro'})}
     feature_macros &= present_macros
 
     # Check that we have all needed macros
-    expected_macros = {item.name for item in manifest.select({'macro'})}
+    expected_macros = {
+        item.name for item in manifest.select({'macro'})
+        if not item.is_static_inline_function
+    }
     missing_macros = expected_macros - present_macros
     okay &= _report_unexpected_items(
         missing_macros,
