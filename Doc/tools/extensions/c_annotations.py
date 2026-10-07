@@ -255,7 +255,8 @@ def _stable_abi_annotation(
     elif record.kind == "macro":
         # Macros are not part of the ABI
         message = sphinx_gettext(
-            "This macro is available when compiling for the")
+            "This macro is available when compiling for the"
+        )
     else:
         message = sphinx_gettext("Part of the")
     emph_node += nodes.Text(" " + message + " ")
