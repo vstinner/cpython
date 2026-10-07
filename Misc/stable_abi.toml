@@ -2471,7 +2471,7 @@
     added = '3.12'
 [function.PyObject_VectorcallMethod]
     added = '3.12'
-[macro.PY_VECTORCALL_ARGUMENTS_OFFSET]
+[const.PY_VECTORCALL_ARGUMENTS_OFFSET]
     added = '3.12'
 [typedef.getbufferproc]
     added = '3.12'
