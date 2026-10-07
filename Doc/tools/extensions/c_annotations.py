@@ -252,10 +252,13 @@ def _stable_abi_annotation(
         emph_node += nodes.Text(" ")
         emph_node += nodes.literal(record.name, record.name)
         message = sphinx_gettext("is part of the")
-        emph_node += nodes.Text(" " + message + " ")
+    elif record.kind == "macro":
+        # Macros are not part of the ABI
+        message = sphinx_gettext(
+            "This macro is available when compiling for the")
     else:
         message = sphinx_gettext("Part of the")
-        emph_node += nodes.Text(" " + message + " ")
+    emph_node += nodes.Text(" " + message + " ")
     ref_node = addnodes.pending_xref(
         "Stable ABI",
         refdomain="std",
