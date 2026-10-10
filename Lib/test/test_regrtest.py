@@ -383,8 +383,11 @@ class ParseArgsTestCase(unittest.TestCase):
     def test_coverage_sequential(self):
         for opt in '-T', '--coverage':
             with self.subTest(opt=opt):
+                ns = self.parse_args([opt])
+                self.assertTrue(ns.trace)
+
                 with support.captured_stderr() as stderr:
-                    ns = self.parse_args([opt])
+                    ns = self.parse_args([opt, '--single-process'])
                 self.assertTrue(ns.trace)
                 self.assertIn(
                     "collecting coverage without -j is imprecise",
@@ -557,13 +560,23 @@ class ParseArgsTestCase(unittest.TestCase):
         self.assertTrue(regrtest.want_bisect)
 
     def test_verbose3_huntrleaks(self):
-        args = ['-R', '3:10', '--verbose3']
-        with support.captured_stderr():
-            regrtest = self.create_regrtest(args)
-        self.assertIsNotNone(regrtest.hunt_refleak)
-        self.assertEqual(regrtest.hunt_refleak.warmups, 3)
-        self.assertEqual(regrtest.hunt_refleak.runs, 10)
-        self.assertFalse(regrtest.output_on_failure)
+        for single_process in (False, True):
+            args = ['-R', '3:10', '--verbose3']
+            if single_process:
+                args.append('--single-process')
+            with support.captured_stderr() as err:
+                regrtest = self.create_regrtest(args)
+            self.assertIsNotNone(regrtest.hunt_refleak)
+            self.assertEqual(regrtest.hunt_refleak.warmups, 3)
+            self.assertEqual(regrtest.hunt_refleak.runs, 10)
+            self.assertEqual(regrtest.output_on_failure, not single_process)
+            if single_process:
+                errmsg = ("WARNING: Disable --verbose3 because it's "
+                          "incompatible with --huntrleaks and "
+                          "--single-process options")
+                self.assertEqual(err.getvalue().rstrip(), errmsg)
+            else:
+                self.assertEqual(err.getvalue(), '')
 
     def test_single_process(self):
         args = ['-j2', '--single-process']
@@ -584,7 +597,7 @@ class ParseArgsTestCase(unittest.TestCase):
 
         # No -j given: default to one worker
         regrtest = self.create_regrtest(['--single-process-per-case'])
-        self.assertEqual(regrtest.num_workers, 1)
+        self.assertEqual(regrtest.num_workers, -1)
 
         # Explicit -j2 is respected
         regrtest = self.create_regrtest(['-j2', '--single-process-per-case'])

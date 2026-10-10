@@ -1,0 +1,3 @@
+Run the Python test suite in parallel by default (``-j0`` is the default).
+Use ``--single-process`` to run tests sequentially in a single process.
+Patch by Victor Stinner.

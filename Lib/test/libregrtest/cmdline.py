@@ -174,7 +174,7 @@ class Namespace(argparse.Namespace):
         self.verbose3 = False
         self.print_slow = False
         self.random_seed = None
-        self.use_mp = None
+        self.use_mp = 0
         self.parallel_threads = None
         self.forever = False
         self.header = False
@@ -333,8 +333,9 @@ def _create_parser():
                        help='search for reference leaks (needs debug build, '
                             'very slow).' + more_details)
     group.add_argument('-j', '--multiprocess', metavar='PROCESSES',
-                       dest='use_mp', type=int,
-                       help='run `PROCESSES` processes at once')
+                       dest='use_mp', type=int, default=0,
+                       help='run `PROCESSES` processes at once '
+                            '(default: -j0, use the number of CPUs)')
     group.add_argument('--single-process', action='store_true',
                        dest='single_process',
                        help='always run all tests sequentially in '
@@ -479,8 +480,6 @@ def _parse_args(args, **kwargs):
     if ns.slow_ci or ns.fast_ci:
         # Similar to options:
         #   -j0 --randomize --fail-env-changed --rerun --slowest --verbose3
-        if ns.use_mp is None:
-            ns.use_mp = 0
         ns.randomize = True
         ns.fail_env_changed = True
         if ns.python is None:
@@ -587,7 +586,7 @@ def _parse_args(args, **kwargs):
         # a memory leak, whereas it is not (gh-71290).
         ns.verbose3 = False
         print("WARNING: Disable --verbose3 because it's incompatible with "
-              "--huntrleaks without -jN option",
+              "--huntrleaks and --single-process options",
               file=sys.stderr)
 
     if ns.forever:
