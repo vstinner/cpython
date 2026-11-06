@@ -485,7 +485,7 @@ PyUnicodeWriter_DecodeUTF8Stateful(PyUnicodeWriter *writer,
     }
 
     return _PyUnicode_DecodeUTF8Writer((_PyUnicodeWriter*)writer, str, size,
-                                       _Py_ERROR_UNKNOWN, errors,
+                                       _Py_ERROR_UNSET, errors,
                                        consumed);
 }
 

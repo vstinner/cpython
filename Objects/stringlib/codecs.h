@@ -316,7 +316,7 @@ STRINGLIB(utf8_encoder)(PyObject *unicode,
         else if (Py_UNICODE_IS_SURROGATE(ch)) {
             Py_ssize_t startpos, endpos, newpos;
             Py_ssize_t k;
-            if (error_handler == _Py_ERROR_UNKNOWN) {
+            if (error_handler == _Py_ERROR_UNSET) {
                 error_handler = _Py_GetErrorHandler(errors);
             }
 
@@ -380,6 +380,10 @@ STRINGLIB(utf8_encoder)(PyObject *unicode,
                 assert(startpos < endpos);
                 _Py_FALLTHROUGH;
             default:
+                if (errors == NULL) {
+                    // PyUnicode_EncodeFSDefault() uses errors=NULL
+                    errors = _Py_GetErrorHandlerName(error_handler);
+                }
                 rep = unicode_encode_call_errorhandler(
                       errors, &error_handler_obj, "utf-8", "surrogates not allowed",
                       unicode, &exc, startpos, endpos, &newpos);

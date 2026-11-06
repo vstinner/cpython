@@ -1018,20 +1018,6 @@ unicode_decodelocaleandsize(PyObject *self, PyObject *args)
     return PyUnicode_DecodeLocaleAndSize(data, size, errors);
 }
 
-/* Test PyUnicode_DecodeLocale() */
-static PyObject *
-unicode_decodelocale(PyObject *self, PyObject *args)
-{
-    const char *data;
-    Py_ssize_t size;
-    const char *errors = NULL;
-
-    if (!PyArg_ParseTuple(args, "y#|z", &data, &size, &errors))
-        return NULL;
-
-    return PyUnicode_DecodeLocale(data, errors);
-}
-
 /* Test PyUnicode_EncodeLocale() */
 static PyObject *
 unicode_encodelocale(PyObject *self, PyObject *args)
@@ -1982,7 +1968,6 @@ static PyMethodDef TestMethods[] = {
     {"unicode_encodecodepage",   unicode_encodecodepage,         METH_VARARGS},
 #endif /* MS_WINDOWS */
     {"unicode_decodelocaleandsize",unicode_decodelocaleandsize,  METH_VARARGS},
-    {"unicode_decodelocale",     unicode_decodelocale,           METH_VARARGS},
     {"unicode_encodelocale",     unicode_encodelocale,           METH_VARARGS},
     {"unicode_decodefsdefault",  unicode_decodefsdefault,        METH_VARARGS},
     {"unicode_decodefsdefaultandsize",unicode_decodefsdefaultandsize,METH_VARARGS},

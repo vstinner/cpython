@@ -1,7 +1,17 @@
+// clinic/unicode.c.h uses pycore_modsupport.h
+#define PYTESTCAPI_NEED_INTERNAL_API
+
 #include <stddef.h>               // ptrdiff_t
 
 #include "parts.h"
 #include "util.h"
+#include "clinic/unicode.c.h"
+
+/*[clinic input]
+module _testcapi
+[clinic start generated code]*/
+/*[clinic end generated code: output=da39a3ee5e6b4b0d input=6361033e795369fc]*/
+
 
 /* Test PyUnicode_New() */
 static PyObject *
@@ -464,6 +474,28 @@ unicode_is_compact_ascii(PyObject *self, PyObject *arg)
     RETURN_INT(PyUnicode_IS_COMPACT_ASCII(arg));
 }
 
+// FIXME: data: str(accept={robuffer}, zeroes=True)
+// FIXME: data: str(accept={robuffer, str}, zeroes=True)
+// FIXME: errors: str(accept={str, NoneType}) = NULL
+
+/*[clinic input]
+_testcapi.unicode_decodelocale
+
+    data: str(accept={robuffer}, zeroes=True)
+    errors: str(accept={str, NoneType}) = NULL
+
+Test PyUnicode_DecodeLocale().
+[clinic start generated code]*/
+
+static PyObject *
+_testcapi_unicode_decodelocale_impl(PyObject *module, const char *data,
+                                    Py_ssize_t data_length,
+                                    const char *errors)
+/*[clinic end generated code: output=1490de3ecdfdcb00 input=15caf72398754a01]*/
+{
+    // ignore data_length
+    return PyUnicode_DecodeLocale(data, errors);
+}
 
 // --- PyUnicodeWriter type -------------------------------------------------
 
@@ -920,6 +952,7 @@ static PyMethodDef TestMethods[] = {
     {"unicode_is_ascii",         unicode_is_ascii,               METH_O},
     {"unicode_is_compact",       unicode_is_compact,             METH_O},
     {"unicode_is_compact_ascii", unicode_is_compact_ascii,       METH_O},
+    _TESTCAPI_UNICODE_DECODELOCALE_METHODDEF
     {NULL},
 };
 

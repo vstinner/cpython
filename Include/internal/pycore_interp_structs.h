@@ -668,7 +668,7 @@ struct _Py_mem_interp_free_queue {
 /****** Unicode state *********/
 
 typedef enum {
-    _Py_ERROR_UNKNOWN=0,
+    _Py_ERROR_UNSET=0,
     _Py_ERROR_STRICT,
     _Py_ERROR_SURROGATEESCAPE,
     _Py_ERROR_REPLACE,
@@ -676,7 +676,7 @@ typedef enum {
     _Py_ERROR_BACKSLASHREPLACE,
     _Py_ERROR_SURROGATEPASS,
     _Py_ERROR_XMLCHARREFREPLACE,
-    _Py_ERROR_OTHER
+    _Py_ERROR_UNKNOWN
 } _Py_error_handler;
 
 struct _Py_unicode_runtime_ids {
