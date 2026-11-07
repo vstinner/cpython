@@ -47,7 +47,6 @@ typedef struct _Py_Identifier {
     } mutex;
 } _Py_Identifier;
 
-#ifndef Py_BUILD_CORE
 // For now we are keeping _Py_IDENTIFIER for continued use
 // in non-builtin extensions (and naughty PyPI modules).
 
@@ -55,7 +54,6 @@ typedef struct _Py_Identifier {
 #define _Py_static_string(varname, value)  static _Py_Identifier varname = _Py_static_string_init(value)
 #define _Py_IDENTIFIER(varname) _Py_static_string(PyId_##varname, #varname)
 
-#endif /* !Py_BUILD_CORE */
 
 
 typedef struct {

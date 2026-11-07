@@ -293,6 +293,9 @@ struct pyruntimestate {
     PyInterpreterState _main_interpreter;
     // _main_interpreter should be the last field of _PyRuntimeState.
     // See https://github.com/python/cpython/issues/127117.
+
+    int current_locale_is_utf8;
+    char *cached_locale_encoding;
 };
 
 
