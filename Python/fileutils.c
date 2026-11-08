@@ -1,4 +1,5 @@
 #include "Python.h"
+#include "pycore_codecs.h"        // _PyCodec_Lookup()
 #include "pycore_fileutils.h"     // fileutils definitions
 #include "pycore_runtime.h"       // _PyRuntime
 #include "pycore_pystate.h"       // _Py_AssertHoldsTstate()
@@ -632,6 +633,9 @@ decode_locale_impl(const char* arg, wchar_t **wstr, size_t *wlen,
 #ifdef _Py_FORCE_UTF8_LOCALE
         return _Py_DecodeUTF8(arg, strlen(arg), wstr, wlen, errors);
 #else
+        if (_PyRuntime.current_locale_is_utf8) {
+            return _Py_DecodeUTF8(arg, strlen(arg), wstr, wlen, errors);
+        }
         return decode_current_locale(arg, wstr, wlen, errors);
 #endif
     }
@@ -643,6 +647,7 @@ decode_locale_impl(const char* arg, wchar_t **wstr, size_t *wlen,
 #ifdef MS_WINDOWS
     use_utf8 |= (_PyRuntime.preconfig.legacy_windows_fs_encoding == 0);
 #endif
+    use_utf8 |= _PyRuntime.current_locale_is_utf8;
     if (use_utf8) {
         return _Py_DecodeUTF8(arg, strlen(arg), wstr, wlen, errors);
     }
@@ -905,6 +910,10 @@ encode_locale_inner(const wchar_t *text, char **str, size_t *output_length,
         return _Py_EncodeUTF8(text, str, output_length,
                               error_pos, raw_malloc, errors);
 #else
+        if (_PyRuntime.current_locale_is_utf8) {
+            return _Py_EncodeUTF8(text, str, output_length,
+                                  error_pos, raw_malloc, errors);
+        }
         return encode_current_locale(text, str, output_length,
                                      error_pos, raw_malloc, errors);
 #endif
@@ -918,6 +927,7 @@ encode_locale_inner(const wchar_t *text, char **str, size_t *output_length,
 #ifdef MS_WINDOWS
     use_utf8 |= (_PyRuntime.preconfig.legacy_windows_fs_encoding == 0);
 #endif
+    use_utf8 |= _PyRuntime.current_locale_is_utf8;
     if (use_utf8) {
         return _Py_EncodeUTF8(text, str, output_length,
                               error_pos, raw_malloc, errors);
@@ -1058,7 +1068,7 @@ _Py_EncodeLocale(const wchar_t *text, char **str, size_t *output_length,
 // - Return "utf-8" if nl_langinfo(CODESET) returns an empty string.
 // - Otherwise, return nl_langinfo(CODESET).
 //
-// Return NULL on memory allocation failure.
+// Return NULL on memory allocation failure. Do not set an exception on error.
 //
 // See also config_get_locale_encoding()
 wchar_t*
@@ -3394,5 +3404,75 @@ _Py_strerror(int code)
         return NULL;
     }
     return PyUnicode_DecodeLocale(message, errors);
+#endif
+}
+
+
+int
+_Py_UpdateLocale(void)
+{
+#ifdef _Py_FORCE_UTF8_LOCALE
+    _PyRuntime.current_locale_is_utf8 = 1;
+#else
+    extern wchar_t* _PyUnicode_GetCodecName(const wchar_t *encoding);
+
+    // first, reset cache
+    _PyRuntime.current_locale_is_utf8 = 0;
+    free(_PyRuntime.cached_locale_encoding);
+    _PyRuntime.cached_locale_encoding = NULL;
+
+    const char *encoding = nl_langinfo(CODESET);
+    if (encoding == NULL) {
+        // Do not use UTF-8 cache if nl_langinfo(CODESET) failed
+        return 0;
+    }
+
+    PyObject *codec = _PyCodec_Lookup(encoding);
+    if (!codec) {
+        return -1;
+    }
+
+    PyObject *name = PyObject_GetAttrString(codec, "name");
+    Py_DECREF(codec);
+    if (!name) {
+        return -1;
+    }
+
+    int is_utf8 = PyUnicode_EqualToUTF8(name, "utf-8");
+    Py_DECREF(name);
+
+    if (is_utf8) {
+        _PyRuntime.cached_locale_encoding = _PyMem_Strdup(encoding);
+        if (_PyRuntime.cached_locale_encoding == NULL) {
+            // Do not use UTF-8 cache on memory allocation failure
+            return 0;
+        }
+        _PyRuntime.current_locale_is_utf8 = 1;
+    }
+    return 0;
+#endif
+}
+
+
+int
+_Py_CurrentLocaleIsUTF8(void)
+{
+#ifdef _Py_FORCE_UTF8_LOCALE
+    return 1;
+#else
+    if (!_PyRuntime.current_locale_is_utf8) {
+        return 0;
+    }
+
+    // Make sure that the LC_TYPE locale didn't change
+    const char *encoding = nl_langinfo(CODESET);
+    if (encoding == NULL
+        || strcmp(encoding, _PyRuntime.cached_locale_encoding) != 0)
+    {
+        _PyRuntime.current_locale_is_utf8 = 0;
+        return 0;
+    }
+
+    return 1;
 #endif
 }

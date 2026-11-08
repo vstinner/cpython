@@ -122,6 +122,7 @@ check_locale_name_all(const char *locale)
 }
 #endif
 
+
 /*[clinic input]
 _locale.setlocale
 
@@ -170,9 +171,8 @@ _locale_setlocale_impl(PyObject *module, int category, const char *locale)
             return NULL;
         }
         result_object = PyUnicode_DecodeLocale(result, NULL);
-        if (!result_object)
-            return NULL;
-    } else {
+    }
+    else {
         /* get locale */
         result = setlocale(category, NULL);
         if (!result) {
@@ -182,6 +182,16 @@ _locale_setlocale_impl(PyObject *module, int category, const char *locale)
         }
         result_object = PyUnicode_DecodeLocale(result, NULL);
     }
+    if (!result_object) {
+        return NULL;
+    }
+
+    extern int _Py_UpdateLocale(void);
+    if (_Py_UpdateLocale() < 0) {
+        Py_DECREF(result_object);
+        return NULL;
+    }
+
     return result_object;
 }
 

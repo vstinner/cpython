@@ -1368,7 +1368,36 @@ convertsimple(PyObject *arg, const char **p_format, va_list *p_va, int flags,
 #undef RETURN_ERR_OCCURRED
 }
 
-static Py_ssize_t
+PyAPI_FUNC(Py_ssize_t)
+_Py_ConvertBuffer(PyObject *arg, const char **buf)
+{
+    PyBufferProcs *pb = Py_TYPE(arg)->tp_as_buffer;
+    Py_ssize_t count;
+    Py_buffer view;
+
+    if (pb != NULL && pb->bf_releasebuffer != NULL) {
+        PyErr_SetString(PyExc_TypeError,
+                        "expect read-only bytes-like object");
+        *buf = NULL;
+        return -1;
+    }
+
+    /* PyBUF_SIMPLE implies C-contiguous */
+    if (PyObject_GetBuffer(arg, &view, PyBUF_SIMPLE) != 0) {
+        PyErr_SetString(PyExc_TypeError,
+                        "expect bytes-like object");
+        *buf = NULL;
+        return -1;
+    }
+    assert(PyBuffer_IsContiguous(&view, 'C'));
+
+    count = view.len;
+    *buf = view.buf;
+    PyBuffer_Release(&view);
+    return count;
+}
+
+Py_ssize_t
 convertbuffer(PyObject *arg, const void **p, const char **errmsg)
 {
     PyBufferProcs *pb = Py_TYPE(arg)->tp_as_buffer;

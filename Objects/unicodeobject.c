@@ -479,7 +479,7 @@ _Py_GetErrorHandler(const char *errors)
     if (strcmp(errors, "xmlcharrefreplace") == 0) {
         return _Py_ERROR_XMLCHARREFREPLACE;
     }
-    return _Py_ERROR_OTHER;
+    return _Py_ERROR_UNKNOWN;
 }
 
 
@@ -507,7 +507,26 @@ get_error_handler_wide(const wchar_t *errors)
     if (wcscmp(errors, L"xmlcharrefreplace") == 0) {
         return _Py_ERROR_XMLCHARREFREPLACE;
     }
-    return _Py_ERROR_OTHER;
+    return _Py_ERROR_UNKNOWN;
+}
+
+
+static const char*
+_Py_GetErrorHandlerName(_Py_error_handler errors)
+{
+    switch (errors)
+    {
+    case _Py_ERROR_UNSET: return NULL;
+    case _Py_ERROR_STRICT: return "strict";
+    case _Py_ERROR_SURROGATEESCAPE: return "surrogateescape";
+    case _Py_ERROR_REPLACE: return "replace";
+    case _Py_ERROR_IGNORE: return "ignore";
+    case _Py_ERROR_BACKSLASHREPLACE: return "backslashreplace";
+    case _Py_ERROR_SURROGATEPASS: return "surrogatepass";
+    case _Py_ERROR_XMLCHARREFREPLACE: return "xmlcharrefreplace";
+    case _Py_ERROR_UNKNOWN: return NULL;
+    default: return NULL;
+    }
 }
 
 
@@ -3818,6 +3837,7 @@ PyUnicode_EncodeFSDefault(PyObject *unicode)
         const wchar_t *filesystem_errors = config->filesystem_errors;
         assert(filesystem_errors != NULL);
         _Py_error_handler errors = get_error_handler_wide(filesystem_errors);
+        // init_fs_codec() rejects unknown filesystem error handlers
         assert(errors != _Py_ERROR_UNKNOWN);
 #ifdef _Py_FORCE_UTF8_FS_ENCODING
         return unicode_encode_utf8(unicode, errors, NULL);
@@ -3963,8 +3983,28 @@ PyUnicode_AsEncodedUnicode(PyObject *unicode,
 
 static PyObject*
 unicode_decode_locale(const char *str, Py_ssize_t len,
-                      _Py_error_handler errors, int current_locale)
+                      _Py_error_handler error_handler, const char *errors,
+                      int current_locale)
 {
+    if (errors) {
+        // error_handler can be _Py_ERROR_UNSET or _Py_ERROR_UNKNOWN
+    }
+    else {
+        assert(error_handler != _Py_ERROR_UNSET);
+        assert(error_handler != _Py_ERROR_UNKNOWN);
+    }
+
+    extern int _Py_CurrentLocaleIsUTF8(void);
+    if (_Py_CurrentLocaleIsUTF8()) {
+        return unicode_decode_utf8(str, len,
+                                   error_handler, errors,
+                                   NULL);
+    }
+
+    if (error_handler == _Py_ERROR_UNSET && errors) {
+        error_handler = _Py_GetErrorHandler(errors);
+    }
+
     if (str[len] != '\0' || (size_t)len != strlen(str))  {
         PyErr_SetString(PyExc_ValueError, "embedded null byte");
         return NULL;
@@ -3972,7 +4012,7 @@ unicode_decode_locale(const char *str, Py_ssize_t len,
 
     wchar_t *wstr;
     size_t wlen;
-    int res = _Py_DecodeLocale(str, &wstr, &wlen, current_locale, errors);
+    int res = _Py_DecodeLocale(str, &wstr, &wlen, current_locale, error_handler);
     if (res != 0) {
         if (res == _Py_CODEC_DECODE_ERROR) {
             PyObject *exc;
@@ -4006,16 +4046,18 @@ PyObject*
 PyUnicode_DecodeLocaleAndSize(const char *str, Py_ssize_t len,
                               const char *errors)
 {
-    _Py_error_handler error_handler = _Py_GetErrorHandler(errors);
-    return unicode_decode_locale(str, len, error_handler, 1);
+    return unicode_decode_locale(str, len,
+                                 errors ? _Py_ERROR_UNSET : _Py_ERROR_STRICT,
+                                 errors, 1);
 }
 
 PyObject*
 PyUnicode_DecodeLocale(const char *str, const char *errors)
 {
     Py_ssize_t size = (Py_ssize_t)strlen(str);
-    _Py_error_handler error_handler = _Py_GetErrorHandler(errors);
-    return unicode_decode_locale(str, size, error_handler, 1);
+    return unicode_decode_locale(str, size,
+                                 errors ? _Py_ERROR_UNSET : _Py_ERROR_STRICT,
+                                 errors, 1);
 }
 
 
@@ -4051,11 +4093,12 @@ PyUnicode_DecodeFSDefaultAndSize(const char *s, Py_ssize_t size)
         const wchar_t *filesystem_errors = config->filesystem_errors;
         assert(filesystem_errors != NULL);
         _Py_error_handler errors = get_error_handler_wide(filesystem_errors);
+        // init_fs_codec() rejects unknown filesystem error handlers
         assert(errors != _Py_ERROR_UNKNOWN);
 #ifdef _Py_FORCE_UTF8_FS_ENCODING
         return unicode_decode_utf8(s, size, errors, NULL, NULL);
 #else
-        return unicode_decode_locale(s, size, errors, 0);
+        return unicode_decode_locale(s, size, errors, NULL, 0);
 #endif
     }
 }
@@ -5244,8 +5287,9 @@ unicode_decode_utf8_impl(_PyUnicodeWriter *writer,
             continue;
         }
 
-        if (error_handler == _Py_ERROR_UNKNOWN)
+        if (error_handler == _Py_ERROR_UNSET) {
             error_handler = _Py_GetErrorHandler(errors);
+        }
 
         switch (error_handler) {
         case _Py_ERROR_IGNORE:
@@ -5276,6 +5320,10 @@ unicode_decode_utf8_impl(_PyUnicodeWriter *writer,
         }
 
         default:
+            if (errors == NULL) {
+                // PyUnicode_DecodeFSDefaultAndSize() uses errors=NULL
+                errors = _Py_GetErrorHandlerName(error_handler);
+            }
             if (unicode_decode_call_errorhandler_writer(
                     errors, &error_handler_obj,
                     "utf-8", errmsg,
@@ -5465,7 +5513,7 @@ PyUnicode_DecodeUTF8Stateful(const char *s,
                              Py_ssize_t *consumed)
 {
     return unicode_decode_utf8(s, size,
-                               errors ? _Py_ERROR_UNKNOWN : _Py_ERROR_STRICT,
+                               errors ? _Py_ERROR_UNSET : _Py_ERROR_STRICT,
                                errors, consumed);
 }
 
@@ -5846,7 +5894,7 @@ unicode_fill_utf8(PyObject *unicode)
 PyObject *
 _PyUnicode_AsUTF8String(PyObject *unicode, const char *errors)
 {
-    return unicode_encode_utf8(unicode, _Py_ERROR_UNKNOWN, errors);
+    return unicode_encode_utf8(unicode, _Py_ERROR_UNSET, errors);
 }
 
 
@@ -7265,7 +7313,7 @@ unicode_encode_ucs1(PyObject *unicode,
     const char *reason = (limit == 256) ? "ordinal not in range(256)" : "ordinal not in range(128)";
     PyObject *error_handler_obj = NULL;
     PyObject *exc = NULL;
-    _Py_error_handler error_handler = _Py_ERROR_UNKNOWN;
+    _Py_error_handler error_handler = _Py_ERROR_UNSET;
     PyObject *rep = NULL;
 
     size = PyUnicode_GET_LENGTH(unicode);
@@ -7307,8 +7355,9 @@ unicode_encode_ucs1(PyObject *unicode,
             writer->overallocate = (collend < size);
 
             /* cache callback name lookup (if not done yet, i.e. it's the first error) */
-            if (error_handler == _Py_ERROR_UNKNOWN)
+            if (error_handler == _Py_ERROR_UNSET) {
                 error_handler = _Py_GetErrorHandler(errors);
+            }
 
             switch (error_handler) {
             case _Py_ERROR_STRICT:
@@ -7468,7 +7517,7 @@ PyUnicode_DecodeASCII(const char *s,
     const char *e = s + size;
     PyObject *error_handler_obj = NULL;
     PyObject *exc = NULL;
-    _Py_error_handler error_handler = _Py_ERROR_UNKNOWN;
+    _Py_error_handler error_handler = _Py_ERROR_UNSET;
 
     if (size == 0)
         _Py_RETURN_UNICODE_EMPTY();
@@ -7508,8 +7557,9 @@ PyUnicode_DecodeASCII(const char *s,
 
         /* byte outsize range 0x00..0x7f: call the error handler */
 
-        if (error_handler == _Py_ERROR_UNKNOWN)
+        if (error_handler == _Py_ERROR_UNSET) {
             error_handler = _Py_GetErrorHandler(errors);
+        }
 
         switch (error_handler)
         {
@@ -9276,8 +9326,9 @@ charmap_encoding_error(
     }
     /* cache callback name lookup
      * (if not done yet, i.e. it's the first error) */
-    if (*error_handler == _Py_ERROR_UNKNOWN)
+    if (*error_handler == _Py_ERROR_UNSET) {
         *error_handler = _Py_GetErrorHandler(errors);
+    }
 
     switch (*error_handler) {
     case _Py_ERROR_STRICT:
@@ -9400,7 +9451,7 @@ _PyUnicode_EncodeCharmap(PyObject *unicode,
     Py_ssize_t inpos = 0;
     /* current output position */
     Py_ssize_t respos = 0;
-    _Py_error_handler error_handler = _Py_ERROR_UNKNOWN;
+    _Py_error_handler error_handler = _Py_ERROR_UNSET;
 
     if (Py_IS_TYPE(mapping, &EncodingMapType)) {
         char *outstart = _PyBytesWriter_GetData(writer);
@@ -15206,70 +15257,80 @@ unicode_iter(PyObject *seq)
     return (PyObject *)it;
 }
 
-static int
-encode_wstr_utf8(wchar_t *wstr, char **str, const char *name)
+static char*
+encode_wstr_utf8(const wchar_t *wstr, const char *name)
 {
-    assert(str != NULL);
-
+    char *str;
     size_t unused_output_length;
-    int res = _Py_EncodeUTF8(wstr, str, &unused_output_length,
+    int res = _Py_EncodeUTF8(wstr, &str, &unused_output_length,
                              NULL, 1, _Py_ERROR_STRICT);
     if (res == -2) {
         PyErr_Format(PyExc_RuntimeError, "cannot encode %s", name);
-        return -1;
+        return NULL;
     }
     if (res < 0) {
         PyErr_NoMemory();
-        return -1;
+        return NULL;
     }
-    return 0;
+    return str;
+}
+
+
+static wchar_t*
+config_get_codec_name_impl(const wchar_t *encoding, const char *errmsg)
+{
+    char *encoding_utf8 = encode_wstr_utf8(encoding, errmsg);
+    if (encoding_utf8 == NULL) {
+        return NULL;
+    }
+
+    PyObject *name_obj = NULL;
+    PyObject *codec = _PyCodec_Lookup(encoding_utf8);
+    PyMem_RawFree(encoding_utf8);
+    if (!codec) {
+        return NULL;
+    }
+
+    name_obj = PyObject_GetAttrString(codec, "name");
+    Py_DECREF(codec);
+    if (!name_obj) {
+        return NULL;
+    }
+
+    wchar_t *name = PyUnicode_AsWideCharString(name_obj, NULL);
+    Py_DECREF(name_obj);
+    return name;
 }
 
 
 static int
-config_get_codec_name(wchar_t **config_encoding)
+config_get_codec_name(wchar_t **config_encoding, const char *errmsg)
 {
-    char *encoding;
-    if (encode_wstr_utf8(*config_encoding, &encoding, "stdio_encoding") < 0) {
+    wchar_t *name = config_get_codec_name_impl(*config_encoding, errmsg);
+    if (name == NULL) {
         return -1;
     }
 
-    PyObject *name_obj = NULL;
-    PyObject *codec = _PyCodec_Lookup(encoding);
-    PyMem_RawFree(encoding);
-
-    if (!codec)
-        goto error;
-
-    name_obj = PyObject_GetAttrString(codec, "name");
-    Py_CLEAR(codec);
-    if (!name_obj) {
-        goto error;
-    }
-
-    wchar_t *wname = PyUnicode_AsWideCharString(name_obj, NULL);
-    Py_DECREF(name_obj);
-    if (wname == NULL) {
-        goto error;
-    }
-
-    wchar_t *raw_wname = _PyMem_RawWcsdup(wname);
-    if (raw_wname == NULL) {
-        PyMem_Free(wname);
+    // PyConfig requires PyMem_RawMalloc()
+    wchar_t *raw_name = _PyMem_RawWcsdup(name);
+    PyMem_Free(name);
+    if (raw_name == NULL) {
         PyErr_NoMemory();
-        goto error;
+        return -1;
     }
 
     PyMem_RawFree(*config_encoding);
-    *config_encoding = raw_wname;
-
-    PyMem_Free(wname);
+    *config_encoding = raw_name;
     return 0;
+}
 
-error:
-    Py_XDECREF(codec);
-    Py_XDECREF(name_obj);
-    return -1;
+
+// Return codecs.lookup(encoding).name. The result should be deallocated with
+// PyMem_Free(). On error, set an exception and return NULL.
+wchar_t*
+_PyUnicode_GetCodecName(const wchar_t *encoding)
+{
+    return config_get_codec_name_impl(encoding, "encoding name");
 }
 
 
@@ -15282,7 +15343,7 @@ init_stdio_encoding(PyInterpreterState *interp)
         /* gh-86427: The encoding is determined for every stream. */
         return _PyStatus_OK();
     }
-    if (config_get_codec_name(&config->stdio_encoding) < 0) {
+    if (config_get_codec_name(&config->stdio_encoding, "stdio_encoding") < 0) {
         return _PyStatus_ERR("failed to get the Python codec name "
                              "of the stdio encoding");
     }
@@ -15302,16 +15363,15 @@ init_fs_codec(PyInterpreterState *interp)
         return -1;
     }
 
-    char *encoding, *errors;
-    if (encode_wstr_utf8(config->filesystem_encoding,
-                         &encoding,
-                         "filesystem_encoding") < 0) {
+    char *encoding = encode_wstr_utf8(config->filesystem_encoding,
+                                      "filesystem_encoding");
+    if (encoding == NULL) {
         return -1;
     }
 
-    if (encode_wstr_utf8(config->filesystem_errors,
-                         &errors,
-                         "filesystem_errors") < 0) {
+    char *errors = encode_wstr_utf8(config->filesystem_errors,
+                                    "filesystem_errors");
+    if (errors == NULL) {
         PyMem_RawFree(encoding);
         return -1;
     }
@@ -15356,7 +15416,7 @@ init_fs_encoding(PyThreadState *tstate)
        For example, replace "ANSI_X3.4-1968" (locale encoding) with "ascii"
        (Python codec name). */
     PyConfig *config = (PyConfig*)_PyInterpreterState_GetConfig(interp);
-    if (config_get_codec_name(&config->filesystem_encoding) < 0) {
+    if (config_get_codec_name(&config->filesystem_encoding, "filesystem_encoding") < 0) {
         _Py_DumpPathConfig(tstate);
         return _PyStatus_ERR("failed to get the Python codec "
                              "of the filesystem encoding");
@@ -15393,7 +15453,7 @@ _PyUnicode_FiniEncodings(struct _Py_unicode_fs_codec *fs_codec)
     fs_codec->utf8 = 0;
     PyMem_RawFree(fs_codec->errors);
     fs_codec->errors = NULL;
-    fs_codec->error_handler = _Py_ERROR_UNKNOWN;
+    fs_codec->error_handler = _Py_ERROR_UNSET;
 }
 
 
