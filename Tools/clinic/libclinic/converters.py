@@ -836,59 +836,71 @@ class str_converter(CConverter):
             return ""
 
     def parse_arg(self, argname: str, displayname: str, *, limited_capi: bool) -> str | None:
-        if self.format_unit not in ('s', 'z'):
+        if self.format_unit not in ('s', 'z', 'y#'):
             return super().parse_arg(argname, displayname, limited_capi=limited_capi)
 
-        # Decode a value already known to be a str.  Shared by 's' and 'z',
-        # which differ only in whether None is also accepted.
-        if limited_capi:
-            decode = """
-                Py_ssize_t {length_name};
-                {paramname} = PyUnicode_AsUTF8AndSize({argname}, &{length_name});
-                if ({paramname} == NULL) {{{{
-                    goto exit;
-                }}}}
-                if (strlen({paramname}) != (size_t){length_name}) {{{{
-                    PyErr_SetString(PyExc_ValueError, "embedded null character");
-                    goto exit;
-                }}}}
-                """
-        else:
-            # _PyUnicode_AsUTF8NoNUL() is the same code, but its Py_ssize_t
-            # stays in the callee's frame.  An address-taken local here would
-            # give every generated parser a stack protector canary.
-            self.add_include('pycore_unicodeobject.h',
-                             '_PyUnicode_AsUTF8NoNUL()')
-            decode = """
-                {paramname} = _PyUnicode_AsUTF8NoNUL({argname});
-                if ({paramname} == NULL) {{{{
-                    goto exit;
-                }}}}
-                """
+        if self.format_unit == 'y#':
+            expected = 'bytes'
+            code = """
+                PyAPI_FUNC(Py_ssize_t) _Py_ConvertBuffer(PyObject *arg, const char **buf);
 
-        if self.format_unit == 'z':
-            expected = 'str or None'
-            code = """
-                if ({argname} == Py_None) {{{{
-                    {paramname} = NULL;
-                }}}}
-                else if (PyUnicode_Check({argname})) {{{{
-                    {decode}
-                }}}}
-                else {{{{
-                    {bad_argument}
+                {length_name} = _Py_ConvertBuffer({argname}, &{paramname});
+                if ({length_name} < 0) {{{{
                     goto exit;
                 }}}}
                 """
+            decode = ''
         else:
-            expected = 'str'
-            code = """
-                if (!PyUnicode_Check({argname})) {{{{
-                    {bad_argument}
-                    goto exit;
-                }}}}
-                {decode}
-                """
+            # Decode a value already known to be a str.  Shared by 's' and 'z',
+            # which differ only in whether None is also accepted.
+            if limited_capi:
+                decode = """
+                    Py_ssize_t {length_name};
+                    {paramname} = PyUnicode_AsUTF8AndSize({argname}, &{length_name});
+                    if ({paramname} == NULL) {{{{
+                        goto exit;
+                    }}}}
+                    if (strlen({paramname}) != (size_t){length_name}) {{{{
+                        PyErr_SetString(PyExc_ValueError, "embedded null character");
+                        goto exit;
+                    }}}}
+                    """
+            else:
+                # _PyUnicode_AsUTF8NoNUL() is the same code, but its Py_ssize_t
+                # stays in the callee's frame.  An address-taken local here would
+                # give every generated parser a stack protector canary.
+                self.add_include('pycore_unicodeobject.h',
+                                 '_PyUnicode_AsUTF8NoNUL()')
+                decode = """
+                    {paramname} = _PyUnicode_AsUTF8NoNUL({argname});
+                    if ({paramname} == NULL) {{{{
+                        goto exit;
+                    }}}}
+                    """
+
+            if self.format_unit == 'z':
+                expected = 'str or None'
+                code = """
+                    if ({argname} == Py_None) {{{{
+                        {paramname} = NULL;
+                    }}}}
+                    else if (PyUnicode_Check({argname})) {{{{
+                        {decode}
+                    }}}}
+                    else {{{{
+                        {bad_argument}
+                        goto exit;
+                    }}}}
+                    """
+            else:
+                expected = 'str'
+                code = """
+                    if (!PyUnicode_Check({argname})) {{{{
+                        {bad_argument}
+                        goto exit;
+                    }}}}
+                    {decode}
+                    """
 
         return self.format_code(
             libclinic.linear_format(
